@@ -1,0 +1,420 @@
+/**
+ * @license
+ * Copyright 2016 Google Inc. All rights reserved.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+// Templates for questionnaire.
+
+{namespace vsaq.questionnaire.templates autoescape="strict"}
+
+
+/**
+ * The header for the part that shows the sections.
+ */
+{template .sectionsHeader}
+  <div id="_vsaq_sections_header">Sections</div>
+{/template}
+
+
+/**
+ * An item in the list of questionnaire sections.
+ * @param sectionHtml {SanitizedContent} Index of the current item in the list.
+ */
+{template .questionnaireSection}
+  <li>
+    <a title="Open section #{$sectionHtml}">
+      <div class="vsaq-section-title">{$sectionHtml}</div>
+    </a>
+    <div class="vsaq-section-status">
+      <span class="vsaq-unanswered-count">x</span> questions unanswered
+    </div>
+  </li>
+{/template}
+
+
+/**
+ * The basic template for a questionnaire-block.
+ * @param id {string} The id of the fieldset HTML element.
+ * @param captionHtml {SanitizedContent} The caption of the block.
+ * @param blockId {string} The id for the anchor for the block.
+ */
+{template .block}
+  <fieldset id="{$id}" class="vsaq-item vsaq-block">
+    <legend>
+      <span name="text" class="vsaq-label-text">{$captionHtml}</span>
+      {if $blockId}
+        <a href="#{$blockId}" name="{$blockId}" class="vsaq-block-link">&#x1f517;</a>
+      {/if}
+    </legend>
+  </fieldset>
+{/template}
+
+
+/**
+ * A dropdown box that displays all possible and allowed values for the current
+ * item.
+ * @param propertyInformation {Object} Object containing the current item's
+ *     properties.
+ */
+{template .editablePropertyValue}
+  <span name="{$propertyInformation.nameInClass}"
+        class="{if not $propertyInformation.unchangeable}
+                 {if $propertyInformation.defaultValues}vsaq-select-text{else}vsaq-label-text{/if}
+               {/if}">
+    {if $propertyInformation.defaultValues}
+        <select>
+           {if not $propertyInformation.mandatory}
+             <option value="">none</option>
+           {/if}
+           {foreach $defaultTypeKey in keys($propertyInformation.defaultValues)}
+             <option value="{$propertyInformation.defaultValues[$defaultTypeKey]}"
+                 {if $propertyInformation.defaultValues[$defaultTypeKey] == $propertyInformation.value}selected="selected"{/if}>
+               {$propertyInformation.defaultValues[$defaultTypeKey]}
+             </option>
+           {/foreach}
+         </select>
+    {else}
+      {($propertyInformation.value or 'none')}
+    {/if}
+  </span>
+{/template}
+
+
+/**
+ * An info section that is prepanded to each item that should be editable.
+ * Note: the outer div wrapper here is not allowed to have an id since all
+ * buttons refer to the first outer HTML element that has an id set (expected to
+ * be an item).
+ * @param knownPropertiesKeys {Array.<number>} Object that contains keys for
+ *     known item properties.
+ * @param knownPropertiesValues {Array.<Object>} Object that contains values for
+ *     known item properties.
+ */
+{template .editablePrefix}
+  <div>
+    <table width="100%">
+      {foreach $knownPropertyIndex in keys($knownPropertiesKeys)}
+        <tr>
+          <td>{$knownPropertiesKeys[$knownPropertyIndex]}</td>
+          <td>
+            {if not $knownPropertiesValues[$knownPropertyIndex].metadata and
+                not $knownPropertiesValues[$knownPropertyIndex].defaultValues and
+                $knownPropertiesValues[$knownPropertyIndex].value}
+              <span name="{$knownPropertiesValues[$knownPropertyIndex].nameInClass}" class="vsaq-remove-text">
+                <input type="checkbox" checked="checked" class="vsaq-checkbox">
+              </span>
+            {else}
+              {call .editablePropertyValue}
+                {param propertyInformation: $knownPropertiesValues[$knownPropertyIndex] /}
+              {/call}
+            {/if}
+          </td>
+        </tr>
+      {/foreach}
+    </table>
+  </div>
+{/template}
+
+
+/**
+ * An appendix for editability.
+ * Note: the outer div wrapper here is not allowed to have an id since all
+ * buttons refer to the first outer HTML element that has an id set (expected
+ * to be an item).
+ * @param types {array} Array of possible item types.
+ * @param defaultType {string} The default selected type.
+ */
+{template .editableSuffix}
+  <div>
+    <a class="maia-button eh-add-to-item">Add</a>
+    &nbsp;
+    <select>
+      {foreach $type in $types}
+        <option value="{$type}" {if $type==$defaultType}selected="selected"{/if}>{$type}</option>
+      {/foreach}
+    </select>
+    &nbsp;
+    {if $defaultType!='block' and $defaultType!='radiogroup' and $defaultType!='checkgroup'}
+      <a class="maia-button eh-copy-item">Copy</a>
+      &nbsp;
+    {/if}
+    <a class="maia-button eh-remove-from-item">Remove</a>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <a class="maia-button eh-move-item-up">&#x25B2;</a>
+    <a class="maia-button eh-move-item-down">&#x25BC;</a>
+  </div>
+{/template}
+
+
+/**
+ * A decent symbol which allows to make the item editable on click.
+ * @param itemType {string} The type of the item in question.
+ */
+{template .editableTrigger}
+  <div class="vsaq-editable" style="display:inline">
+    &nbsp;
+    <img class="vsaq-icon eh-make-editable" src="/static/mode_edit.png" title="edit/save" alt="edit/save"/>
+    [{$itemType}]
+  </div>
+{/template}
+
+
+/**
+ * A radio item.
+ * @param id {string} The id of the question.
+ * @param captionHtml {SanitizedContent} The caption of the question.
+ */
+{template .radio}
+  <div class="vsaq-item vsaq-radio-item" data-vsaq-container-for="{$id}">
+    <label>
+      <input name="{$id}" type="radio" id="{$id}" class="vsaq-radiobutton">{sp}
+      <span name="text" class="vsaq-label-text">{$captionHtml}</span>
+    </label>
+  </div>
+{/template}
+
+
+/**
+ * A yes/no question.
+ * @param id {string} The id of the question.
+ * @param captionHtml {SanitizedContent} The caption of the question.
+ * @param yesHtml {SanitizedContent} The yes-answer.
+ * @param noHtml {SanitizedContent} The no-answer.
+ */
+{template .yesno}
+  <div class="vsaq-item vsaq-yesno-block" data-vsaq-container-for="{$id}">
+    <div class="vsaq-question-title">
+      <span name="text" class="vsaq-label-text">{$captionHtml}</span>
+    </div>
+    <label>
+      <input name="{$id}" id="{$id}/yes" type="radio" value="yes"
+        class="vsaq-radiobutton">{sp}
+      <span name="yes" class="vsaq-label-text">{$yesHtml}</span>
+    </label>
+    <label>
+      <input name="{$id}" id="{$id}/no" type="radio" value="no"
+        class="vsaq-radiobutton">{sp}
+      <span name="no" class="vsaq-label-text">{$noHtml}</span>
+    </label>
+  </div>
+{/template}
+
+
+/**
+ * A simple wrapper for group items.
+ * @param id {string} The id of the group.
+ * @param captionHtml {SanitizedContent} The caption of the question.
+ */
+{template .groupitem}
+  <div id="{$id}" class="vsaq-item vsaq-group-item">
+    <div class="vsaq-question-title">
+      <span name="text" class="vsaq-label-text">{$captionHtml}</span>
+    </div>
+  </div>
+{/template}
+
+
+/**
+ * A simple wrapper for info items.
+ * @param id {string} The id of the info.
+ * @param captionHtml {SanitizedContent} The caption of the question.
+ */
+{template .info}
+  <div id="{$id}" class="vsaq-item vsaq-info-item">
+    <span name="info" class="vsaq-label-text">{$captionHtml}</span>
+  </div>
+{/template}
+
+
+/**
+ * A simple wrapper for group items.
+ * @param id {string} The id of the group.
+ */
+{template .group}
+  <div id="{$id}" class="vsaq-item vsaq-group-item">
+  </div>
+{/template}
+
+
+/**
+ * A simple wrapper for spacer items.
+ * @param id {string} The id of the group.
+ */
+{template .spacer}
+  <div id="{$id}" class="vsaq-item">
+    <hr class="vsaq-spacer" />
+  </div>
+{/template}
+
+
+/**
+ * A checkbox item.
+ * @param id {string} The id of the item.
+ * @param captionHtml {SanitizedContent} The caption of the item.
+ */
+{template .check}
+  <div class="vsaq-item vsaq-checkbox-item" data-vsaq-container-for="{$id}">
+    <label>
+      <input type="checkbox" name="{$id}" id="{$id}" class="vsaq-checkbox">{sp}
+      <span name="text" class="vsaq-label-text">{$captionHtml}</span>
+    </label>
+  </div>
+{/template}
+
+
+/**
+ * Shows a bubble with a caption and some text.
+ * @param contentHtml {SanitizedContent} The content of the bubbble.
+ * @param isWarning {boolean} Wether we're warning about something (warnings
+ *    have an alarming background color).
+ * @param whyHtml {SanitizedContent} Asks for what compensating controls are in place.
+ * @param id {string} If whyHtml is set, this will be the ID of the text area.
+ * @param whyValue {string} Value of the "why"-text area.
+ * @param severity {string} Severity of the issue.
+ * @param customTitle {string} Title of bubble defined in JSON.
+ */
+{template .bubble}
+  <div class="vsaq-item vsaq-bubble-block" data-vsaq-container-for="{$id}">
+    <div class="maia-notification{sp}
+      {if $isWarning}vsaq-bubble-{$severity or 'medium'}{/if}">
+      <p><strong>
+        {if $customTitle}
+          <span name="customTitle" class="vsaq-label-text">{$customTitle}</span>
+        {elseif $isWarning}
+          Warning
+          {if $severity} &mdash; possible {$severity}-risk issue{/if}
+        {else}
+          Tip
+        {/if}
+      </strong></p>
+      <p>
+        <span name="text" class="vsaq-label-text">{$contentHtml}</span>
+      </p>
+      {if $whyHtml}
+        <div class="vsaq-compensating-desc">
+          <i><span name="clarification" class="vsaq-label-text">{$whyHtml}</span></i>
+          <br>
+          <textarea id="{$id}" class="vsaq-box">{if $whyValue}{$whyValue}{/if}</textarea>
+        </div>
+      {/if}
+    </div>
+  </div>
+{/template}
+
+
+/**
+ * Shows a question with a caption and a textarea.
+ * @param id {string} The id of the item.
+ * @param captionHtml {SanitizedContent} A caption for the textarea.
+ * @param placeholder {string} Placeholder value.
+ * @param inputPattern {string} Input pattern.
+ * @param inputTitle {string} Input title.
+ * @param isRequired {boolean} True iff the item is required.
+ */
+{template .box}
+  <div class="vsaq-item" data-vsaq-container-for="{$id}">
+    <div class="vsaq-question-title">
+      <label name="text" class="vsaq-label-text" for="{$id}">
+        {$captionHtml}
+      </label>
+    </div>
+    <textarea id="{$id}"
+      {if $placeholder}placeholder="{$placeholder}" {/if}
+      {if $inputPattern}pattern="{$inputPattern}" {/if}
+      {if $inputTitle}title="{$inputTitle}" {/if}
+      {if $isRequired}required {/if}
+      class="vsaq-box"></textarea>
+  </div>
+{/template}
+
+
+/**
+ * Shows a question with a caption and an input field.
+ * @param id {string} The id of the item.
+ * @param captionHtml {SanitizedContent} A caption to be shown above the input field.
+ * @param type {string} Input field type.
+ * @param placeholder {string} Placeholder value.
+ * @param inputPattern {string} Input pattern.
+ * @param inputTitle {string} Input title.
+ * @param isRequired {boolean} True iff the item is required.
+ */
+{template .line}
+  <div class="vsaq-item" data-vsaq-container-for="{$id}">
+    <div class="vsaq-question-title">
+      <label name="text" class="vsaq-label-text" for="{$id}">
+        {$captionHtml}
+      </label>
+    </div>
+    <input id="{$id}"
+      {if $placeholder}placeholder="{$placeholder}" {/if}
+      {if $isRequired}required {/if}
+      {if $inputPattern}pattern="{$inputPattern}" {/if}
+      {if $inputTitle}title="{$inputTitle}" {/if}
+      {if $type}type="{$type}" {/if}
+      class="vsaq-line">
+    <p></p>
+  </div>
+{/template}
+
+
+/**
+ * Shows a question with a caption and file upload field.
+ * @param id {string} The id of the item.
+ * @param captionHtml {SanitizedContent} A caption to be shown above the input field.
+ */
+{template .upload}
+  <div class="vsaq-item" data-vsaq-container-for="{$id}">
+    <div class="vsaq-question-title">
+      <label name="text" class="vsaq-label-text" for="{$id}-file">
+        {$captionHtml}
+      </label>
+    </div>
+    <div class="vsaq-question-title">The following file types are allowed: PDF, ODT, DOC, DOCX</div>
+    <form enctype="multipart/form-data" method="POST" id="{$id}-form">
+      <span id="{$id}-label"></span>{sp}
+      <input type="file" name="file" class="vsaq-upload" id="{$id}-file">
+      {sp}<a href="javascript:void(0)" id="{$id}-download">Download</a>
+      {sp}<a href="javascript:void(0)" id="{$id}-delete">Delete</a>
+    </form>
+    <p></p>
+  </div>
+{/template}
+
+
+/**
+ * Shows a list of todo items.
+ * @param todoListItems {Array.<{key: string, description: SanitizedContent}>} A list of todo items that may contain HTML.
+ * @param todoStatus {array} A list of corresponding todo statuses.
+ */
+{template .todoList}
+  <fieldset class="vsaq-item vsaq-block">
+    <legend>Todo List</legend>
+    {if length($todoListItems)}
+      <p>Based on your selections, we have compiled the following todo list
+      for you:</p>
+      <ul id='vsaq_todo_ul'>
+      {foreach $todo in $todoListItems}
+        <li><label><input type='checkbox' name='{$todo.key}'
+                          class='eh-todo-item'
+                          {if $todoStatus[$todo.key] == 'checked'}checked {/if}
+                          id='{$todo.key}'
+                          value='checked'>
+          <span>{$todo.description}</span></label></li>
+      {/foreach}
+      </ul>
+    {else}
+      <p>Great news, you're all set. There is no todo.</p>
+    {/if}
+  </fieldset>
+{/template}

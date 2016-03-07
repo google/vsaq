@@ -1,0 +1,12 @@
+[submodule "third_party/closure-compiler"]
+	path = third_party/closure-compiler
+	url = https://github.com/google/closure-compiler
+[submodule "third_party/closure-library"]
+	path = third_party/closure-library
+	url = https://github.com/google/closure-library
+[submodule "third_party/closure-stylesheets"]
+	path = third_party/closure-stylesheets
+	url = https://github.com/google/closure-stylesheets
+[submodule "third_party/js-dossier"]
+	path = third_party/js-dossier
+	url = https://github.com/jleyba/js-dossier

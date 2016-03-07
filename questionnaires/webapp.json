@@ -1,0 +1,1445 @@
+
+// Copyright 2016 Google Inc. All rights reserved.
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+{
+  "questionnaire": [
+    {
+      "type": "block",
+      "text": "Web Application Security Questionnaire",
+      "items": [
+        {
+          "type": "block",
+          "text": "Application",
+          "id": "block_application",
+          "items": [
+            {
+              "type": "block",
+              "text": "Application Metadata",
+              "id": "block_application_metadata",
+              "items": [
+                {
+                  "type": "line",
+                  "text": "The name of the application:",
+                  "id": "application_name"
+                },
+                {
+                  "type": "box",
+                  "text": "A brief description:",
+                  "id": "application_description"
+                },
+                {
+                  "type": "line",
+                  "text": "What frameworks (if any) does this application require?",
+                  "id": "application_frameworks"
+                }
+              ]
+            },
+            {
+              "type": "block",
+              "text": "Vulnerability Reporting and Management",
+              "id": "block_vulnerability_reporting",
+              "items": [
+                {
+                  "type": "info",
+                  "text": "Because no system is entirely free of security issues, it's important to provide ways for external users to offer input and report vulnerabilities."
+                },
+                {
+                  "type": "radiogroup",
+                  "text": "Do you have an easily discoverable way for external researchers to report security vulnerabilities in your systems?",
+                  "defaultChoice": false,
+                  "id": "application_vm_securitycontact",
+                  "choices": [
+                    {"application_vm_securitycontact_yes": "Yes, we have a published security email contact, or we provide another way for users to report security issues. Incoming reports are timely reviewed and triaged."},
+                    {"application_vm_securitycontact_no": "No, we do not currently offer a way to report security vulnerabilities for priority handling."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "text": "Make it easy for others to let you know about security issues in your products. That way you'll learn about vulnerabilities earlier and can respond to them quickly. Also, without an easy way to report issues directly to you, external researchers might publish issues widely instead.",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "warn": "yes",
+                  "name": "No external security contact published",
+                  "severity": "medium",
+                  "id": "warn_application_vm_securitycontact",
+                  "cond": "application_vm_securitycontact_no"
+                }
+              ]
+            },
+            {
+              "type": "block",
+              "text": "HTTPS and Mixed-Content Risks",
+              "id": "block_https",
+              "items": [
+                {
+                  "type": "radiogroup",
+                  "text": "Select the option that best describes your web application:",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"application_ssl_exclusively": "The web application is reachable exclusively over HTTPS. Even if the user manually edits the URL to start with <code>http://</code>, it won't work or it will redirect to <code>https://</code>."},
+                    {"application_ssl_mixed": "The web application is flexible — users can reach it over HTTP or over HTTPS."},
+                    {"application_ssl_none": "The web application supports HTTP only, and can't be reached over HTTPS even if you edit the URL."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "text": "It's often extremely easy for attackers to eavesdrop on packets transmitted between users and web applications (for example, on public Wi-Fi networks). To avoid exposing sensitive data in transit, any application that allows users to log in — or contains anything but public data — should be available solely over HTTPS. It's also fine to use a web server that listens on port 80 (plain HTTP) and redirects users to the SSL version; this method can make it easier for users to access the application.",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below.",
+                  "warn": "yes",
+                  "name": "Unencrypted application network traffic",
+                  "severity": "high",
+                  "id": "warn_application_not_ssl",
+                  "cond": "application_ssl_mixed || application_ssl_none"
+                },
+                {
+                  "type": "block",
+                  "text": "Configuring SSL/TLS",
+                  "id": "application_ssl_configuration",
+                  "cond": "application_ssl_mixed || application_ssl_exclusively",
+                  "items": [
+                    {
+                      "type": "radiogroup",
+                      "text": "Have you recently reviewed your SSL configuration to ensure that only secure protocols and ciphers are offered to clients?",
+                      "choices": [
+                        {"application_ssl_configuration_ciphers_yes": "Yes, we regularly review the cipher suite advertised by the server and the protocols it uses."},
+                        {"application_ssl_configuration_ciphers_no": "We're not sure whether our SSL/TLS configuration is secure."}
+                      ],
+                      "id": "application_ssl_configuration_ciphers"
+                    },
+                    {
+                      "type": "tip",
+                      "text": "Detailed guidance on SSL/TLS and cipher suites is beyond the scope of this questionnaire. A very good and well-maintained resource is <a href='https://wiki.mozilla.org/Security/Server_Side_TLS'>Mozilla's SSL/TLS configuration wiki page</a>, which gives up-to-date recommendations for the most common use cases. Another good resource for reviewing the security of your SSL/TLS server is <a href='https://www.ssllabs.com/ssltest/'>SSL Labs' server test</a>.",
+                      "name": "Protocol and cipher selection",
+                      "cond": "application_ssl_configuration_ciphers_no",
+                      "id": "tip_application_ssl_configuration_ciphers"
+                    },
+                    {
+                      "type": "radiogroup",
+                      "text": "Does your server offer <a href='https://en.wikipedia.org/wiki/Forward_secrecy'>forward secrecy</a> for clients that support it?",
+                      "choices": [
+                        {"application_ssl_configuration_pfs_yes": "Yes, the server supports ECDHE and DHE ciphers that offer forward secrecy."},
+                        {"application_ssl_configuration_pfs_no": "No, no ciphers providing forward secrecy are enabled."}
+                      ],
+                      "id": "application_ssl_configuration_pfs"
+                    },
+                    {
+                      "type": "tip",
+                      "text": "In ciphers that support forward secrecy, an ephemeral key is negotiated for each connection, using the Diffie-Hellman algorithm. This key is used for a limited period of time, after which it is \"forgotten.\" Even if the private SSL key is later compromised, an attacker who recorded conversations between the server and clients won't be able to decrypt those conversations without also breaking the associated ephemeral keys. Enabling ciphers that offer forward secrecy can protect your users against future disclosure of the information transmitted between them and your server.",
+                      "name": "Enable forward secrecy for HTTPS",
+                      "cond": "application_ssl_configuration_pfs_no",
+                      "id": "tip_application_ssl_configuration_pfs"
+                    },
+                    {
+                      "type": "radiogroup",
+                      "text": "Are your SSL/TLS private keys appropriately protected on your web servers?",
+                      "choices": [
+                        {"application_ssl_configuration_keys_yes": "Yes, we have taken all necessary steps to protect our private keys."},
+                        {"application_ssl_configuration_keys_no": "I'm not sure how well protected they are."}
+                      ],
+                      "id": "application_ssl_configuration_keys"
+                    },
+                    {
+                      "type": "tip",
+                      "text": "Make sure private SSL/TLS keys are, at a minimum, protected through file system permissions. It's important to make sure the user account that's used to serve web pages does not have access; otherwise, a vulnerability in the web app could easily lead to a compromise of the keys. If you are using an SSL certificate with a wildcard CN (e.g., *.example.net), ensure that the private key is well protected on all the servers it resides on (not just your most important server).",
+                      "name": "Protection of SSL/TLS private keys",
+                      "cond": "application_ssl_configuration_keys_no",
+                      "id": "tip_application_ssl_configuration_keys"
+                    },
+                    {
+                      "type": "radiogroup",
+                      "text": "Where is the SSL connection between the user and your application terminated?",
+                      "choices": [
+                        {"application_ssl_configuration_termination_app": "At the application server"},
+                        {"application_ssl_configuration_termination_loadbalancer": "At the load balancer"},
+                        {"application_ssl_configuration_termination_other": "Somewhere else"}
+                      ],
+                      "id": "application_ssl_configuration_termination"
+                    },
+                    {
+                      "type": "line",
+                      "text": "Provide more details on the termination point:",
+                      "cond": "application_ssl_configuration_termination_other",
+                      "id": "application_ssl_configuration_termination_other_value"
+                    },
+                    {
+                      "type": "radiogroup",
+                      "text": "How is traffic between the load balancer and the application servers protected?",
+                      "choices": [
+                        {"application_ssl_configuration_lb_traffic_encrypted": "Traffic is encrypted and certificates between load balancer and application servers are validated."},
+                        {"application_ssl_configuration_lb_traffic_unencrypted_own_network": "Traffic is unencrypted, but all networks transited between load balancers and application servers are owned and exclusively used by us."},
+                        {"application_ssl_configuration_lb_traffic_unencrypted_other_network": "Traffic is unencrypted, and traffic has to transit through networks not owned and exclusively used by us."},
+                        {"application_ssl_configuration_lb_traffic_other": "Through other means."}
+                      ],
+                      "id": "application_ssl_configuration_lb_traffic",
+                      "cond": "application_ssl_configuration_termination_loadbalancer"
+                    },
+                    {
+                      "type": "tip",
+                      "text": "Because user traffic appears to transit networks behind your load balancer that are not fully owned and operated by you, we strongly recommend that you establish another SSL/TLS connection between the load balancer and the servers that actually serve the application. Otherwise, an attacker who can listen in on the traffic behind your load balancers will be able to see unencrypted user data.",
+                      "name": "End-to-End SSL encryption necessary",
+                      "cond": "application_ssl_configuration_lb_traffic_unencrypted_other_network",
+                      "id": "tip_application_ssl_configuration_endtoend"
+                    },
+                    {
+                      "type": "box",
+                      "text": "Describe how the traffic is protected:",
+                      "cond": "application_ssl_configuration_lb_traffic_other",
+                      "id": "application_ssl_configuration_lb_traffic_other_value"
+                    }
+                  ]
+                },
+                {
+                  "type": "radiogroup",
+                  "text": "Applications served over SSL may still be vulnerable to attacks if resources (often JavaScript, style sheets, or other active content) are included over plain HTTP. This defeats the purpose of SSL, because the active content loaded through plain HTTP will have access to the DOM of content protected by SSL. Make sure no resources are included from plain HTTP sites. Typically, browsers will help identify cases where resources from non-SSL sites are included, by displaying <a href='https://developer.mozilla.org/en-US/docs/Security/MixedContent'>mixed content</a> warnings.<p>To avoid these issues, do you have checks in place to ensure that all references to resources either point to SSL or are protocol-relative</a>?",
+                  "choices": [
+                    {"application_ssl_mixedcontent_yes": "Yes, we are very careful and have specific controls in place to prevent mixed-content issues."},
+                    {"application_ssl_mixedcontent_no": "It wouldn't be too difficult for something to fall through the cracks and introduce mixed-content bugs."}
+                  ],
+                  "id": "application_ssl_mixedcontent",
+                  "cond": "application_ssl_mixed || application_ssl_exclusively"
+                },
+                {
+                  "type": "tip",
+                  "text": "Mixed content is a big deal, and it's becoming more problematic as an increasing number of users roam on public Wi-Fi and other insecure networks. We recommend cleaning up your codebase to avoid this kind of issue, and establishing procedures to help guard against new instances.",
+                  "warn": "yes",
+                  "name": "Mixed content issue",
+                  "severity": "medium",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below.",
+                  "id": "warn_ssl_mixed_content",
+                  "cond": "application_ssl_mixedcontent_no"
+                },
+                {
+                  "type": "radiogroup",
+                  "text": "To improve security for your users even further, have you deployed <a href='https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security'>HTTP Strict Transport Security (HSTS)</a> on your server?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"tip_application_ssl_hsts_yes": "Yes, we have HSTS configured with a max-age value of at least 6 months."},
+                    {"tip_application_ssl_hsts_no": "No, we don't use HTTP Strict Transport Security, or we have a short max-age configured."}
+                  ],
+                  "cond": "application_ssl_exclusively",
+                  "id": "tip_application_ssl_hsts"
+                },
+                {
+                  "type": "tip",
+                  "text": "Strict Transport Security is an HTTP response header that tells clients to initiate connections over HTTPS only. This defense-in-depth mechanism helps mitigate certain issues, such as the accidental inclusion of (or linking to) resources over plain HTTP. In HSTS, the header must be configured with a 'max-age' value; this tells clients how long to honor the directive.<p>Sensitive web applications should enable HSTS to ensure that users are always protected by SSL/TLS. For this protection to be effective, the max-age value should be in the 6+ months range.",
+                  "warn": "yes",
+                  "name": "Strict Transport Security not enabled",
+                  "severity": "high",
+                  "id": "warn_application_ssl_nohsts",
+                  "cond": "tip_application_ssl_hsts_no"
+                },
+                {
+                  "type": "radiogroup",
+                  "text": "If your application supports authentication, are authentication cookies marked with the <code>secure</code> attribute?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"application_ssl_cookies_secure_yes": "Yes, the authentication cookies are marked <code>secure</code>."},
+                    {"application_ssl_cookies_secure_no": "I'm not sure whether the application does that."}
+                  ],
+                  "cond": "application_ssl_exclusively",
+                  "id": "application_ssl_cookies_secure"
+                },
+                {
+                  "type": "tip",
+                  "text": "Unless a cookie has the <code>secure</code> attribute set, the browser will add the cookie to plain-text HTTP requests, even if the application is SSL-only. A man-in-the-middle attack can use this vulnerability to steal authentication cookies.",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below.",
+                  "warn": "yes",
+                  "name": "Cookie without secure flag",
+                  "severity": "medium",
+                  "id": "warn_application_ssl_cookies_secure",
+                  "cond": "application_ssl_cookies_secure_no"
+                }
+              ]
+            },
+            {
+              "type": "block",
+              "text": "Authentication and Authorization",
+              "id": "block_authn_authz",
+              "items": [
+                {
+                  "type": "block",
+                  "text": "Basic Information",
+                  "items": [
+                    {
+                      "type": "checkgroup",
+                      "text": "To get started, tell us a little about your application so we can ask you the right questions.",
+                      "defaultChoice": false,
+                      "choices": [
+                        {"application_authentication_requires_login": "Our application requires regular users to log in. Most features aren't available without logging in."},
+                        {"application_authentication_admin_interface": "In addition to an interface for regular users, our application provides an administration interface."},
+                        {"application_authentication_roles": "Our application features complex user management. Various roles can be assigned to user accounts."}
+                      ]
+                    },
+                    {
+                      "type": "box",
+                      "text": "Briefly describe the different roles your application provides. If your application also offers custom role definitions, be sure to mention that.",
+                      "id": "application_authentication_roles_description",
+                      "cond": "application_authentication_roles"
+                    },
+                    {
+                      "type": "checkgroup",
+                      "text": "Is your application integrated with any of the following single sign-on (SSO) mechanisms?",
+                      "defaultChoice": false,
+                      "choices": [
+                        {"application_authentication_sso_saml": "SAML 2.0"},
+                        {"application_authentication_sso_oauth": "OpenID Connect / OAuth2 Login"},
+                        {"application_authentication_sso_openid": "OpenID 2.0"},
+                        {"application_authentication_sso_ldap": "LDAP / Active Directory"},
+                        {"application_authentication_sso_other": "Other"},
+                        {"application_authentication_sso_none": "None of the above"}
+                      ],
+                      "cond": "application_authentication_requires_login || application_authentication_admin_interface"
+                    },
+                    {
+                      "type": "line",
+                      "text": "What other SSO mechanisms does the application support?",
+                      "id": "application_authentication_sso_other_description",
+                      "cond": "application_authentication_sso_other"
+                    },
+                    {
+                      "type": "tip",
+                      "text": "OpenID 2.0 has been replaced by OpenID Connect (also called OAuth2 Login). We recommend updating your application's SSO integration to support OpenID Connect.",
+                      "warn": "yes",
+                      "name": "OpenID is deprecated",
+                      "severity": "high",
+                      "id": "warn_application_authentication_openid_deprecated",
+                      "cond": "application_authentication_sso_openid && !application_authentication_sso_oauth"
+                    },
+                    {
+                      "type": "tip",
+                      "text": "Integrating with LDAP and/or Active Directory has a significant downside: any application that integrates with it has to receive the user's SSO password. As a result, a vulnerability in any integrated application puts the password at risk for all other applications. We recommend using an SSO mechanism that does not require the password to be sent anywhere other than a central authentication system.",
+                      "warn": "yes",
+                      "name": "LDAP/AD integration sends password to application",
+                      "severity": "high",
+                      "id": "warn_application_authentication_ldap_password",
+                      "cond": "application_authentication_sso_ldap"
+                    }
+                  ]
+                },
+                {
+                  "type": "block",
+                  "text": "OAuth2 Login",
+                  "id": "block_oauth2",
+                  "cond": "application_authentication_sso_oauth",
+                  "items": [
+                    {
+                      "type": "radiogroup",
+                      "text": "Implementing OAuth2 Login / OpenID Connect from scratch is fairly complex and error-prone, and mistakes can result in security vulnerabilities. Select the option that best describes your implementation:",
+                      "defaultChoice": false,
+                      "choices": [
+                        {"application_auth2_library": "Very secure: We're using a standard OAuth2 library, and we update it when security fixes are released."},
+                        {"application_auth2_self_secure": "Secure: We implemented OAuth2 on our own, but our employees are experts and we're convinced that it is implemented securely."},
+                        {"application_auth2_self": "Not sure: We implemented OAuth2 on our own, and it seemed simple at the time. I'm not sure about the security of our implementation."}
+                      ]
+                    },
+                    {
+                      "type": "tip",
+                      "text": "If your employees really are OAuth2 experts, you're probably fine. But note that even standard libraries have had vulnerabilities due to the intricacies of the standard. Be sure to ask your penetration testing provider to take a look at the OAuth2 implementation.",
+                      "id": "tip_application_auth2_self_secure",
+                      "cond": "application_auth2_self_secure"
+                    },
+                    {
+                      "type": "tip",
+                      "text": "Implementing OAuth2 on your own is extremely dangerous. Even the experts on the OAuth2 standards panel concluded that the only way to securely implement it is through a well-known and well-tested library. Some of these libraries are very easy to use (e.g., the <a href='https://developers.google.com/identity/toolkit/'>Google Identity Toolkit</a>), so replacing your custom implementation should be feasible.",
+                      "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                      "warn": "yes",
+                      "name": "Homebrewed OAuth2 implementation",
+                      "severity": "high",
+                      "id": "warn_application_auth2_self",
+                      "cond": "application_auth2_self"
+                    }
+                  ]
+                },
+                {
+                  "type": "radiogroup",
+                  "text": "Does any part of the application employ username/password-based authentication?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"application_custom_auth_yes": "Yes"},
+                    {"application_custom_auth_no": "No, all authentication is based on single sign-on (SSO)."}
+                  ],
+                  "cond": "application_authentication_requires_login || application_authentication_admin_interface",
+                  "id": "application_custom_auth"
+                },
+                {
+                  "type": "block",
+                  "text": "Username/Password Authentication",
+                  "cond": "application_custom_auth_yes",
+                  "id": "block_custom_auth",
+                  "items": [
+                    {
+                      "type": "box",
+                      "text": "What username/password-based logins does the application use? For example, if there's a separate administrator authentication, mention that.",
+                      "id": "application_custom_auth_explain"
+                    },
+                    {
+                      "type": "radiogroup",
+                      "text": "Does your application allow users to change their passwords?",
+                      "defaultChoice": false,
+                      "id": "application_custom_auth_chpasswd",
+                      "choices": [
+                        {"application_custom_auth_chpasswd_yes": "Yes"},
+                        {"application_custom_auth_chpasswd_no": "No"}
+                      ]
+                    },
+                    {
+                      "type": "tip",
+                      "text": "Allowing users to change their passwords is important. A user might be recovering from a compromise, or might have accidentally typed the password elsewhere.",
+                      "warn": "yes",
+                      "name": "Application does not support changing the password",
+                      "severity": "high",
+                      "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                      "id": "warn_application_custom_auth_chpasswd",
+                      "cond": "application_custom_auth_chpasswd_no"
+                    },
+                    {
+                      "type": "radiogroup",
+                      "text": "Does the application enforce minimum password security requirements (e.g., a certain length, character classes, etc.)?",
+                      "defaultChoice": false,
+                      "id": "application_custom_auth_pwdreq",
+                      "choices": [
+                        {"application_custom_auth_pwdreq_yes": "Yes"},
+                        {"application_custom_auth_pwdreq_no": "No"}
+                      ]
+                    },
+                    {
+                      "type": "tip",
+                      "text": "Please help protect users from themselves by enforcing certain minimum password requirements. It's up to you to determine the details of these requirements, but they should account for the sensitivity of the information and should conform to industry standards.",
+                      "warn": "yes",
+                      "name": "Application should enforce minimum password requirements",
+                      "severity": "medium",
+                      "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                      "id": "warn_application_custom_auth_pwdreq",
+                      "cond": "application_custom_auth_pwdreq_no"
+                    },
+                    {
+                      "type": "block",
+                      "text": "Password Storage",
+                      "items": [
+                        {
+                          "type": "radiogroup",
+                          "text": "How does the application store passwords?",
+                          "defaultChoice": false,
+                          "choices": [
+                            {"application_custom_auth_storage_plain": "In plain text (unencrypted)"},
+                            {"application_custom_auth_storage_reversible": "Using reversible encryption (e.g., DES, 3DES, AES, etc.)."},
+                            {"application_custom_auth_storage_hashed": "Using a secure <a href='https://en.wikipedia.org/wiki/Cryptographic_hash_function'>cryptographic one-way hash function</a> (such as SHA-256) of the password, without the use of a <a href='http://en.wikipedia.org/wiki/Salt_(cryptography)'>salt</a>"},
+                            {"application_custom_auth_storage_salted": "Using a secure <a href='http://en.wikipedia.org/wiki/Cryptographic_hash_function'>cryptographic one-way hash function</a> (such as SHA-256) of the <a href='http://en.wikipedia.org/wiki/Salt_(cryptography)'>salted</a> password"},
+                            {"application_custom_auth_storage_pbkdf": "Using a dedicated password-based key derivation function, such as <a href='http://en.wikipedia.org/wiki/Bcrypt'>bcrypt</a>, <a href='http://en.wikipedia.org/wiki/PBKDF2'>PBKDF2</a> or <a href='http://en.wikipedia.org/wiki/Scrypt'>scrypt</a>"},
+                            {"application_custom_auth_storage_other": "None of the above"}
+                          ]
+                        },
+                        {
+                          "type": "box",
+                          "text": "Explain how your application stores passwords:",
+                          "id": "application_custom_auth_storage_other_what",
+                          "cond": "application_custom_auth_storage_other"
+                        },
+                        {
+                          "type": "tip",
+                          "text": "Passwords should be stored in such a way that the original passwords cannot be easily recovered, even if an attacker manages to get access to the storage location (e.g., through a SQL injection vulnerability). At a minimum, passwords should be secured using a cryptographic one-way hash function and a salt. We strongly recommended using password-based key derivation function like <a href='http://en.wikipedia.org/wiki/Bcrypt'>bcrypt</a> <a href='http://en.wikipedia.org/wiki/PBKDF2'>PBKDF2</a> or <a href='http://en.wikipedia.org/wiki/Scrypt'>scrypt</a> instead; they were specifically designed for this use case and make it significantly harder for attackers to crack password hashes.",
+                          "warn": "yes",
+                          "name": "Passwords stored insecurely",
+                          "severity": "critical",
+                          "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                          "id": "warn_application_custom_auth_storage_insecure",
+                          "cond": "application_custom_auth_storage_reversible || application_custom_auth_storage_plain || application_custom_auth_storage_hashed"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "block",
+                      "text": "Setting an Initial Password",
+                      "id": "block_initial_password",
+                      "items": [
+                        {
+                          "type": "radiogroup",
+                          "text": "How do users get their initial passwords?",
+                          "defaultChoice": false,
+                          "choices": [
+                            {"application_custom_auth_initpwd_selfset": "Users self-register and set their passwords online directly within the application."},
+                            {"application_custom_auth_initpwd_email": "The initial password or a link to set the initial password is sent to users by email."},
+                            {"application_custom_auth_initpwd_snail": "The initial password is provided in a (physical) letter sent to a verified address."},
+                            {"application_custom_auth_initpwd_other": "None of the above."}
+                          ]
+                        },
+                        {
+                          "type": "box",
+                          "text": "Explain how users get their initial passwords:",
+                          "id": "application_custom_auth_initpwd_other_what",
+                          "cond": "application_custom_auth_initpwd_other"
+                        },
+                        {
+                          "type": "radiogroup",
+                          "text": "When the user gets their initial password, will their account be prepopulated with any confidential information? For example, in an online payroll portal, a user can typically access previous pay statements even when the account is brand new.",
+                          "defaultChoice": false,
+                          "id": "application_custom_auth_initpwd_prepopulated",
+                          "choices": [
+                            {"application_custom_auth_initpwd_prepopulated_yes": "Yes, when users log in for the first time, confidential information will already be present."},
+                            {"application_custom_auth_initpwd_prepopulated_no": "No, at the initial login, no confidential information will be available to the user."}
+                          ]
+                        },
+                        {
+                          "type": "tip",
+                          "warn": "yes",
+                          "text": "When users self-register for prepopulated accounts, some initial authentication of the user should be performed. Otherwise, arbitrary users could gain access to the prepopulated information. The type of authentication depends on the sensitivity of the prepopulated information. Commonly requested information — like the last four digits of the social security number, a home address, or an employee ID — is rarely secret enough to be used for authentication",
+                          "name": "Self-registration to prepopulated accounts",
+                          "severity": "high",
+                          "why": "Explain how users are identified and authenticated when they self-register in the application:",
+                          "id": "warn_application_custom_auth_initpwd_selfset",
+                          "cond": "application_custom_auth_initpwd_selfset && application_custom_auth_initpwd_prepopulated_yes"
+                        },
+                        {
+                          "type": "tip",
+                          "text": "If passwords are sent by email, make sure users are required to change their initial passwords when they first log in.",
+                          "id": "tip_application_custom_auth_initpwd_email",
+                          "cond": "application_custom_auth_initpwd_email"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "block",
+                      "text": "Account Recovery",
+                      "id": "block_account_recovery",
+                      "items": [
+                        {
+                          "type": "checkgroup",
+                          "text": "Sometimes, passwords are simply forgotten — it happens to the best of us. How does your application deal with users who can no longer access their accounts?",
+                          "defaultChoice": false,
+                          "choices": [
+                            {"application_custom_auth_recovery_questions": "The user is asked questions that were set up when the account was created."},
+                            {"application_custom_auth_recovery_resetlink": "A password reset link is sent via email to the user's registered email address."},
+                            {"application_custom_auth_recovery_newpwd": "A new password is sent via email to the user's registered email address."},
+                            {"application_custom_auth_recovery_other": "None of the above."}
+                          ]
+                        },
+                        {
+                          "type": "box",
+                          "text": "Describe your password recovery mechanism:",
+                          "id": "application_custom_auth_recovery_other_what",
+                          "cond": "application_custom_auth_recovery_other"
+                        },
+                        {
+                          "type": "tip",
+                          "warn": "yes",
+                          "text": "Recovery questions alone should not be sufficient for resetting a password. The answers to these questions are often not as secret as they might seem; in particular, friends and family can often easily guess the answers.",
+                          "name": "Recovery questions should not be sufficient to reset password",
+                          "severity": "high",
+                          "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below:",
+                          "id": "warn_application_custom_auth_recovery_questions",
+                          "cond": "application_custom_auth_recovery_questions && !(application_custom_auth_recovery_resetlink || application_custom_auth_recovery_newpwd)"
+                        },
+                        {
+                          "type": "tip",
+                          "warn": "yes",
+                          "text": "Sending passwords by email is rarely a good idea. Email is generally unencrypted, so it should not be used for sensitive information. Instead, we recommend sending a token that can be used to set the actual password. Although an attacker with the token could still reset the password, the user would at least become aware of the reset when they later attempted to log in.",
+                          "name": "Application sends passwords via email for account recovery",
+                          "severity": "medium",
+                          "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below:",
+                          "id": "warn_application_custom_auth_recovery_email",
+                          "cond": "application_custom_auth_recovery_newpwd"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "block",
+                  "text": "Authentication Cookies and Sessions",
+                  "id": "block_auth_cookies",
+                  "cond": "application_authentication_requires_login || application_authentication_admin_interface",
+                  "items": [
+                    {
+                      "type": "radiogroup",
+                      "text": "Cookies can be decorated with a special keyword, <code>HttpOnly</code>. If this keyword is set, the browser will not allow JavaScript to access the cookie. Even if the application has a cross-site scripting vulnerability, this keyword makes it much harder for an attacker to steal the session cookie.",
+                      "defaultChoice": false,
+                      "id": "application_auth_cookies_httponly",
+                      "choices": [
+                        {"application_auth_cookies_httponly_yes": "The <code>HttpOnly</code> keyword is set for all our authentication cookies."},
+                        {"application_auth_cookies_httponly_no": "Our application does not make use of this defense-in-depth mechanism."}
+                      ]
+                    },
+                    {
+                      "type": "tip",
+                      "text": "Setting the <code>HttpOnly</code> attribute is a very simple defense-in-depth mechanism. We highly recommended making use of it.",
+                      "warn": "yes",
+                      "name": "Cookie without HttpOnly flag",
+                      "severity": "medium",
+                      "id": "warn_application_auth_cookies_httponly_no",
+                      "why": "If there are specific reasons why this is not possible in your case please explain below:",
+                      "cond": "application_auth_cookies_httponly_no"
+                    },
+                    {
+                      "type": "checkgroup",
+                      "text": "Session IDs can be constructed in many ways. Select the methods used in your application:",
+                      "defaultChoice": false,
+                      "choices": [
+                        {"application_auth_cookies_framework": "The web application framework we use has a built-in session ID mechanism."},
+                        {"application_auth_cookies_random": "Our session IDs are randomly generated strings or numbers."},
+                        {"application_auth_cookies_sig": "We store a signed token as a cookie to indicate that the user is successfully logged in."},
+                        {"application_auth_cookies_other": "We use some other mechanism."}
+                      ]
+                    },
+                    {
+                      "type": "box",
+                      "text": "Describe the mechanism you're using:",
+                      "id": "application_auth_cookies_other_explain",
+                      "cond": "application_auth_cookies_other"
+                    },
+                    {
+                      "type": "line",
+                      "text": "What's the name of the framework that generates your session IDs?",
+                      "id": "application_auth_cookies_framework_which",
+                      "cond": "application_auth_cookies_framework"
+                    },
+                    {
+                      "type": "radiogroup",
+                      "text": "Do sessions automatically time out after a specified period of inactivity?",
+                      "defaultChoice": false,
+                      "choices": [
+                        {"application_auth_cookies_timeout_yes": "Yes"},
+                        {"application_auth_cookies_timeout_no": "No"}
+                      ],
+                      "cond": "application_auth_cookies_sig || application_auth_cookies_random",
+                      "id": "application_auth_cookies_timeout"
+                    },
+                    {
+                      "type": "tip",
+                      "text": "If you don't specify a session timeout, an attacker who has stolen a session ID once will have a permanent back door to the application. Be sure to implement a timeout — even if it's fairly long, it's still better than no timeout at all).",
+                      "warn": "yes",
+                      "name": "No automatic session timeout",
+                      "severity": "medium",
+                      "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                      "id": "warn_application_auth_cookies_timeout",
+                      "cond": "application_auth_cookies_timeout_no"
+                    },
+                    {
+                      "type": "line",
+                      "text": "How long is the session timeout?",
+                      "id": "application_auth_cookies_timeout_length",
+                      "cond": "application_auth_cookies_timeout_yes || application_auth_cookies_framework"
+                    },
+                    {
+                      "type": "radiogroup",
+                      "text": "Does the application use a secure <a href='https://en.wikipedia.org/wiki/Pseudorandom_number_generator#Cryptographically_secure_pseudorandom_number_generators'>cryptographic pseudo random number generator</a> (PRNG) to generate session IDs? The PRNG should not allow the state of the generator to be recalculated from its output, and the entropy of the session ID should be sufficient to make brute-forcing infeasible.",
+                      "defaultChoice": false,
+                      "choices": [
+                        {"application_auth_cookies_prng_yes": "Yes, we use a PRNG that meets these criteria."},
+                        {"application_auth_cookies_prng_no": "No, we don't use a PRNG, or our PRNG doesn't meet these criteria."}
+                      ],
+                      "cond": "application_auth_cookies_random",
+                      "id": "application_auth_cookies_prng"
+                    },
+                    {
+                      "type": "tip",
+                      "text": "If you're not using a cryptographic PRNG, an attacker can recalculate the state of the generator in order to guess subsequent session IDs and steal those users' sessions. Many programming languages already have a secure PRNG built in (e.g., Java has <code>java.security.SecureRandom</code>; C# has <code>System.Security.Cryptography.RNGCryptoServiceProvider</code>; Python has <code>os.urandom</code>), and in most cases it is as easy to use as a less secure option.",
+                      "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                      "id": "warn_application_auth_cookies_no_prng",
+                      "warn": "yes",
+                      "name": "Inappropriate PRNG in use",
+                      "severity": "high",
+                      "cond": "application_auth_cookies_prng_no"
+                    },
+                    {
+                      "type": "radiogroup",
+                      "text": "Does your application offer a \"log out\" button or link that, when clicked, not only terminates the session (deletes cookies from the client) but also invalidates the entire session ID?",
+                      "defaultChoice": false,
+                      "id": "application_auth_cookies_invalidation",
+                      "choices": [
+                        {"application_auth_cookies_invalidation_yes": "Yes"},
+                        {"application_auth_cookies_invalidation_no": "No"}
+                      ]
+                    },
+                    {
+                      "type": "tip",
+                      "text": "Unless sessions are invalidated on logout, an attacker who has stolen a session ID will have access to the user's data until the session expires. Make sure all logout actions invalidate the session ID.",
+                      "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                      "id": "warn_application_auth_cookies_no_invalidation",
+                      "warn": "yes",
+                      "name": "No logout button",
+                      "severity": "medium",
+                      "cond": "application_auth_cookies_invalidation_no"
+                    }
+                  ]
+                },
+                {
+                  "type": "block",
+                  "text": "Authorization",
+                  "id": "block_authz",
+                  "cond": "application_authentication_requires_login || application_authentication_admin_interface",
+                  "items": [
+                    {
+                      "type": "info",
+                      "text": "In most applications, certain information should only be accessible to certain users. For example, in most applications that require authentication, only the currently logged-in user should be able to change master data (such as the username, the associated email address, or the account password). When an application has data that should not be available to other users or should be restricted to certain roles, authorization must be enforced on the server side."
+                    },
+                    {
+                      "type": "radiogroup",
+                      "text": "<strong>Horizontal Access Control</strong>: Horizontal access control refers to isolation between users of the same role. For example, consider an application that allows users to access their payroll statements. The application must ensure that a user cannot access another user's statements; i.e., if the user's statement for the month of May is found at <code>statement.html?id=837<b>2</b>&month=5</code>, it shouldn't be possible to see someone else's pay stub simply by loading <code>statement.html?id=837<b>3</b>&month=5</code>.",
+                      "defaultChoice": false,
+                      "id": "application_authz_horizontal",
+                      "choices": [
+                        {"application_authz_horizontal_yes": "Our application enforces these restrictions on the server side. We have processes in place to make sure nothing slips through the cracks."},
+                        {"application_authz_horizontal_no": "It's possible that we missed checks like this in a few places."}
+                      ]
+                    },
+                    {
+                      "type": "tip",
+                      "text": "Applications must have controls in place that help protect all data from unauthorized access. We recommend that you thoroughly audit your code for vulnerabilities resulting from inadequate access control.",
+                      "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                      "id": "warn_application_authz_no_horizontal",
+                      "warn": "yes",
+                      "name": "Lack of horizontal access control",
+                      "severity": "high",
+                      "cond": "application_authz_horizontal_no"
+                    },
+                    {
+                      "type": "radiogroup",
+                      "text": "<strong>Vertical Access Control</strong>: When an application supports multiple roles, users should not be able to gain privileges or perform unauthorized actions by loading pages or features that should only be available to users in a different role. Throughout your application, have you ensured that users can perform only those actions that are appropriate for their roles?",
+                      "defaultChoice": false,
+                      "id": "application_authz_vertical",
+                      "choices": [
+                        {"application_authz_vertical_yes": "Our application enforces these restrictions on the server side. We have processes in place to make sure nothing slips through the cracks."},
+                        {"application_authz_vertical_no": "It's possible that we missed checks like this in a few places."}
+                      ]
+                    },
+                    {
+                      "type": "tip",
+                      "text": "Applications must have controls in place that protect all functionality from unauthorized access. We recommend that you thoroughly audit your code for vulnerabilities resulting from inadequate access control.",
+                      "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                      "warn": "yes",
+                      "name": "Lack of vertical access control",
+                      "severity": "high",
+                      "id": "warn_application_authz_no_vertical",
+                      "cond": "application_authz_vertical_no"
+                    }
+                  ]
+                },
+                {
+                  "type": "block",
+                  "text": "Authorization-Related Web Vulnerabilities",
+                  "id": "block_authz_vulns",
+                  "cond": "application_authentication_requires_login || application_authentication_admin_interface",
+                  "items": [
+                    {
+                      "type": "block",
+                      "text": "Cross Site Request Forgery",
+                      "items": [
+                        {
+                          "type": "info",
+                          "text": "<p>Applications must protect all state-changing actions against <a href='https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)'>cross-site request forgery</a> (XSRF). In this attack, a malicious user forces the victim to send a request to the application, for example by luring the user to a page under the attacker's control. Because the browser automatically attaches available authentication cookies, the request will appear to be authorized if the user is logged in to the application.</p>" +
+                                  "<p>For example, consider an online banking application that allows users to transfer money to another account. The URL for transfers might look something like this:</p>" +
+                                  "<p><code>https://www.example.com/bank-transfer.html?dest_account=123456&amount=99.90&submit=true</code></p>" +
+                                  "<p>If an attacker manages to lure the victim to a malicious site, the site could include HTML that causes such a request to be sent:</p>" +
+                                  "<p><code>&lt;img src=\"https://www.example.com/bank-transfer.html?dest_account=666&amount=99.90& submit=true\"&gt;</code></p>" +
+                                  "<p>If the user is logged in to the online banking portal, the application will receive that request and check for authentication cookies — which will be present, since the request was sent from the authorized user's browser.</p>"
+                        },
+                        {
+                          "type": "radiogroup",
+                          "text": "Does your application protect all state-changing actions against XSRF?",
+                          "defaultChoice": false,
+                          "id": "application_authz_xsrf",
+                          "choices": [
+                            {"application_authz_xsrf_yes": "Yes, all state-changing actions are protected. We have a way to ensure that no actions are missed (such as enforcing XSRF-token checks in a central place)."},
+                            {"application_authz_xsrf_no": "Some actions might not be protected against XSRF."}
+                          ]
+                        },
+                        {
+                          "type": "tip",
+                          "text": "Web applications used to process private or confidential information should protect against XSRF. We recommend that you thoroughly audit your code for XSRF vulnerabilities, and put procedures in place so that future code is also protected.",
+                          "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                          "id": "warn_application_authz_no_xsrf",
+                          "warn": "yes",
+                          "name": "Lack of CSRF protection",
+                          "severity": "high",
+                          "cond": "application_authz_xsrf_no"
+                        },
+                        {
+                          "type": "radiogroup",
+                          "text": "What strategy do you use to protect against XSRF?",
+                          "defaultChoice": false,
+                          "choices": [
+                            {"application_authz_xsrf_token": "We protect requests that change the state with tokens that are bound to the user they were generated for, and that expire after a certain amount of time."},
+                            {"application_authz_xsrf_header": "We use a custom fixed header that we add to requests."},
+                            {"application_authz_xsrf_post": "The application does one of the following: verifies the referrer header; requires all state-changing actions to be POST requests; employs another mechanism to protect against XSRF."}
+                          ],
+                          "cond": "application_authz_xsrf_yes"
+                        },
+                        {
+                          "type": "tip",
+                          "text": "Various browser plugins (such as Flash and Java) have had security vulnerabilities that allowed an attacker to set arbitrary custom headers on cross-domain requests. We highly recommend the use of tokens instead of headers.",
+                          "id": "tip_application_authz_xsrf_header",
+                          "cond": "application_authz_xsrf_header"
+                        },
+                        {
+                          "type": "tip",
+                          "text": "Unfortunately, using POST requests does not protect against XSRF. Attackers can perform cross-domain POST requests by submitting a form with the appropriate <code>action</code> parameter, via JavaScript. Referrer checks are similarly ineffective because attackers can get around them through open redirects.",
+                          "id": "warn_application_authz_xsrf_post",
+                          "warn": "yes",
+                          "name": "Inappropriate CSRF protection",
+                          "severity": "high",
+                          "why": "If you are using an alternative, effective method to protect against XSRF, describe it:",
+                          "cond": "application_authz_xsrf_post"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "block",
+                      "text": "Cross-Site Script Inclusion",
+                      "id": "block_xssi",
+                      "items": [
+                        {
+                          "type": "checkgroup",
+                          "text": "<p>Many web applications use AJAX to exchange data in the background, using a syntax that can be automatically interpreted as JavaScript by the user's browser. Unfortunately, this leads to <a href='http://capec.mitre.org/data/definitions/111.html'>cross-site script inclusion</a> (XSSI) vulnerabilities: the JavaScript can be included from a different origin, and any variables set at the other origin can be read.</p>" +
+                                  "<p>For example, consider a contact management application that transmits the user's contacts in a JSON file (contacts.js):</p>" +
+                                  "<p><code>var contacts = {\"name\": \"John Doe\", \"address\": \"jdoe@example.com\", ... }</code></p>" +
+                                  "<p>An attacker can include the following script from their own site, so that when the user visits the attacker's site while logged in to the contact management application, the attacker can read the variable <code>contacts</code> and get access to all of the victim's contact information.</p>" +
+                                  "<p><code>&lt;script src=\"http://www.example.com/contacts.js\"&gt;&lt;/script&gt;</code></p>" +
+                                  "<p>Do either of the following statements describe your application?</p>",
+                          "defaultChoice": false,
+                          "choices": [
+                            {"application_authz_xssi_jsonp": "Our application makes use of <a href='http://en.wikipedia.org/wiki/JSONP'>JSONP</a>."},
+                            {"application_authz_xssi_other": "Our application uses another format that sets variables or calls functions with non-public information."}
+                          ]
+                        },
+                        {
+                          "type": "radiogroup",
+                          "text": "Your application may be affected by XSSI, unless you specifically protect against this kind of attack.",
+                          "defaultChoice": false,
+                          "choices": [
+                            {"application_authz_xssi_protections_yes": "We use one of the following mechanisms to protect against this kind of attack:<ul><li>protect transmission of such data with an unguessable, unpredictable token (this token must fulfill the same requirements as those described for XSRF tokens above).</li><li>require POST requests, so the data cannot be included in &lt;script&gt tags.</li></ul>"},
+                            {"application_authz_xssi_protections_no": "It's possible that part of our web application is vulnerable to XSSI."}
+                          ],
+                          "cond": "application_authz_xssi_jsonp || application_authz_xssi_other",
+                          "id": "application_authz_xssi_protections"
+                        },
+                        {
+                          "type": "tip",
+                          "text": "Web applications that transmit private information must be protected against XSSI, to prevent attackers from stealing the private data.",
+                          "why": "If you are using an alternative, effective method to protect against XSSI, describe it:",
+                          "id": "warn_application_authz_xssi_no_protection",
+                          "warn": "yes",
+                          "name": "Lack of XSSI protection",
+                          "severity": "high",
+                          "cond": "application_authz_xssi_protections_no"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "block",
+                      "text": "Clickjacking",
+                      "id": "block_clickjacking",
+                      "items": [
+                        {
+                          "type": "radiogroup",
+                          "text": "<p>Depending on the nature of your application and the actions that can be taken in it, you may need to protect against <a href='https://www.owasp.org/index.php/Clickjacking'>clickjacking</a>.</p>" +
+                                  "<p>If you don't typically need to frame web pages, your application should use the <a href='https://developer.mozilla.org/en/the_x-frame-options_response_header'>X-Frame-Options response header</a> to tell the browser not to render any page that's framed from a different origin:</p>" +
+                                  "<p><code>X-Frame-Options: SAMEORIGIN</code></p>",
+                          "defaultChoice": false,
+                          "choices": [
+                            {"application_authz_clickjacking_protected": "Our application employs protections against clickjacking (such as using the <code>X-Frame-Options</code> header)."},
+                            {"application_authz_clickjacking_notprotected": "Our application does not have such protections."}
+                          ]
+                        },
+                        {
+                          "type": "tip",
+                          "text": "Clickjacking is difficult to address. But in high-risk applications, clickjacking protection is essential.",
+                          "why": "Explain why you consider clickjacking protection unnecessary:",
+                          "id": "tip_application_authz_clickjacking_notprotected",
+                          "cond": "application_authz_clickjacking_notprotected"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "block",
+              "text": "Common Web Vulnerabilities",
+              "id": "block_common_vulns",
+              "items": [
+                {
+                  "type": "checkgroup",
+                  "text": "Certain features can result in security issues, if used incorrectly. To help us identify potential issues, select the statements that describe your application:",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"application_webvuln_db": "The application uses a database back end, or any other persistence back end that can be queried with SQL or a related language (e.g., GQL, FQL, SOQL, etc.)."},
+                    {"application_webvuln_plugin": "The application requires a plugin, such as Java, Flash, Silverlight, etc."},
+                    {"application_webvuln_upload": "The application has a file upload feature."},
+                    {"application_webvuln_3rdpartycontent": "The application loads active content, such as scripts, applets, or style sheets, from third-party servers (i.e., any server that is not under your direct control)."},
+                    {"application_webvuln_xml": "The application processes or manipulates user-provided XML."},
+                    {"application_webvuln_crypto": "The application uses cryptography to encrypt data or protect its integrity."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "text": "<p>Loading content from other sites is dangerous under certain circumstances; security issues in the other sites might also affect the security of your application. Scripts, for example, have full access to the DOM of the site on which they're included — so if one of the servers that hosts your third-party JavaScript gets compromised, the attacker also gains access to all of your users' data, simply by injecting a bit of code.</p>" +
+                          "<p>Unless you trust the third party completely (not only to not do something malicious, but also to be secure enough to adequately protect their infrastructure against attackers), it's best not to load scripts or style sheets (e.g., via <code>&lt;script src=...&gt;</code> or <code>&lt;style src=...&gt;</code>) from third-party sites.</p>" +
+                          "<p>Similarly (although to a lesser extent), directly embedding videos, frames, or images (including advertisements, tracking pixels, etc.) from third-party sources can be dangerous. Loading such a resource can leak information to the site it's loaded from (e.g., through the referrer). This can be a privacy issue as well as a security issue.</p>",
+                  "why": "If your application loads third-party content, describe your threat model:",
+                  "id": "warn_application_3rdparty_conent",
+                  "warn": "yes",
+                  "name": "Application includes active 3rd party content",
+                  "severity": "medium",
+                  "cond": "application_webvuln_3rdpartycontent"
+                },
+                {
+                  "type": "tip",
+                  "text": "Dealing with user-provided and untrusted XML may make your application vulnerable to attacks. For example, the expat XML parser (written in C) has been found vulnerable to buffer overflow attacks. Even if you use a secure parser (or run it in a sandbox), things that can go wrong." +
+                          "<p>Various attacks rely on the attacker's ability to specify XML entities. Entities are \"codes\" (such as <code>&amp;quot;</code>) that are translated into defined strings by the parser. HTML has a predefined set of entities, but in XML, entities can be specified arbitrarily. An entity specification usually looks like this:<p>" +
+                          "<code>&lt;!ENTITY ent \"Hello!\"&gt;</code><p>" +
+                          "With this definition, whenever the parser comes across <code>&amp;ent;</code>, it will replace it with <code>Hello!</code>. Entities are usually defined in the document type, which can be provided in a separate file or  in the <code>&lt;!DOCTYPE&gt;</code> section at the beginning of an XML document." +
+                          "Entities are used in a variety of XML-related attacks. For example, they can be used for something called the <a href='http://www.ibm.com/developerworks/xml/library/x-tipcfsx/index.html'>billion laughs attack</a>, where an entity resolves to other entities, which resolve to other entities, etc., causing high memory usage and essentially resulting in a denial-of-service attack.<p>" +
+                          "Even more serious is an attack using <a href='http://www.securiteam.com/securitynews/6D0100A5PU.html'>external entities</a>. Definitions of external entities look similar to regular entity definitions, but they reference local files or URLs. Unless the XML parser has been specifically instructed not to expand external entities, a definition like <code>&lt;!ENTITY etc SYSTEM \"file:///etc/passwd\"&gt;</code> would include the /etc/passwd file where the entity &amp;etc; occurs in the XML document, leading to the disclosure of files as well as internal URLs." +
+                          "It's very important to restrict entity specification in user-provided or untrusted XML. Make sure your parser is adequately configured.",
+                  "warn": "yes",
+                  "name": "User provided XML processed/manipulated",
+                  "severity": "medium",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "id": "warn_application_webvuln_xml_entities",
+                  "cond": "application_webvuln_xml"
+                },
+                {
+                  "type": "block",
+                  "text": "Cross-Site Scripting",
+                  "id": "block_xss",
+                  "items": [
+                    {
+                      "type": "checkgroup",
+                      "text": "<a href='https://www.owasp.org/index.php/XSS'>Cross-site scripting</a> (or XSS for short) occurs when an application redisplays insufficiently sanitized user input in the context of the application's origin (as defined by the <a href='http://code.google.com/p/browsersec/wiki/Part2#Same-origin_policy'>same-origin policy</a>). If the user input contains certain kinds of scripting code, it may read or alter the DOM of the current page when redisplayed. In many cases, XSS is used to steal users' cookies or other application-related data, but it may also be used for phishing attacks, or even to deface the web page. Unfortunately, XSS is one of the most common security issues in web applications, and due to browser quirks and other factors, quite hard to protect against. Select the statements that describe your strategy:",
+                      "defaultChoice": false,
+                      "choices": [
+                        {"application_xss_templating": "We use a templating system that automatically escapes all user input before redisplaying it."},
+                        {"application_xss_chokepoint": "Our application has a central choke point where all user input is validated and escaped, depending on the context in which it will be interpreted."},
+                        {"application_xss_perpage": "Some of the pages (or all of them) escape user input."},
+                        {"application_xss_other": "We are using some other technique to protect against XSS."},
+                        {"application_xss_sanitization": "Part of the application deals with user-provided HTML that is sanitized and re-displayed to the user."}
+                      ]
+                    },
+                    {
+                      "type": "tip",
+                      "text": "You didn't select a strategy for protecting against cross-site scripting.",
+                      "why": "Explain why:",
+                      "warn": "yes",
+                      "id": "warn_application_no_xss_strategy",
+                      "cond": "!application_xss_templating && !application_xss_chokepoint && !application_xss_perpage && !application_xss_other && !application_xss_sanitization"
+                    },
+                    {
+                      "type": "tip",
+                      "text": "Using a templating system to escape user input is a good way to protect against XSS. But be careful with directives that disable automatic escaping, and watch for the direct display of user input (for example, in error messages). Additionally, be aware of the context in which user input is used in templates. Not all templating systems automatically understand that different escaping may be required, depending on where in the application the user input is displayed. For example, many templating systems would not correctly escape a construct such as <code>&gt;a href=\"{{ user_input }}\"&lt;</code>, where a user could supply <code>javascript:alert(/xss/)</code> as user_input. We recommend using a context-sensitive templating system.",
+                      "id": "tip_application_xss_templating",
+                      "cond": "application_xss_templating"
+                    },
+                    {
+                      "type": "tip",
+                      "text": "A central choke point for validating and escaping user input is generally a good way to protect against XSS. But make sure your application identifies the context in which the user input is being used; otherwise, it might still be possible to smuggle in JavaScript through user input. You might also want to consider using a context-sensitive templating system, to address this issue automatically.",
+                      "id": "tip_application_xss_chokepoint",
+                      "cond": "application_xss_chokepoint"
+                    },
+                    {
+                      "type": "tip",
+                      "text": "<p>Escaping user input on each page individually is a fairly dangerous strategy: it's very easy to miss something. We recommend using a templating system that automatically escapes user input, ideally in a context-sensitive fashion. Some examples are listed below. Note that not all of these are context-sensitive, so you may still need to do manual escaping (or explicitly tag a variable in the template) when the context is something other than HTML.</p>" +
+                              "<ul><li><a href='https://www.djangoproject.com/'>Django</a> (Python)</li>" +
+                              "<li><a href='http://code.google.com/p/ctemplate/?redir=1'>Google CTemplates</a> (C++)</li>" +
+                              "<li><a href='http://code.google.com/p/jsilver/'>Jsilver</a> (Java)</li>" +
+                              "<li><a href='https://developers.google.com/closure/templates/'>Closure/Soy</a> (Javascript, Java)</li>" +
+                              "<li><a href='http://jquery.com/'>JQuery</a> (JavaScript)</li>" +
+                              "<li><a href='http://www.smarty.net/'>Smarty</a> (PHP)</li>",
+                      "warn": "yes",
+                      "name": "Inappropriate XSS protection",
+                      "severity": "medium",
+                      "id": "warn_application_xss_perpage",
+                      "cond": "!application_xss_templating && !application_xss_chokepoint && application_xss_perpage"
+                    },
+                    {
+                      "type": "box",
+                      "text": "Describe your strategy for protecting against XSS vulnerabilities:",
+                      "id": "application_xss_other_explanation",
+                      "cond": "application_xss_other"
+                    },
+                    {
+                      "type": "tip",
+                      "text": "Unfortunately, due to error-correcting behavior and browser quirks, getting HTML sanitization right is very difficult. The sanitization code has to build an in-memory representation of the DOM, and then serialize that to a known-safe format. Some libraries do this correctly, so we highly recommended using a well-tested library.",
+                      "why": "Describe how your application deals with HTML sanitization:",
+                      "warn": "yes",
+                      "name": "Dangerous HTML sanitization",
+                      "severity": "medium",
+                      "id": "warn_application_xss_sanitization",
+                      "cond": "application_xss_sanitization"
+                    },
+                    {
+                      "type": "radiogroup",
+                      "text": "In addition to applying the strategies you've identified, does the application set a valid and appropriate content type and character set for each page (in the <code>Content-Type</code> HTTP header)?",
+                      "defaultChoice": false,
+                      "id": "application_xss_content_type",
+                      "choices": [
+                        {"application_xss_content_type_yes": "Yes, we take great care to set this, knowing that otherwise we might be introducing XSS vulnerabilities."},
+                        {"application_xss_content_type_no": "I'm not sure all pages set an appropriate content type."}
+                      ]
+                    },
+                    {
+                      "type": "tip",
+                      "text": "Not setting both a content type and a character set often leads to cross-site scripting vulnerabilities. For example, if the application outputs JSON but sets the content type to text/html, this might result in XSS because JavaScript/JSON escaping is different from HTML escaping. We recommend that you thoroughly audit your code for pages that don't set the content type correctly.",
+                      "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                      "warn": "yes",
+                      "name": "Inappropriate content type/character set",
+                      "severity": "medium",
+                      "id": "warn_application_xss_content_type",
+                      "cond": "application_xss_content_type_no"
+                    },
+                    {
+                      "type": "radiogroup",
+                      "text": "Earlier, you noted that the application has a file upload feature. Does the application allow other users (or administrators) to access the files that are uploaded?",
+                      "defaultChoice": false,
+                      "choices": [
+                        {"application_xss_fileupload_yes": "Yes, this is a feature of our application."},
+                        {"application_xss_fileupload_no": "No; uploaded files are processed but can't be downloaded again."}
+                      ],
+                      "cond": "application_webvuln_upload",
+                      "id": "application_xss_fileupload"
+                    },
+                    {
+                      "type": "tip",
+                      "text": "Hosting and serving user-provided content is almost guaranteed to introduce XSS vulnerabilities. Because of various browser quirks, countermeasures (such as setting a <code>Content-Disposition: attachment</code> header) do not provide full protection. We recommend serving user-provided content on a domain separate from all domains that have authentication cookies. However, this approach introduces another problem, if access to the content is intended to be authenticated. You can solve this by using short-lived random tokens, or by serving each document from a separate domain. If you use the latter approach, each domain should have a unique set of authentication cookies, valid only for the one document that's served from the domain.",
+                      "why": "Describe your strategy for protecting against XSS vulnerabilities introduced by serving user-provided content:",
+                      "warn": "yes",
+                      "name": "Potential XSS via uploaded file access",
+                      "severity": "medium",
+                      "id": "warn_application_xss_fileupload",
+                      "cond": "application_xss_fileupload_yes"
+                    },
+                    {
+                      "type": "radiogroup",
+                      "text": "Some XSS vulnerabilities work exclusively on the client side, in an application's scripting code. This kind of XSS is commonly referred to as <a href='https://www.owasp.org/index.php/DOM_Based_XSS'>DOM-based XSS</a>. Because server-side escaping of user input does not protect against DOM-based XSS, you need a strategy for dealing with client-side scripting code that handles user input, as well as parts of the DOM that may contain user input (such as document.location).",
+                      "defaultChoice": false,
+                      "id": "application_xss_dombased",
+                      "choices": [
+                        {"application_xss_dombased_yes": "We know about DOM-based XSS, and we take specific steps to protect against this kind of vulnerability."},
+                        {"application_xss_dombased_no": "It may be possible that something slipped through the cracks and our application has DOM-based XSS vulnerabilities."}
+                      ]
+                    },
+                    {
+                      "type": "tip",
+                      "text": "We recommend that you thoroughly audit your code for DOM-based XSS vulnerabilities, and put procedures in place so that future code is also protected.",
+                      "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                      "warn": "yes",
+                      "name": "Lack of protection against DOM-based XSS",
+                      "severity": "medium",
+                      "id": "warn_application_xss_dombased",
+                      "cond": "application_xss_dombased_no"
+                    }
+                  ]
+                },
+                {
+                  "type": "block",
+                  "text": "Persistence Back Ends and Querying",
+                  "cond": "application_webvuln_db",
+                  "id": "block_app_db",
+                  "items": [
+                    {
+                      "type": "checkgroup",
+                      "text": "<p>Because your application uses a database or a similar back end to persist data, we need to make sure it's not vulnerable to injection attacks, such as <a href='http://en.wikipedia.org/wiki/SQL_injection'>SQL injection</a>.</p>" +
+                              "<p>An application is vulnerable to SQL injection when some portion of user input is interpreted by the database as part of a query. When this occurs, an attacker may be able to read or even write data directly from or to the database.</p>",
+                      "defaultChoice": false,
+                      "choices": [
+                        {"application_sqli_orm": "Our application uses an object-relational mapping (ORM) framework. When we need to manually construct queries or conditions, we use one of the mechanisms selected below:"},
+                        {"application_sqli_prepared": "We use prepared statements and let the framework take care of correctly escaping the user input."},
+                        {"application_sqli_stored": "We pass user input to the database via stored procedures."},
+                        {"application_sqli_manual": "We manually escape user input whenever we need to use it in a database query."},
+                        {"application_sqli_other": "We do something else."}
+                      ]
+                    },
+                    {
+                      "type": "box",
+                      "text": "Describe the other mechanism you're using to protect against SQL injection:",
+                      "id": "application_sqli_other_details",
+                      "cond": "application_sqli_other"
+                    },
+                    {
+                      "type": "tip",
+                      "text": "Using an ORM layer is generally a good way to protect against SQL injection. However, in most ORM frameworks, it's possible to directly specify parts of the SQL query. Some ORM frameworks also have a special querying language that makes it possible to set the <code>WHERE</code> part of the statement. In these cases, you still need to be sure to guard against injection vulnerabilities.",
+                      "id": "tip_application_sqli_orm",
+                      "cond": "application_sqli_orm"
+                    },
+                    {
+                      "type": "line",
+                      "text": "What ORM framework are you using?",
+                      "id": "application_sqli_orm_which",
+                      "cond": "application_sqli_orm"
+                    },
+                    {
+                      "type": "tip",
+                      "text": "Using stored procedures is generally a good way to protect against SQL injection. But this strategy must be used consistently. Make sure neither the stored procedures themselves nor the calls of the stored procedures are vulnerable to injection attacks.",
+                      "id": "tip_application_sqli_stored",
+                      "cond": "application_sqli_stored"
+                    },
+                    {
+                      "type": "radiogroup",
+                      "text": "Do you take special steps (policies, code reviews, audits, etc.) to ensure that prepared statements are used consistently, and that string concatenation is never used to construct database queries?",
+                      "defaultChoice": false,
+                      "choices": [
+                        {"application_sqli_prepared_consistent_yes": "Yes, we have all or most of these measures in place, and we're very confident that there are no SQL injection vulnerabilities in our code."},
+                        {"application_sqli_prepared_consistent_no": "We try to make our developers use prepared statements, but it may be possible for some string concatenation to slip through."}
+                      ],
+                      "cond": "application_sqli_prepared && !application_sqli_manual",
+                      "id": "application_sqli_prepared_consistent"
+                    },
+                    {
+                      "type": "tip",
+                      "text": "<p>Manually escaping SQL (or related) queries is error-prone and very difficult to do consistently. Here are a couple of examples:</p>" +
+                              "<ul><li>PHP provides the function <code>mysql_escape_string</code> for escaping user input that will be used in a database query. Unfortunately, that function does not take into account the character set of the connection, so it may still be possible to smuggle in user input that will be interpreted as part of the SQL query. Applications should use <code>mysql_real_escape_string</code> instead.</li>" +
+                              "<li>In SQL, numbers do not need to be surrounded with quotation marks when used in a statement. For example, <code>SELECT username WHERE id=123</code> is perfectly valid. But if user-provided input that will be used as a number is not confirmed to be actually numeric, the resulting code will be vulnerable to SQL injection (even if the input is escaped).</li></ul>" +
+                              "<p>We highly recommend using something like prepared statements, or using an ORM layer consistently throughout the application. Make sure you have procedures in place to enforce your approach (such as static tests when code is checked into the repository).</p>",
+                      "warn": "yes",
+                      "name": "Inadequate SQL injection protection",
+                      "severity": "medium",
+                      "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                      "id": "warn_application_sqli_manual",
+                      "cond": "application_sqli_prepared_consistent_no || application_sqli_manual"
+                    }
+                  ]
+                },
+                {
+                  "type": "block",
+                  "text": "Browser Plugins",
+                  "cond": "application_webvuln_plugin",
+                  "id": "block_plugins",
+                  "items": [
+                    {
+                      "type": "checkgroup",
+                      "text": "You mentioned that your application requires certain browser plugins to work correctly. Which of the following plugins are required?",
+                      "defaultChoice": false,
+                      "choices": [
+                        {"application_plugin_java": "Java"},
+                        {"application_plugin_flash": "Flash"},
+                        {"application_plugin_silverlight": "Silverlight"},
+                        {"application_plugin_other": "Other"}
+                      ]
+                    },
+                    {
+                      "type": "line",
+                      "text": "What other plugins are required by your application?",
+                      "id": "application_plugin_other_which",
+                      "cond": "application_plugin_other"
+                    },
+                    {
+                      "type": "box",
+                      "text": "Explain what the plugin is used for, what technology it uses (e.g., ActiveX, NPAPI, Chrome plugin, etc.), how it is usually deployed to your users, and what privileges it requires:",
+                      "id": "application_plugin_other_desc",
+                      "cond": "application_plugin_other"
+                    },
+                    {
+                      "type": "tip",
+                      "text": "Enabling Java in the browser exposes users to a variety of security issues. We strongly discourage requiring Java.",
+                      "warn": "yes",
+                      "name": "Java plugin required by application",
+                      "severity": "medium",
+                      "why": "Is Java absolutely necessary for your application to function correctly? Are there any workarounds?",
+                      "id": "warn_application_plugin_java",
+                      "cond": "application_plugin_java"
+                    },
+                    {
+                      "type": "tip",
+                      "text": "In most cases, custom plugins are considered a security risk. Plugins can operate outside of the usual constraints (such as a same-origin policy, sandboxing, etc.) and can introduce security vulnerabilities that affect the entire browser. It's also often difficult to deploy and centrally manage them. We strongly discourage using custom plugins.",
+                      "warn": "yes",
+                      "name": "Custom plugin required by application",
+                      "severity": "high",
+                      "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below:",
+                      "id": "warn_application_plugin_other",
+                      "cond": "application_plugin_other"
+                    }
+                  ]
+                },
+                {
+                  "type": "block",
+                  "text": "File Uploads",
+                  "cond": "application_webvuln_upload",
+                  "id": "block_uploads",
+                  "items": [
+                    {
+                      "type": "radiogroup",
+                      "text": "You mentioned previously that your application allows users to upload files. Where does the application store those files?",
+                      "defaultChoice": false,
+                      "choices": [
+                        {"application_upload_storage_fs": "On the file system"},
+                        {"application_upload_storage_db": "In a database"},
+                        {"application_upload_storage_other": "Somewhere else"}
+                      ]
+                    },
+                    {
+                      "type": "line",
+                      "text": "Explain where the uploaded files are stored:",
+                      "id": "application_upload_storage_other_expl",
+                      "cond": "application_upload_storage_other"
+                    },
+                    {
+                      "type": "tip",
+                      "text": "Storing uploaded files on the file system can be dangerous. Here are a few issues that can occur:<p>" +
+                              "<ul><li><b>Path traversal</b>: The names of uploaded files must be carefully sanitized to prevent attackers from uploading files with paths in the name, such as <code>../../../../some_existing_file.html</code>. Files like these can end up in the wrong directory.</li>" +
+                              "<li><b>Null bytes</b>: The names of uploaded files must be examined for null bytes, which can cause file names to be truncated (e.g., a file called <code>evilfile.exe[0x00].gif</code> might become <code>evilfile.exe</code> when stored on disk).</li>" +
+                              "<li><b>Interpretation</b>: Files on the file system are much more likely to end up being interpreted. For example, if an attacker manages to store an uploaded file somewhere underneath the web root and names it <code>evilfile.php</code>, it might be executed as PHP code by the web server.</li></ul>" +
+                              "<p>To prevent issues like these, store user-uploaded content in a database instead. If your application stores files on the file system, be sure to implement careful handling, validation, and sanitization of uploaded files.",
+                      "warn": "yes",
+                      "name": "Dangerous way of storing uploaded files",
+                      "severity": "medium",
+                      "id": "warn_application_upload_fs",
+                      "cond": "application_upload_storage_fs"
+                    },
+                    {
+                      "type": "line",
+                      "text": "In most cases, file type restrictions should be in place for uploads. What types of files does your application white-list?",
+                      "id": "application_upload_storage_types"
+                    },
+                    {
+                      "type": "checkgroup",
+                      "text": "How does the application enforce these file type restrictions?",
+                      "defaultChoice": false,
+                      "choices": [
+                        {"application_upload_type_extension": "We verify the file type by checking the file extension on the server side."},
+                        {"application_upload_type_contenttype": "We look at the content type that is sent by the user."},
+                        {"application_upload_type_reencoding": "We decode and re-encode the file, storing only the result."},
+                        {"application_upload_type_other": "We employ another method to verify the file type."}
+                      ]
+                    },
+                    {
+                      "type": "box",
+                      "text": "Explain how you verify the file type and enforce the whitelist:",
+                      "id": "application_upload_type_other_expl",
+                      "cond": "application_upload_type_other"
+                    },
+                    {
+                      "type": "tip",
+                      "text": "Some web servers are configured by default to allow double file extensions. For example, if a user uploads a file called <code>malicious.php.gif</code>, it might actually be executed as PHP code upon retrieval. Because you store uploaded files on the file system, this issue may affect your application. Make sure your web server uses only the last extension (i.e., the part after the right-most dot in the file name) when determining how to process the file.",
+                      "warn": "yes",
+                      "name": "Inadequate method of file type verification",
+                      "severity": "medium",
+                      "id": "warn_application_upload_doubleextension",
+                      "cond": "application_upload_type_extension && application_upload_storage_fs"
+                    },
+                    {
+                      "type": "tip",
+                      "text": "Re-encoding files uploaded by users is usually a very good approach. However, note that because the decoding and re-encoding works on untrusted user input (and because parsing is difficult and error-prone), it's best to perform these operations in a sandbox. That way, even if an attacker successfully exploits a vulnerability in the parser, the effects would be constrained to the sandboxed environment. Various sandboxing APIs are available, such as the <a href='http://sourceforge.net/projects/libseccomp/'>Seccomp library</a> for Linux." +
+                              "<p>You could also run the decoder/encoder on an isolated virtual machine that's regularly reset to a predefined state. Note, however, that a successful attacker would still be able to observe all incoming and outgoing files, unless the reset happens after each individual file operation." +
+                              "<p>Even with a sandboxed encoder, some attacker-provided content may survive the re-encoding. For example, in images, the EXIF metadata may be left intact. If this occurs and the content type is incorrectly set (or browser content-sniffing behavior kicks in), cross-site scripting vulnerabilities can result.",
+                      "warn": "yes",
+                      "name": "Inadequate method of file type verification",
+                      "severity": "medium",
+                      "why": "Describe the steps you're taking to protect against vulnerabilities in the decoding and parsing code:",
+                      "id": "warn_application_upload_reencoding",
+                      "cond": "application_upload_type_reencoding"
+                    },
+                    {
+                      "type": "tip",
+                      "text": "Unfortunately, verifying the content type of uploaded files is generally not sufficient for enforcing a whitelist. Because the content type is a field in the HTTP request sent by the user, it can be arbitrarily set by an attacker (for example, by using an interception proxy). At a minimum, the application should also verify the extension at the very end of the file name and check it against the whitelist.",
+                      "warn": "yes",
+                      "name": "Inadequate method of file type verification",
+                      "severity": "high",
+                      "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                      "id": "warn_application_upload_contenttypeonly",
+                      "cond": "application_upload_type_contenttype && !application_upload_type_reencoding && !application_upload_type_extension"
+                    }
+                  ]
+                },
+                {
+                  "type": "block",
+                  "text": "Use of Cryptography",
+                  "cond": "application_webvuln_crypto",
+                  "id": "block_app_crypto",
+                  "items": [
+                    {
+                      "type": "info",
+                      "text": "You previously mentioned that your application uses cryptography to ensure the confidentiality and/or integrity of information. That's great! But we want to make sure you're using cryptography correctly." +
+                              "<p>Note: when using cryptography, make sure algorithms are used in the right context and within appropriate constraints. For example, encrypting a session ID does not prevent an attacker from manipulating it. Similarly, a signature does not protect a message's confidentiality."
+                    },
+                    {
+                      "type": "box",
+                      "text": "Describe your use of cryptography (what information is encrypted/signed, how, why, what algorithms are used, etc.). Be as specific and precise as possible:",
+                      "id": "application_webvuln_crypto_details"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "block",
+              "text": "Testing, QA, and Monitoring",
+              "id": "block_qa",
+              "items": [
+                {
+                  "type": "info",
+                  "text": "<p>Security testing can be part of standard application tests. Here are some examples:</p>" +
+                          "<ul><li><b>Simple unit tests:</b> Unit tests are typically used to confirm that the basic building blocks of the application work as expected. Unit tests are easy to repeat — they can run whenever new code is checked into the repository, to confirm that the code still behaves as expected. Unit tests can also check for security features. For example, they can be used to confirm that requests fail without XSRF tokens; that authentication is required to access user data; or that unexpected HTML tags can't get through input filters or escaping routines.</li>" +
+                          "<ul><li><b>Release testing:</b> Before a new version of a product is released, human testers typically go through the application, try the new features, and make sure previous features still work correctly (regression testing). Security testing should be included in this process as well. For example, release testing is a great time to verify that user A cannot access the data of user B.</li>" +
+                          "<ul><li><b>Monitoring:</b> Once the application is deployed, the focus usually shifts from testing to monitoring. Watch out for unexpected spikes in error rates, sandbox violations, and other flaky or inexplicable behavior (including intermittent test failures) — and before you dismiss an anomaly, check with your security team. Crashes and flakiness can indicate a race condition or a memory corruption bug.</li></ul>" +
+                          "<p>The next few questions assess the testing and monitoring of your application.</p>"
+                },
+                {
+                  "type": "radiogroup",
+                  "text": "Are you using unit tests or similar methods?",
+                  "defaultChoice": false,
+                  "id": "application_testing_unit",
+                  "choices": [
+                    {"application_testing_unit_yes": "Yes"},
+                    {"application_testing_unit_no": "No"}
+                  ]
+                },
+                {
+                  "type": "block",
+                  "text": "Unit Testing",
+                  "cond": "application_testing_unit_yes",
+                  "id": "block_unit_testing",
+                  "items": [
+                    {
+                      "type": "radiogroup",
+                      "text": "How would you describe the code coverage of your unit tests?",
+                      "defaultChoice": false,
+                      "choices": [
+                        {"application_testing_unit_coverage_large": "<b>Robust:</b> The vast majority of our code is tested through unit tests; code coverage is at least &gt;80%."},
+                        {"application_testing_unit_coverage_med": "<b>Weak:</b> We have some unit testing, but much of the code is not tested."},
+                        {"application_testing_unit_coverage_small": "<b>Nonexistent:</b> We have no (or almost no) unit tests."}
+                      ]
+                    },
+                    {
+                      "type": "tip",
+                      "text": "Unit tests have become quasi-standard for testing the functionality of software at a low level. Although this questionnaire focuses on security, the functional correctness of the application is also important. Particularly for web applications, where it is difficult (often impossible) to fall back to a previous version, functional bugs can cause problems with both integrity and availability. Consider implementing unit tests.",
+                      "warn": "yes",
+                      "name": "No unit tests",
+                      "severity": "medium",
+                      "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                      "id": "warn_application_testing_unit_coverage",
+                      "cond": "application_testing_unit_coverage_med || application_testing_unit_coverage_small"
+                    },
+                    {
+                      "type": "radiogroup",
+                      "text": "Do you have special unit tests in place for testing the security of your code? For example, unit tests can be used to do the following:<p><ul>" +
+                              "<li>Verify that XSRF tokens are required for all state-changing actions</li>" +
+                              "<li>Confirm that user input is correctly escaped and/or sanitized</li>" +
+                              "<li>Check that the application enforces access control (e.g., user A doesn't have access to user B's data)</li>",
+                      "defaultChoice": false,
+                      "choices": [
+                        {"application_testing_unit_security_yes": "Yes"},
+                        {"application_testing_unit_security_no": "No"}
+                      ],
+                      "cond": "application_testing_unit_coverage_med || application_testing_unit_coverage_large",
+                      "id": "application_testing_unit_security"
+                    },
+                    {
+                      "type": "tip",
+                      "text": "Scalable security depends on engineers doing their part — and common-sense, low-overhead unit tests are one of the most cost-efficient defenses available. Unit tests can help validate security parameters and avoid regressions that reintroduce security bugs. We strongly recommend including security checks in your unit tests.",
+                      "warn": "yes",
+                      "name": "No unit tests for security functions",
+                      "severity": "medium",
+                      "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                      "id": "warn_application_testing_unit_security",
+                      "cond": "application_testing_unit_security_no"
+                    }
+                  ]
+                },
+                {
+                  "type": "radiogroup",
+                  "text": "Do your engineers and your QA team look for potential security issues during release testing, and have they been trained to do so?",
+                  "defaultChoice": false,
+                  "id": "application_testing_qa_security",
+                  "choices": [
+                    {"application_testing_qa_security_yes": "Yes, our QA process explicitly includes testing for security issues that might have been introduced in the new version."},
+                    {"application_testing_qa_security_no": "This is an area where we have some room for improvement."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "text": "Your engineering and QA teams are in the best position to understand how all parts of the application work, what has changed since the previous iteration, and how the changes might introduce security vulnerabilities. Release testing is typically done under considerable time pressure, but it's the last chance to catch security vulnerabilities internally. When your teams are already focused on testing, adding a few security tests won't increase the effort by much.<p>" +
+                          "Engineers and testers who have been trained to look for security issues can make all the difference between a secure product and a serious vulnerability.",
+                  "warn": "yes",
+                  "name": "No security quality assurance",
+                  "severity": "medium",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "id": "warn_application_testing_qa_security",
+                  "cond": "application_testing_qa_security_no"
+                },
+                {
+                  "type": "block",
+                  "text": "Post-Launch Monitoring",
+                  "id": "block_monitoring",
+                  "items": [
+                    {
+                      "type": "radiogroup",
+                      "text": "How would you describe your post-launch monitoring?",
+                      "defaultChoice": false,
+                      "choices": [
+                        {"warn_application_monitoring_robust": "<b>Robust</b>: We have procedures in place to log and monitor for unexpected crashes, exceptions, and other error conditions. If something looks suspicious, a security-conscious engineer evaluates it."},
+                        {"warn_application_monitoring_weak": "<b>Weak</b>: If something goes terribly wrong, such as massive spikes in crash rates or other large-scale anomalies, we will probably notice. But our monitoring is fairly coarse, and there is room for improvement."},
+                        {"warn_application_monitoring_none": "<b>Nonexistent</b>: At the moment, we are not doing any kind of post-release monitoring that looks for signs of exploitation or increases in crashes/exceptions."}
+                      ]
+                    },
+                    {
+                      "type": "tip",
+                      "text": "Thank you for putting effort into post-launch monitoring. Exceptions often indicate an underlying security problem, and close monitoring goes a long way toward quickly identifying and subsequently fixing vulnerabilities.",
+                      "id": "tip_warn_application_monitoring",
+                      "cond": "warn_application_monitoring_robust"
+                    },
+                    {
+                      "type": "tip",
+                      "text": "Exceptions and crashes often indicate an underlying security problem. Monitoring the deployed application can go a long way toward quickly identifying and subsequently fixing vulnerabilities. In carefully designed software products, exceptions should be a fairly rare occurrence; it therefore usually does not introduce significant overhead to monitor for them.",
+                      "warn": "yes",
+                      "name": "Inadequate monitoring for crashes/exceptions",
+                      "severity": "medium",
+                      "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                      "id": "warn_warn_application_monitoring",
+                      "cond": "warn_application_monitoring_weak || warn_application_monitoring_none"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "block",
+              "text": "Additional Notes",
+              "id": "block_notes",
+              "items": [
+                {
+                  "type": "box",
+                  "text": "Provide any additional information about the security of your application:",
+                  "id": "application_other"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "block",
+          "text": "Security Contacts",
+          "id": "block_security_contact",
+          "items": [
+            {
+              "type": "line",
+              "text": "List the email addresses of people we should contact about any security issues in the application:",
+              "id": "security_contacts"
+            }
+          ]
+        },
+        {
+          "type": "block",
+          "text": "Feedback",
+          "id": "feedback_block",
+          "items": [
+            {
+              "type": "box",
+              "text": "<b>Congratulations!</b> You've made it to the end of this questionnaire. If you can spare another minute, please let us know how we can improve it. Your feedback is highly appreciated.",
+              "id": "feedback"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "questionnaire": [
+    {
+      "type": "block",
+      "text": "My questionnaire",
+      "items": [
+        {
+          "type": "block",
+          "id": "network",
+          "text": "Network section",
+          "items": [
+            {
+              "type": "info",
+              "text": "What security standards do you apply?"
+            },
+            {
+              "type": "checkgroup",
+              "defaultChoice": false,
+              "choices": [
+                {"standard_1": "Standard 1"},
+                {"standard_2": "Standard 2"}
+              ]
+            }
+          ]
+        },
+        {
+          "type": "block",
+          "text": "Data section",
+          "items": [
+            {
+              "type": "check",
+              "id": "data_warning",
+              "text": "Click me to trigger a warning."
+            },
+            {
+              "type": "tip",
+              "id": "data_tip",
+              "cond": "data_warning/yes",
+              "text": "You shouldn't click the box above.",
+              "warn": "yes",
+              "severity": "critical"
+            }
+          ]
+        },
+        {
+          "type": "block",
+          "text": "Final section",
+          "items": [
+            {
+              "type": "check",
+              "id": "declaration",
+              "text": "I hereby declare that the above answers are true to the best of my knowledge and belief."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

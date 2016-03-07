@@ -1,0 +1,527 @@
+
+// Copyright 2016 Google Inc. All rights reserved.
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+{
+  "questionnaire": [
+    {
+      "type": "block",
+      "text": "Physical & Data Center Security Questionnaire",
+      "items": [
+        {
+          "type": "block",
+          "id": "block_office_security",
+          "text": "Security at the Office",
+          "items": [
+            {
+              "type": "info",
+              "text": "<b>Why this section matters:</b> Data centers are often fairly easy to protect because not very many people need physical access to them. Offices, on the other hand, are much harder to secure because a lot of people need frequent access. In addition to being directly connected to data centers on a network level, offices host the physical machines that are used to access data. Unless the office is sufficiently protected, attackers might use physical access to (for example) set up back doors on machines or steal local data, including credentials that can then be used to access information in data centers."
+            },
+            {
+              "type": "info",
+              "text": "<b>Note:</b> If you have multiple offices with network-level access to systems or data containing confidential information, answer the following questions for the office with the fewest physical controls (the weakest link)."
+            },
+            {
+              "type": "radiogroup",
+              "id": "office_facilities_excl",
+              "text": "Are all facilities used exclusively by your company, or are some shared?",
+              "defaultChoice": false,
+              "choices": [
+                {"office_facilities_excl_yes": "Yes, we are the only tenant of the facilities."},
+                {"office_facilities_excl_no": "No, some or all of the facilities are shared with other companies."},
+                {"office_facilities_home": "We don't have offices; everyone works from home."}
+              ]
+            },
+            {
+              "type": "box",
+              "id": "office_home_device_mgmt",
+              "cond": "office_facilities_home",
+              "text": "How do you manage your employees' devices, considering everyone works from home? Are they centrally managed?"
+            },
+            {
+              "type": "box",
+              "id": "office_facilities_separation",
+              "cond": "office_facilities_excl_no",
+              "text": "How is your physical area separated from other areas of the office facility? Explain how you control access to your area (e.g., door with swipe card and a receptionist)."
+            },
+            {
+              "type": "radiogroup",
+              "id": "office_ra",
+              "cond": "!office_facilities_home",
+              "text": "Does your company review the physical and environmental risks that your office facilities are exposed to, and do you have procedures in place to evaluate and, if necessary, address them?",
+              "defaultChoice": false,
+              "choices": [
+                {"office_ra_yes": "Yes, we do risk assessments to proactively identify risks related to physical and environmental security."},
+                {"office_ra_no": "No, we don't review physical and environmental risks."}
+              ]
+            },
+            {
+              "type": "tip",
+              "id": "warn_no_office_ra",
+              "cond": "office_ra_no",
+              "text": "To ensure that your current security controls are adequate, it's important to assess the physical and environmental risks that your office facilities are exposed to.",
+              "warn": "yes",
+              "name": "No risk assessments of physical security at office",
+              "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+              "severity": "high"
+            },
+            {
+              "type": "checkgroup",
+              "cond": "office_facilities_excl_no",
+              "text": "Select the security controls that are in place at <i>all</i> of your offices:",
+              "defaultChoice": false,
+              "choices": [
+                {"office_controls_receptionist": "Staffed reception desk"},
+                {"office_controls_guards_shared": "Guards (shared by entire building)"},
+                {"office_controls_guards_exclusive": "Guards (hired by and for your company specifically)"},
+                {"office_controls_motion_detectors": "Motion detectors"},
+                {"office_controls_alarms": "Alarms"},
+                {"office_controls_cctv": "CCTV"},
+                {"office_controls_swipe_cards": "Electronic access control (e.g., swipe cards)"},
+                {"office_controls_perimeter_security": "Perimeter security"}
+              ]
+            },
+            {
+              "type": "tip",
+              "id": "warn_office_controls_swipe_cards",
+              "cond": "office_facilities_excl_no && !office_controls_swipe_cards",
+              "text": "Electronic access control is strongly recommended for office facilities that deal with confidential or sensitive data or have network-level access to it. Standard (non-electronic) keys are very difficult to control (short of changing the entire lock), and access is generally not logged in an auditable way.",
+              "warn": "yes",
+              "name": "No electronic access controls at the office",
+              "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+              "severity": "high"
+            },
+            {
+              "type": "radiogroup",
+              "id": "office_policy",
+              "cond": "!office_facilities_home",
+              "text": "Do you have a written policy that lists the physical security requirements for office facilities?",
+              "defaultChoice": false,
+              "choices": [
+                {"office_policy_yes": "Yes"},
+                {"office_policy_no": "No"}
+              ]
+            },
+            {
+              "type": "tip",
+              "id": "warn_office_policy",
+              "cond": "office_policy_no",
+              "text": "Having a written physical security policy helps ensure that all offices establish the same standards for protecting against unauthorized physical access. Because overall security is determined by the weakest link in the chain, a single noncompliant office may introduce risk to your company's (and customers') confidential and sensitive information.",
+              "warn": "yes",
+              "name": "No written policy for physical security at office",
+              "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+              "severity": "medium"
+            },
+            {
+              "type": "block",
+              "id": "block_access_control",
+              "cond": "office_controls_swipe_cards",
+              "text": "Access Control",
+              "items": [
+                {
+                  "type": "radiogroup",
+                  "id": "office_access",
+                  "text": "Do you have an auditable process in place for granting and revoking physical access to office facilities?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"office_access_yes": "Yes"},
+                    {"office_access_no": "No"}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_office_access",
+                  "cond": "office_access_no",
+                  "text": "Physical access to office facilities should be restricted, because a breach can affect the confidentiality, integrity, and availability of information. It's important to have an auditable process for granting and revoking physical access, and for reviewing physical entry logs.",
+                  "warn": "yes",
+                  "name": "No auditable procedures for physical security at office",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "high"
+                },
+                {
+                  "type": "radiogroup",
+                  "id": "office_acclogs",
+                  "cond": "!office_facilities_home",
+                  "text": "Are physical entry logs kept for at least six months?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"office_acclogs_yes": "Yes"},
+                    {"office_acclogs_no": "No"}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_office_acclogs",
+                  "cond": "office_acclogs_no",
+                  "text": "Unfortunately, security incidents (whether physical or logical) are not always immediately detected. It's important to retain physical access log files, typically for six months, in case they're needed for investigation.",
+                  "warn": "yes",
+                  "name": "No office access log retention",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "medium"
+                },
+                {
+                  "type": "block",
+                  "id": "block_entry_log_review",
+                  "cond": "!office_facilities_home",
+                  "text": "Entry Log Review",
+                  "items": [
+                    {
+                      "type": "radiogroup",
+                      "text": "How often do you review physical entry logs?",
+                      "defaultChoice": false,
+                      "choices": [
+                        {"office_acclogs_review_never": "Never"},
+                        {"office_acclogs_review_quarterly": "Every couple of months"},
+                        {"office_acclogs_review_monthly": "Once per month"},
+                        {"office_acclogs_review_often": "More often"}
+                      ]
+                    },
+                    {
+                      "type": "tip",
+                      "id": "warn_office_acclogs_review_never",
+                      "cond": "office_acclogs_review_never",
+                      "text": "In data theft incidents, it is not always immediately obvious that data has been copied (after all, nothing is missing per se). To address this, physical access logs should be regularly reviewed so that irregularities can be quickly identified and investigated.",
+                      "warn": "yes",
+                      "name": "No office access log reviews",
+                      "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                      "severity": "medium"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "radiogroup",
+              "id": "office_network_room",
+              "cond": "!office_facilities_home",
+              "text": "Offices need a lot of networking equipment. If an attacker manages to gain access to such equipment, they could, for example, do a man-in-the-middle attack for all office traffic. It's important to protect access to network equipment like floor distributor switches, office routers, wireless APs, etc.",
+              "defaultChoice": false,
+              "choices": [
+                {"office_network_room_yes": "All of these are well protected and locked away. Only a few IT employees have physical access to networking equipment."},
+                {"office_network_room_no": "We don't protect access to office networking equipment."}
+              ]
+            },
+            {
+              "type": "tip",
+              "id": "warn_office_network_room",
+              "cond": "office_network_room_no",
+              "text": "Lack of protection for office network equipment can provide an attacker with a conveniently central place from which to attempt to breach your network. If someone manages to gain unauthorized physical access to office routers/distribution switches, they might be able to get around security controls (such as ARP-spoofing protections or 802.1x). It's best to lock away office networking equipment, to prevent unauthorized tempering.",
+              "warn": "yes",
+              "name": "No protection of office network equipment",
+              "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+              "severity": "medium"
+            },
+            {
+              "type": "box",
+              "id": "office_other",
+              "text": "Is there anything else you want us to know about the physical security at your office?"
+            }
+          ]
+        },
+        {
+          "type": "block",
+          "text": "Data Center Security",
+          "items": [
+            {
+              "type": "info",
+              "text": "<b>Why this section matters:</b> Most of a company's data should be stored and processed in a data center. The physical and environmental protections built into data centers are intended to provide a safe haven for data. This section asks questions about these security controls, to ensure they can provide adequate protection for confidential data."
+            },
+            {
+              "type": "line",
+              "id": "dc_howmany",
+              "text": "How many data centers will (potentially) be used to store confidential data?"
+            },
+            {
+              "type": "line",
+              "id": "dc_countries",
+              "text": "List all countries where data centers are located:"
+            },
+            {
+              "type": "checkgroup",
+              "id": "dc_outsourced",
+              "text": "Do you use Google Cloud, Amazon Web Services, or a similar outsourced, virtual-machine-based data center?",
+              "defaultChoice": false,
+              "choices": [
+                {"dc_outsourced_yes": "Yes."},
+                {"dc_outsourced_no": "No, we maintain our own data centers."}
+              ]
+            },
+            {
+              "type": "line",
+              "id": "dc_provider",
+              "cond": "dc_outsourced_yes",
+              "text": "Who is your data center provider?"
+            },
+            {
+              "type": "block",
+              "cond": "dc_outsourced_no",
+              "text": "Running Own Data Centers",
+              "items": [
+                {
+                  "id": "dc_facilities_excl",
+                  "text": "Are all facilities used exclusively by your company, or are some shared?",
+                  "type": "radiogroup",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"dc_facilities_excl_yes": "Yes, we are the only user of all data centers that potentially store confidential data."},
+                    {"dc_facilities_excl_no": "No, some or all of the facilities are shared with other companies."}
+                  ]
+                },
+                {
+                  "type": "box",
+                  "id": "dc_facilities_equipment_separated",
+                  "cond": "dc_facilities_excl_no",
+                  "text": "How is your equipment separated from other users of the facility?"
+                },
+                {
+                  "type": "line",
+                  "id": "dc_certifications",
+                  "text": "Are the data centers categorized in tiers or certified in some way (e.g., TIA-942, ISO 27001, SSAE-16, etc.)? If yes, list the tiers/certifications:"
+                },
+                {
+                  "id": "dc_policy",
+                  "text": "Do you have a written policy that lists the physical security requirements for data centers?",
+                  "type": "radiogroup",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"dc_policy_yes": "Yes"},
+                    {"dc_policy_no": "No"}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_dc_policy",
+                  "cond": "dc_policy_no",
+                  "text": "When strong physical security controls are in place, certain requirements that are usually recommended (e.g., encryption of data at rest) may be relaxed. These exceptions are acceptable only if specific security controls are  implemented in all data centers that may store confidential information. A written policy describing these requirements should be enforced to ensure that a baseline for physical security is uniformly implemented across all data centers.",
+                  "warn": "yes",
+                  "name": "No written physical security policy",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "medium"
+                },
+                {
+                  "type": "checkgroup",
+                  "text": "Select the security controls that are in place at <i>all</i> of your data centers:",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"dc_controls_guards": "Guards"},
+                    {"dc_controls_mantrap": "Mantrap"},
+                    {"dc_controls_motiondetectors": "Motion detectors"},
+                    {"dc_controls_alarms": "Alarms"},
+                    {"dc_controls_cctv": "CCTV"},
+                    {"dc_controls_electronic_access_control": "Electronic access control (e.g., swipe cards)"},
+                    {"dc_controls_perimetersec": "Perimeter security"}
+                  ]
+                },
+                {
+                  "type": "checkgroup",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"dc_controls_ups": "UPS batteries"},
+                    {"dc_controls_generator": "Backup generators"},
+                    {"dc_controls_water_detection": "Water detection system"},
+                    {"dc_controls_fire_detection": "Fire detection system"},
+                    {"dc_controls_fire_suppression_gas": "Gas-based fire suppression system"},
+                    {"dc_controls_fire_suppression_water": "Water-based fire suppression system"}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_no_dc_controls_electronic_access_control",
+                  "cond": "!dc_controls_electronic_access_control",
+                  "text": "Electronic access control is strongly recommended for data centers that handle or store confidential or sensitive data. Standard (non-electronic) keys are very difficult to control (short of changing the entire lock), and access is generally not logged in an auditable way.",
+                  "warn": "yes",
+                  "name": "No electronic access control",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "high"
+                },
+                {
+                  "id": "dc_testing",
+                  "text": "Are all of the controls you selected above tested at least annually?",
+                  "type": "radiogroup",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"dc_testing_yes": "Yes"},
+                    {"dc_testing_no": "No"}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_no_dc_testing",
+                  "cond": "dc_testing_no",
+                  "text": "Make sure to put procedures in place to regularly verify that security controls are working as intended.",
+                  "warn": "yes",
+                  "name": "Security controls in data centers not tested",
+                  "why": "List the controls that are not regularly tested, and explain whether you have compensating controls in place:",
+                  "severity": "high"
+                },
+                {
+                  "id": "dc_monitoring",
+                  "text": "Do all data centers have monitoring and alerting in place for power supply, HVAC, and temperature?",
+                  "type": "radiogroup",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"dc_monitoring_yes": "Yes"},
+                    {"dc_monitoring_no": "No"}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_no_dc_monitoring",
+                  "cond": "dc_monitoring_no",
+                  "text": "HVAC and temperature inside data centers should be monitored, and appropriate personnel should be informed when they are outside normal ranges.",
+                  "warn": "yes",
+                  "name": "Data center security controls not monitored",
+                  "why": "If you have compensating controls in place, such as automatic failover to another data center, please explain below:",
+                  "severity": "high"
+                },
+                {
+                  "type": "block",
+                  "id": "block_dc_access_control",
+                  "cond": "dc_controls_electronic_access_control",
+                  "text": "Access Control",
+                  "items": [
+                    {
+                      "id": "dc_access",
+                      "text": "Do you have an auditable process in place for granting and revoking physical access to data centers?",
+                      "type": "radiogroup",
+                      "defaultChoice": false,
+                      "choices": [
+                        {"dc_access_yes": "Yes"},
+                        {"dc_access_no": "No"}
+                      ]
+                    },
+                    {
+                      "type": "tip",
+                      "id": "warn_dc_access",
+                      "cond": "dc_access_no",
+                      "text": "Physical access to data center facilities should generally be highly restricted, because a breach can affect confidentiality, integrity, and availability of information. It's important to have an auditable process for granting and revoking physical access, and for reviewing physical entry logs. Otherwise it won't be possible to determine at any given time who actually has access to the data center and the data stored within it.",
+                      "warn": "yes",
+                      "name": "No auditable procedures for data center access",
+                      "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                      "severity": "high"
+                    },
+                    {
+                      "id": "dc_acclogs",
+                      "text": "Are physical entry logs kept for at least six months?",
+                      "type": "radiogroup",
+                      "defaultChoice": false,
+                      "choices": [
+                        {"dc_acclogs_yes": "Yes"},
+                        {"dc_acclogs_no": "No"}
+                      ]
+                    },
+                    {
+                      "type": "tip",
+                      "id": "warn_dc_acclogs",
+                      "cond": "dc_acclogs_no",
+                      "text": "Unfortunately, security incidents (whether physical or logical) are not always immediately detected. It's important to retain physical access log files, typically for six months, in case they're needed for investigation.",
+                      "warn": "yes",
+                      "name": "No data center access log retention",
+                      "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                      "severity": "medium"
+                    },
+                    {
+                      "type": "block",
+                      "id": "block_entry_logs",
+                      "text": "Entry Logs Review",
+                      "items": [
+                        {
+                          "type": "radiogroup",
+                          "defaultChoice": false,
+                          "choices": [
+                            {"dc_acclogs_review_never": "Never"},
+                            {"dc_acclogs_review_quarterly": "Every couple of months"},
+                            {"dc_acclogs_review_monthly": "Once per month"},
+                            {"dc_acclogs_review_often": "More often"}
+                          ],
+                          "text": "How often do you review physical entry logs?"
+                        },
+                        {
+                          "type": "tip",
+                          "id": "warn_dc_acclogs_review_never",
+                          "cond": "dc_acclogs_review_never",
+                          "text": "In data theft incidents, it is not always immediately obvious that data has been copied (after all, nothing is missing per se). To address this, physical access logs should be regularly reviewed so that irregularities can be quickly identified and investigated.",
+                          "warn": "yes",
+                          "name": "No data center access log reviews",
+                          "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                          "severity": "medium"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "id": "dc_outage",
+                  "text": "Even the most advanced and protected data centers have occasional outages. Depending on the availability requirements of your project, it might be necessary to quickly switch to another data center so that operations can be resumed without excessive downtime.",
+                  "type": "radiogroup",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"dc_outage_yes": "We are able to quickly route traffic to another data center (within one hour)."},
+                    {"dc_outage_no": "We would need more than one hour to resume our service in case of a data center outage."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_dc_outage",
+                  "cond": "dc_outage_no",
+                  "text": "If availability is a strong concern for your project, you should make sure you're able to quickly switch to a different data center that is not geographically close to the one that's experiencing the outage.",
+                  "warn": "yes",
+                  "name": "No data center outage procedures",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "medium"
+                },
+                {
+                  "id": "dc_ra",
+                  "text": "Does your company review the physical and environmental risks that your data centers are exposed to, and do you have procedures in place to evaluate and, if necessary, address them?",
+                  "type": "radiogroup",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"dc_ra_yes": "Yes, we do risk assessments or &mdash; if hosted with a colocation provider &mdash; review our provider's security practices."},
+                    {"dc_ra_no": "No, we don't."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_no_dc_ra",
+                  "cond": "dc_ra_no",
+                  "text": "To ensure that current security controls are adequate, it's important to assess the physical and environmental risks that your data center (or data center provider) is exposed to.",
+                  "warn": "yes",
+                  "name": "Environmental risks in data center not monitored",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "high"
+                }
+              ]
+            },
+            {
+              "type": "box",
+              "id": "dc_other",
+              "text": "Is there anything else you want us to know about the security of your data centers?"
+            }
+          ]
+        },
+        {
+          "type": "block",
+          "id": "block_feedback",
+          "text": "Feedback",
+          "items": [
+            {
+              "type": "box",
+              "id": "feedback",
+              "text": "<b>Good news!</b> You have made it to the end of this questionnaire. If you can spare another minute, please let us know how we can improve it. Any feedback is highly appreciated."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

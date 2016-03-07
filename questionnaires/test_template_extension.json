@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "namespace": "mycompany",
+  "extensions": [
+    {
+      "type": "block",
+      "insertAfter": "network",
+      "text": "Questions specific to my company come here.",
+      "items": [
+        {
+          "type": "line",
+          "id": "company_specific",
+          "text": "Company specific question"
+        }
+      ]
+    }
+  ]
+}

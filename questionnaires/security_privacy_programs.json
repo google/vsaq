@@ -1,0 +1,922 @@
+
+// Copyright 2016 Google Inc. All rights reserved.
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+{
+  "questionnaire": [
+    {
+      "type": "block",
+      "text": "Security and Privacy Programs Questionnaire",
+      "items": [
+        {
+          "type": "block",
+          "text": "Questionnaire Options",
+          "items": [
+            {
+              "type": "info",
+              "text": "Select the options that describe your project. These settings configure the questionnaire to fit different scenarios."
+            },
+            {
+              "type": "checkgroup",
+              "id": "options",
+              "defaultChoice": false,
+              "choices": [
+                {"req_sensitive": "<b>Sensitive data</b> &mdash; This project involves processing Personally Identifiable Information (PII), Sensitive PII, or other information your customers may consider sensitive."}
+              ]
+            }
+          ]
+        },
+        {
+          "type": "block",
+          "text": "Security and Privacy",
+          "id": "block_security_privacy",
+          "items": [
+            {
+              "type": "info",
+              "text": "<b>Why this section matters:</b> An information security and privacy program is a comprehensive set of policies, guidelines, and processes for identifying and addressing the threats and risks to company information and systems. An established security and privacy program can help assure customers that their information will be safe while it's in your custody."
+            },
+            {
+              "type": "radiogroup",
+              "text": "Does your company have a strong, established security program, and does the scope of the program include all information processed as part of this project?",
+              "id": "secprog",
+              "defaultChoice": false,
+              "choices": [
+                {"secprog_yes": "Yes, our security program covers all aspects of information security for this project."},
+                {"secprog_no": "No, our security program is more limited."}
+              ]
+            },
+            {
+              "type": "tip",
+              "text": "Having a strong security program to adequately protect all confidential information processed or accessed by your company helps demonstrate to your customers that you will be able to keep their information safe. Your program should be based on recognized standards and should be regularly reviewed and audited.",
+              "warn": "yes",
+              "severity": "critical",
+              "why": "If there are legitimate reasons why you do not need to run a security management system/program, please explain below.",
+              "id": "warn_no_security_program",
+              "name": "No security program",
+              "cond": "secprog_no"
+            },
+            {
+              "type": "block",
+              "text": "Security and Privacy Program Details",
+              "cond": "secprog_yes",
+              "id": "block_security_privacy_details",
+              "items": [
+                {
+                  "type": "radiogroup",
+                  "text": "<p>Standards and guidelines are available for security and privacy programs. Complying with a generally accepted standard helps your customers assess the controls and safeguards that make up your program.</p>" +
+                          "<p>Examples of standards include <a href='http://en.wikipedia.org/wiki/ISO/IEC_27001'>ISO 27001</a>, <a href='https://www.pcisecuritystandards.org/security_standards/'>PCI DSS</a>, and <a href='http://www.aicpa.org/Research/Standards/AuditAttest/DownloadableDocuments/AT-00801.pdf'>SSAE 16</a>.</p>",
+                  "id": "secprog_standard",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"secprog_standard_yes": "Our security program is based on a recognized security standard, and it can easily be audited against that."},
+                    {"secprog_standard_no": "We implement our own security program, not based on any recognized standard or guideline."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "text": "<p>A completely custom security program is difficult to audit against. It's best to model your program on industry standards. If you already have a security program in place, it is often quite easy to remodel the program to comply with a standard of your choice. Make sure the standard you choose is appropriate for your systems. For example, PCI DSS was created specifically for systems and networks processing credit card information.</p>",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "warn": "yes",
+                  "severity": "high",
+                  "id": "warn_secprog_nostandard",
+                  "name": "Nonstandard security program",
+                  "cond": "secprog_standard_no"
+                },
+                {
+                  "type": "line",
+                  "text": "What's the name of the standard or set of best practices that your security program is based on?",
+                  "cond": "secprog_standard_yes",
+                  "id": "secprog_standard_name"
+                },
+                {
+                  "type": "radiogroup",
+                  "text": "<p>Information security and privacy standards are often limited to specific operations, services, or systems. For example, a PCI DSS compliance program may be limited to only those operations that involve the processing of payment card information.</p>" +
+                          "<p>Does your information security and privacy program cover all of your operations, services, and systems that involve access to confidential information?</p>",
+                  "id": "secprog_allinscope",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"secprog_allinscope_yes": "Yes, both the processes that directly deal with customer data (such as IT) and the processes that might indirectly affect the security of customer data (such as HR processes) are in scope."},
+                    {"secprog_allinscope_no": "No, our compliance with these standards is limited."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "warn": "yes",
+                  "severity": "high",
+                  "text": "Excluding parts of the company from the security program means that out-of-scope processes might put your customers' data at risk. Because overall security level is often determined by the weakest link, your security program should cover <i>all</i> of the processes that can directly or indirectly affect the security of your customers' information.",
+                  "why": "What is the scope of the security program? Explain which operations, services, systems, etc. are covered and not covered, especially those that affect the security of customer data but are not in scope:",
+                  "cond": "secprog_allinscope_no",
+                  "name": "Too narrow scope of security program",
+                  "id": "warn_secprog_notinscope"
+                },
+                {
+                  "type": "radiogroup",
+                  "text": "Has your company selected an individual or team to be responsible for managing the information security and privacy program?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"secprog_team_yes": "Yes, management has selected an individual or team to be responsible for the information security and privacy program."},
+                    {"secprog_team_no": "No, there is no ownership for security and privacy in the company."}
+                  ],
+                  "id": "secprog_team",
+                  "cond": "req_sensitive"
+                },
+                {
+                  "type": "tip",
+                  "text": "Not having someone formally responsible for information security often means that there are no resources available to make security-conscious decisions, plan controls, and implement policies. Customers typically expect companies to have an adequate security team.",
+                  "warn": "yes",
+                  "severity": "high",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "cond": "secprog_team_no",
+                  "name": "No formal security team",
+                  "id": "warn_secprog_nosecteam"
+                },
+                {
+                  "type": "line",
+                  "text": "How many employees in the company spend more than 50% of their time working on information security?",
+                  "cond": "secprog_team_yes",
+                  "id": "secprog_team_headcount"
+                }
+              ]
+            },
+            {
+              "type": "block",
+              "text": "Security Controls",
+              "id": "block_security_controls",
+              "items": [
+                {
+                  "type": "checkgroup",
+                  "text": "Select the controls you currently maintain as elements of your information security and privacy program:",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"secprog_privacy_policy": "An external policy or notice to the public, users, or customers, describing how you protect the security and privacy of data"},
+                    {"secprog_policies": "Written internal policies, guidelines, and documented practices for the safe handling and protection of data"},
+                    {"secprog_intaudits": "Internal audits of the security and privacy program"},
+                    {"secprog_extaudits": "Third-party audits of the security and privacy program"},
+                    {"secprog_ra": "A risk assessment and risk management process to regularly review the threats your company is exposed to"},
+                    {"secprog_hr": "A program to ensure security in your human resources processes"},
+                    {"secprog_vendorsec": "A process to ensure that your service providers and subcontractors are capable of taking appropriate steps to protect sensitive data and systems"},
+                    {"secprog_incidentmanagement": "Processes and procedures to ensure that security incidents are discovered in a timely manner and dealt with effectively"},
+                    {"secprog_changemgmt": "A change management process to ensure that all changes to networks, systems, and processes are appropriately reviewed"}
+                  ]
+                },
+                {
+                  "type": "line",
+                  "text": "Provide a link to your public security and/or privacy policy.",
+                  "cond": "secprog_privacy_policy",
+                  "id": "secprog_privacy_policy_uri"
+                },
+                {
+                  "type": "tip",
+                  "text": "In many countries, it's a legal requirement to have an external policy or notice that describes how you handle and protect personally identifiable information. Even when that's not the case, it's best to inform your customers about your methods for ensuring the security and privacy of personal information.",
+                  "warn": "yes",
+                  "severity": "medium",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "id": "warn_secprog_no_privacy_policy",
+                  "name": "No external privacy policy",
+                  "cond": "!secprog_privacy_policy"
+                },
+                {
+                  "type": "tip",
+                  "text": "Security policies are an important tool for establishing authoritative security requirements and enforcing them throughout the company. Policies form the basis of any security program.",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "warn": "yes",
+                  "severity": "high",
+                  "id": "warn_secprog_nopolicies",
+                  "name": "Lack of security policy",
+                  "cond": "!secprog_policies"
+                },
+                {
+                  "type": "tip",
+                  "text": "To verify that theoretical controls work well in practice, you should have an internal audit process that checks for compliance with your own policies and reviews the adequacy of your security program overall.",
+                  "warn": "yes",
+                  "severity": "high",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "id": "warn_secprog_no_intaudits",
+                  "name": "No internal audit of security program",
+                  "cond": "!secprog_intaudits"
+                },
+                {
+                  "type": "tip",
+                  "text": "External audits help to ensure that your security program meets industry standards. In addition, it is often helpful to have a second set of eyes (particularly those of security experts) review the controls and their implementation. Many companies require their vendors to do annual, independent audits of the security program.",
+                  "warn": "yes",
+                  "severity": "high",
+                  "name": "No external audit of security program",
+                  "id": "warn_secprog_no_extaudits",
+                  "why": "If you don't consider audits by independent third parties necessary, please explain below:",
+                  "cond": "!secprog_extaudits"
+                },
+                {
+                  "type": "tip",
+                  "text": "Most standards for information security programs require the implementation of risk assessment and risk management processes. These help identify, evaluate, and, if necessary, address the information security risks a company is exposed to.",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "warn": "yes",
+                  "severity": "critical",
+                  "name": "No Risk Assessment program",
+                  "id": "warn_secprog_no_ra",
+                  "cond": "!secprog_ra"
+                },
+                {
+                  "type": "tip",
+                  "text": "Employees handling sensitive information is still a major risk factor for most companies. It's important to have security controls in human resources, including:" +
+                          "<ul><li>Job descriptions for all employees with access to confidential or sensitive information</li>" +
+                          "<li>Granting access to data solely on a \"need-to-know\" basis, in accordance with the employee's job description and responsibilities; and revoking access when the need no longer exists</li>" +
+                          "<li>Having processes in place to make sure access (both physical and logical) is revoked when an employee, intern, vendor, contractor, or other associate leaves the company or a contract ends</li>" +
+                          "<li>Regularly training employees on current security and awareness best practices</li>" +
+                          "<li>Running background checks on new hires and contractors</li></ul>",
+                  "warn": "yes",
+                  "severity": "high",
+                  "name": "No security controls in people operations/human resources",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "cond": "!secprog_hr",
+                  "id": "warn_secprog_peopleops"
+                },
+                {
+                  "type": "tip",
+                  "text": "Anytime a customer, partner, subcontractor, vendor, or other third party is given access to sensitive information or systems, it's necessary to ensure they are capable of protecting this information at least as well as you do. Several recent data breaches in the news were caused by the compromise of a vendor somewhere down the line.",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "id": "warn_secprog_vendorsec",
+                  "name": "No partner security process",
+                  "warn": "yes",
+                  "severity": "high",
+                  "cond": "!secprog_vendorsec"
+                },
+                {
+                  "type": "tip",
+                  "text": "Unfortunately, security incidents are no longer a matter of \"if,\" but \"when.\" Security incident response procedures are an absolute necessity. Make sure you have procedures in place to ensure that incidents are quickly and effectively identified, contained, and investigated.",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "warn": "yes",
+                  "name": "No security incident response procedure",
+                  "severity": "critical",
+                  "id": "warn_secprog_incidentmanagement",
+                  "cond": "!secprog_incidentmanagement"
+                },
+                {
+                  "type": "tip",
+                  "text": "A change management process helps to ensure that the effect of a change is properly assessed before it's actually implemented. Although it's not necessary for everyday changes within defined procedures to undergo a formal review process, any change that is out of the ordinary should be reviewed and assessed before it's made. A good change management process has the following characteristics:" +
+                          "<ul><li>Formal documentation is in place, including classification of changes by size and impact</li>" +
+                          "<li>Change documentation is retained, both to facilitate auditing and so that changes can be reversed if necessary</li>" +
+                          "<li>A member of the security team sits on the change review board, to make sure security impact is properly assessed</li></ul>",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "warn": "yes",
+                  "severity": "high",
+                  "name": "No change management process for security impacting changes",
+                  "cond": "!secprog_changemgmt",
+                  "id": "warn_secprog_changemgmt"
+                }
+              ]
+            },
+            {
+              "type": "block",
+              "text": "Security and Privacy Policies",
+              "cond": "secprog_policies",
+              "id": "block_security_policies",
+              "items": [
+                {
+                  "type": "checkgroup",
+                  "text": "Select the topics that are covered by your security and privacy policies:",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"secprog_policies_class": "Information classification and protection"},
+                    {"secprog_policies_hr": "Security in human resources"},
+                    {"secprog_policies_physsec": "Physical security requirements"},
+                    {"secprog_policies_acceptableuse": "Acceptable use of information and IT devices"},
+                    {"secprog_policies_accesscontrol": "Access control"},
+                    {"secprog_policies_privacy": "Authorized/unauthorized use and disclosure of data"},
+                    {"secprog_policies_software": "Software development"},
+                    {"secprog_policies_incidentmgmt": "Incident management and response procedures for both security and privacy incidents"},
+                    {"secprog_policies_compliance": "Compliance with laws and regulations"},
+                    {"secprog_policies_data_destruction": "Retention and destruction of data"}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "text": "It seems that some important topics are not covered by your security policies.",
+                  "why": "Please explain below if you have controls in place to compensate for the lack of these policies:",
+                  "severity": "high",
+                  "warn": "yes",
+                  "name": "Important security policies missing",
+                  "cond": "!secprog_policies_class || !secprog_policies_hr || !secprog_policies_physsec || !secprog_policies_acceptableuse || !secprog_policies_accesscontrol || !secprog_policies_privacy || !secprog_policies_software || !secprog_policies_incidentmgmt || !secprog_policies_compliance",
+                  "id": "warn_secprog_policies"
+                },
+                {
+                  "type": "radiogroup",
+                  "text": "Security and privacy policies are most valuable if they are kept current. You should regularly update your policies to reflect changes in processes and security requirements, as well as in response to the threats your company is exposed to. How often does your company review its security and privacy policies to ensure they are up to date?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"secprog_policies_review_immediately": "Immediately whenever something important changes."},
+                    {"secprog_policies_review_often": "Multiple times per year."},
+                    {"secprog_policies_review_annually": "Once per year."},
+                    {"secprog_policies_review_rare": "Less frequently."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "text": "A lot can change within a year, particularly in a field as dynamic and fast-paced as information security. A functioning and well-maintained security program should include reviewing and updating security policies at least once per year, to make sure the company's security requirements are still relevant and adequate to address current threats.",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "high",
+                  "id": "warn_secprog_policies_review_rare",
+                  "name": "Policy review not frequent enough",
+                  "warn": "yes",
+                  "cond": "secprog_policies_review_rare"
+                }
+              ]
+            },
+            {
+              "type": "block",
+              "text": "Internal Assessments",
+              "cond": "secprog_intaudits",
+              "id": "block_internal_assessments",
+              "items": [
+                {
+                  "type": "radiogroup",
+                  "text": "How often are internal information security and privacy audits performed?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"secprog_intaudits_often": "Quarterly or more often."},
+                    {"secprog_intaudits_annually": "At least annually."},
+                    {"secprog_intaudits_rare": "Less frequently."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "text": "A lot can change within a year, particularly in a field as dynamic and fast-paced as information security. A functioning and well-maintained security program should include internal audits of the program at least once per year, to make sure the company's security requirements are still functional, relevant, and adequate to address current threats.",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "id": "warn_secprog_intaudits_rare",
+                  "name": "Infrequent internal audits",
+                  "warn": "yes",
+                  "severity": "high",
+                  "cond": "secprog_intaudits_rare"
+                },
+                {
+                  "type": "radiogroup",
+                  "text": "Does the scope of your internal assessment include the entire security and privacy program, as well as all operations, services, and systems that involve access to the customer data or systems that are used in this project?",
+                  "id": "secprog_intaudits_scope",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"secprog_intaudits_scope_yes": "Yes."},
+                    {"secprog_intaudits_scope_no": "No, the assessments are limited."}
+                  ]
+                },
+                {
+                  "type": "line",
+                  "text": "How is the scope limited?",
+                  "cond": "secprog_intaudits_scope_no",
+                  "id": "secprog_intaudits_scope_limits"
+                },
+                {
+                  "type": "radiogroup",
+                  "text": "Does your internal assessment audit your company's compliance with any specific information security or privacy standards?",
+                  "id": "secprog_intaudits_std",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"secprog_intaudits_std_yes": "Yes."},
+                    {"secprog_intaudits_std_no": "No."}
+                  ]
+                },
+                {
+                  "type": "line",
+                  "text": "To what standards does your internal assessment audit compliance?",
+                  "cond": "secprog_intaudits_std_yes",
+                  "id": "secprog_intaudits_std_names"
+                }
+              ]
+            },
+            {
+              "type": "block",
+              "text": "Third-Party Audits",
+              "cond": "secprog_extaudits",
+              "id": "block_third_party_audits",
+              "items": [
+                {
+                  "type": "radiogroup",
+                  "text": "How often does an independent third party perform audits of your security and privacy program? (Note: this should not include penetration tests or other technical assessments; rather, it refers to security reviews of your organizational processes, procedures, and policies.)",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"secprog_extaudits_quarterly": "Quarterly or more often."},
+                    {"secprog_extaudits_annually": "Annually."},
+                    {"secprog_extaudits_rare": "Less frequently."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "text": "A lot can change within a year, particularly in a field as dynamic and fast-paced as information security. A functioning and well-maintained security program should be audited by a third party at least once per year, to make sure the company's security program meets industry standards, functions properly, and is adequate to address current threats.",
+                  "warn": "yes",
+                  "name": "Infrequent external security program audits",
+                  "severity": "high",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "id": "warn_secprog_extaudits_rare",
+                  "cond": "secprog_extaudits_rare"
+                },
+                {
+                  "type": "radiogroup",
+                  "text": "Does the scope of these third party audits include the entire security and privacy program, as well as all operations, services, and systems that involve access to sensitive information or systems?",
+                  "id": "secprog_extaudits_scope",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"secprog_extaudits_scope_yes": "Yes."},
+                    {"secprog_extaudits_scope_no": "No, the audits are limited."}
+                  ]
+                },
+                {
+                  "type": "line",
+                  "text": "Describe the limits of these external audits:",
+                  "cond": "secprog_extaudits_scope_no",
+                  "id": "secprog_extaudits_scope_limited"
+                },
+                {
+                  "type": "tip",
+                  "text": "Independent third-party audits of your security program should cover all processes that may affect the security of your and your customers' information. It is fine if only part of the security program is audited each year, as long as the auditors are able to freely select the scope of the audit. Within a three-year timespan, these partial audits should have reviewed the entire security program.",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "id": "warn_secprog_extaudits_scope",
+                  "name": "3rd party audits not covering full security program",
+                  "warn": "yes",
+                  "severity": "high",
+                  "cond": "secprog_extaudits_scope_no"
+                },
+                {
+                  "type": "radiogroup",
+                  "text": "Does the independent audit including checking your company's compliance with any specific information security or privacy standard?",
+                  "id": "secprog_extaudits_std",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"secprog_extaudits_std_yes": "Yes."},
+                    {"secprog_extaudits_std_no": "No."}
+                  ]
+                },
+                {
+                  "type": "line",
+                  "text": "What standards does the audit comply with?",
+                  "cond": "secprog_extaudits_std_yes",
+                  "id": "secprog_extaudits_std_list"
+                },
+                {
+                  "type": "box",
+                  "text": "Describe how you select auditors and how often you change auditors, and list the auditors you selected for the three most recent audits:",
+                  "id": "secprog_extaudits_companies"
+                },
+                {
+                  "type": "radiogroup",
+                  "text": "Are you willing to share a management summary of the most recent audit reports?",
+                  "id": "secprog_extaudits_sharereports",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"secprog_extaudits_sharereports_yes": "Yes."},
+                    {"secprog_extaudits_sharereports_no": "No."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "text": "Inviting a third party to do an audit of your security program is something your company can be proud of. Providing evidence of these audits to customers can help them better understand that you have the necessary security controls in place to protect their information. This is true even if you don't share entire reports, but instead share management summaries that describe what has been reviewed and include a statement that the identified issues were remediated.",
+                  "id": "tip_secprog_extaudits_no_sharereports",
+                  "cond": "secprog_extaudits_sharereports_no"
+                }
+              ]
+            },
+            {
+              "type": "block",
+              "text": "Risk Assessment/Risk Management",
+              "cond": "secprog_ra",
+              "items": [
+                {
+                  "type": "radiogroup",
+                  "text": "Under your risk management process, how often are risk assessments reviewed and updated?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"secprog_ra_often": "Multiple times per year."},
+                    {"secprog_ra_annually": "Once per year."},
+                    {"secprog_ra_rare": "Less frequently."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "text": "Information security risks typically change frequently, which makes it important to regularly (at least annually) review each risk assessment, adjust it to changes in your business and threat posture, and act upon the changes to the risk your company is exposed to.",
+                  "id": "tip_secprog_ra_rare",
+                  "cond": "secprog_ra_rare"
+                }
+              ]
+            },
+            {
+              "type": "block",
+              "text": "Partner Security Program",
+              "cond": "secprog_vendorsec",
+              "items": [
+                {
+                  "type": "radiogroup",
+                  "text": "Has your company selected an individual or team to be responsible for reviewing service providers and subcontractors, to ensure that they sufficiently protect the security and privacy of sensitive information and systems?",
+                  "id": "secprog_vendorsec_owner",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"secprog_vendorsec_owner_yes": "Yes."},
+                    {"secprog_vendorsec_owner_no": "No."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "text": "It's important to review your outsourcing providers, vendors, subcontractors, and any other third parties with access to your information or systems. Make sure they have at least similar security controls in place as you do, and that they're generally able to adequately protect your confidential information.",
+                  "warn": "yes",
+                  "severity": "critical",
+                  "name": "No vendor security review process",
+                  "why": "If you don't work with third parties, or you have other mitigating factors in place, please explain below. Note that even if you don't directly share information with third parties, any vendors that have physical or logical access to your systems (e.g., colocated data center provider, IT support companies, companies you outsource client management to, etc.) should be reviewed as well.",
+                  "cond": "secprog_vendorsec_owner_no",
+                  "id": "warn_secprog_vendorsec_owner"
+                },
+                {
+                  "type": "radiogroup",
+                  "text": "Do your written contracts with relevant third parties require them to adequately protect the privacy and security of all confidential information they may get access to during the partnership?",
+                  "id": "secprog_vendorsec_clauses",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"secprog_vendorsec_clauses_yes": "Yes, we require all our outsourcing providers, vendors, and subcontractors to agree to contract clauses that assert security requirements."},
+                    {"secprog_vendorsec_clauses_no": "No, not all vendors that are potentially exposed to confidential information have agreed to security requirements contractually."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "text": "In order to protect confidential data while it is exposed to your outsourcing providers, vendors, and subcontractors, you should contractually enforce security controls similar to your own.",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "warn": "yes",
+                  "name": "No security clauses within vendors contracts",
+                  "severity": "high",
+                  "id": "warn_secprog_vendorsec_clauses",
+                  "cond": "secprog_vendorsec_clauses_no"
+                }
+              ]
+            },
+            {
+              "type": "block",
+              "text": "Change Management",
+              "cond": "secprog_changemgmt",
+              "id": "block_changemgmt",
+              "items": [
+                {
+                  "type": "radiogroup",
+                  "text": "Is your change management process formally documented, and does it classify changes by impact and size?",
+                  "id": "secprog_changemgmt_documented",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"secprog_changemgmt_documented_yes": "Yes"},
+                    {"secprog_changemgmt_documented_no": "No"}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "text": "Not all changes require the same level of attention. For some changes, a minimal amount of review is necessary, while others should be thoroughly assessed to make sure the impact of the change is well understood and has received the appropriate level of sign-off. Your change management documentation should classify changes by impact and size so reviewers can set the right level of assessment. Having formal documentation also helps facilitate communication and enforcement throughout the company.",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "warn": "yes",
+                  "name": "Change management process not documented",
+                  "severity": "medium",
+                  "cond": "secprog_changemgmt_documented_no",
+                  "id": "warn_secprog_changemgmt_documented"
+                },
+                {
+                  "type": "radiogroup",
+                  "text": "Does your change review board include representatives from the teams that are responsible for security and privacy?",
+                  "id": "secprog_changemgmt_secrep",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"secprog_changemgmt_secrep_yes": "Yes"},
+                    {"secprog_changemgmt_secrep_no": "No"}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "text": "The change review board should include at least one member who can assess the impact of all changes on security.",
+                  "warn": "yes",
+                  "severity": "high",
+                  "name": "No security person involved in change management process",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "cond": "secprog_changemgmt_secrep_no",
+                  "id": "warn_secprog_changemgmt_secrep"
+                },
+                {
+                  "type": "radiogroup",
+                  "text": "Do you retain records and documentation about the changes that go through change management?",
+                  "id": "secprog_changemgmt_records",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"secprog_changemgmt_records_yes": "Yes"},
+                    {"secprog_changemgmt_records_no": "No"}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "text": "It's important to retain documentation (in an auditable format) for changes that may affect the security of confidential information or systems. These records also help to make sure changes can be reversed, in case of unexpected issues.",
+                  "warn": "yes",
+                  "severity": "medium",
+                  "name": "Change management not logged",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "cond": "secprog_changemgmt_records_no",
+                  "id": "warn_secprog_changemgmt_records"
+                }
+              ]
+            },
+            {
+              "type": "block",
+              "text": "Security and Privacy Incident Response",
+              "cond": "secprog_incidentmanagement",
+              "id": "block_incident_response",
+              "items": [
+                {
+                  "type": "checkgroup",
+                  "text": "Select the controls you have in place for identifying security and privacy incidents as quickly as possible:",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"secprog_incidents_monitoring_ids": "We have signature- and/or anomaly-based IDS/IPS in place, and sensors are in place at strategic points throughout the network."},
+                    {"secprog_incidents_monitoring_logs": "We regularly review log files for signs of intrusion."},
+                    {"secprog_incidents_monitoring_other": "We have other methods in place to detect security and privacy incidents."}
+                  ]
+                },
+                {
+                  "type": "box",
+                  "text": "Describe the other detection methods you have in place.",
+                  "cond": "secprog_incidents_monitoring_other",
+                  "id": "secprog_incidents_monitoring_other_description"
+                },
+                {
+                  "type": "radiogroup",
+                  "text": "Are incident response procedures documented?",
+                  "id": "secprog_incidents_procedures",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"secprog_incidents_procedures_yes": "Yes"},
+                    {"secprog_incidents_procedures_no": "No"}
+                  ]
+                },
+                {
+                  "type": "radiogroup",
+                  "text": "Do you have the resources to internally conduct incident investigations?",
+                  "id": "secprog_incidents_knowhow",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"secprog_incidents_knowhow_yes": "Yes"},
+                    {"secprog_incidents_knowhow_no": "No"}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "text": "Because your project involves sensitive data, potential security incidents should be immediately investigated and addressed. To respond promptly, you should have in-house incident investigation experts.",
+                  "warn": "yes",
+                  "severity": "high",
+                  "name": "No in-house knowledge about incidents handling",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "cond": "secprog_incidents_knowhow_no && req_sensitive",
+                  "id": "warn_secprog_incidents_knowhow_sensitiveproject"
+                },
+                {
+                  "type": "tip",
+                  "text": "Because you don't have resources for dealing with security incidents in house, it is important to have written procedures that explain how to deal with an identified incident.",
+                  "warn": "yes",
+                  "severity": "high",
+                  "name": "No security incident response procedure",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "cond": "secprog_incidents_procedures_no && secprog_incidents_knowhow_no && !^warn_secprog_incidents_knowhow_sensitiveproject",
+                  "id": "warn_secprog_incidents_knowhow"
+                },
+                {
+                  "type": "line",
+                  "text": "Explain how you'll get the necessary resources for incident investigation when you need them:",
+                  "cond": "secprog_incidents_knowhow_no && !^warn_secprog_incidents_knowhow_sensitiveproject",
+                  "id": "secprog_incidents_knowhow_where"
+                },
+                {
+                  "type": "radiogroup",
+                  "text": "Do you inform affected customers about security incidents?",
+                  "id": "secprog_incidents_inform",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"secprog_incidents_inform_yes": "Yes"},
+                    {"secprog_incidents_inform_no": "No"}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "text": "Customers will expect you to notify them when a security incident affects their data. In many cases, they will also need to take steps to comply with various laws and regulations.",
+                  "severity": "critical",
+                  "warn": "yes",
+                  "name": "Customers not informed about security incidents",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "cond": "secprog_incidents_inform_no",
+                  "id": "warn_secprog_incidents_inform"
+                }
+              ]
+            },
+            {
+              "type": "block",
+              "text": "Personnel Security",
+              "cond": "secprog_hr",
+              "id": "block_personnel_security",
+              "items": [
+                {
+                  "text": "Do you have written job descriptions for employees with access to confidential or sensitive information?",
+                  "type": "radiogroup",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"secprog_peopleops_jobdesc_yes": "Yes"},
+                    {"secprog_peopleops_jobdesc_no": "No"}
+                  ],
+                  "id": "secprog_peopleops_jobdesc",
+                  "cond": "req_sensitive"
+                },
+                {
+                  "type": "tip",
+                  "text": "Job descriptions help ensure that security responsibilities are addressed and can be monitored, and they're essential for granting only \"need-to-know\" access to information.",
+                  "warn": "yes",
+                  "severity": "high",
+                  "name": "No documented job description",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "cond": "secprog_peopleops_jobdesc_no",
+                  "id": "warn_secprog_peopleops_jobdesc"
+                },
+                {
+                  "type": "radiogroup",
+                  "text": "Do you have processes in place to ensure that access to data is granted solely on a \"need-to-know\" basis, in accordance with the job descriptions and responsibilities of users? Do these processes also revoke access when the need no longer exists?",
+                  "id": "secprog_peopleops_needtoknow",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"secprog_peopleops_needtoknow_yes": "Yes"},
+                    {"secprog_peopleops_needtoknow_no": "No"}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "text": "Minimizing the number of personnel exposed to confidential information is key to keeping that information secure. Only those with a \"need to know\" should be granted access to the data. When you have processes and technical controls in place to enforce the need-to-know principle, you greatly reduce the risk of unauthorized data access and other security incidents.",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "warn": "yes",
+                  "severity": "high",
+                  "name": "Need-to-know principle not implemented",
+                  "cond": "secprog_peopleops_needtoknow_no",
+                  "id": "warn_secprog_peopleops_needtoknow"
+                },
+                {
+                  "type": "radiogroup",
+                  "text": "Do you have a disciplinary process in place for handling policy violations?",
+                  "id": "secprog_peopleops_disciplinary_process",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"secprog_peopleops_disciplinary_process_yes": "Yes"},
+                    {"secprog_peopleops_disciplinary_process_no": "No"}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "text": "Security policies are most effective when a formal process exists for dealing with violations. Disciplinary measures can both act as a deterrent and ensure fair treatment of violators. If certain requirements are frequently ignored, it may be necessary to review those requirements for adequacy or leverage management support to enforce them.",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "id": "warn_secprog_policies_violations",
+                  "name": "No formal process for policy violations",
+                  "warn": "yes",
+                  "severity": "medium",
+                  "cond": "secprog_peopleops_disciplinary_process_no"
+                },
+                {
+                  "type": "radiogroup",
+                  "text": "Do you have processes in place to make sure access (both physical and logical) is revoked when an employee, intern, vendor, contractor, or other associate leaves the company or a contract ends? Note that in many cases it is <i>not</i> sufficient to just disable the main LDAP or Active Directory account. Many employees have access to information that is governed by additional credentials, such as data in software-as-a-service applications.",
+                  "id": "secprog_peopleops_leaver",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"secprog_peopleops_leaver_yes": "Yes"},
+                    {"secprog_peopleops_leaver_no": "No"}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "text": "Termination processes are very important. There are numerous documented cases where the failure to revoke the access of former employees resulted in security incidents.",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "warn": "yes",
+                  "name": "No procedures for job leave/termination",
+                  "severity": "critical",
+                  "cond": "secprog_peopleops_leaver_no",
+                  "id": "warn_secprog_peopleops_leaver"
+                },
+                {
+                  "type": "radiogroup",
+                  "text": "How often do you require your employees to undergo information security and privacy training?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"secprog_peopleops_train_never": "Never."},
+                    {"secprog_peopleops_train_hire": "Once, upon hire."},
+                    {"secprog_peopleops_train_annually": "Upon hire, and at least once per year."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "text": "Given the rapid pace of technologies, threats, and best practices, it's very important to train employees regularly in how to ensure security in their work. Only appropriately trained individuals should be granted access to confidential information.",
+                  "warn": "yes",
+                  "severity": "medium",
+                  "name": "No security training for employees",
+                  "why": "If mitigating factors make regular information security training unnecessary, explain below:",
+                  "cond": "secprog_peopleops_train_never || secprog_peopleops_train_hire",
+                  "id": "warn_secprog_peopleops_training"
+                },
+                {
+                  "type": "radiogroup",
+                  "text": "Do you require temps, interns, and contractors to undergo security and privacy training?",
+                  "id": "secprog_train_tvc",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"secprog_train_tvc_yes": "Yes"},
+                    {"secprog_train_tvc_no": "No"}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "text": "Temporary employees, interns, vendors, and contractors are typically less concerned about security, since they don't expect to be at the company over the long term. So it's even more important to train them and make them aware of the security and privacy aspects of their work.",
+                  "warn": "yes",
+                  "severity": "medium",
+                  "name": "No security training for temps/interns/contractors",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "cond": "secprog_train_tvc_no",
+                  "id": "warn_secprog_train_tvc"
+                },
+                {
+                  "type": "radiogroup",
+                  "text": "Do you perform background checks for personnel who are entrusted with sensitive information or granted access to sensitive systems?",
+                  "id": "secprog_background_checks",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"secprog_background_checks_yes": "Yes"},
+                    {"secprog_background_checks_no": "No"}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "text": "New hire background checks should always be performed, both to ensure that an informed hiring decision is made and to verify the trustworthiness of new employees. Many legislatures limit the kinds of background checks that are permissible; make sure your checks comply with all applicable laws. For sensitive projects, you should at least do CV/resume checks, reference checks, and criminal record checks for new hires.",
+                  "warn": "yes",
+                  "severity": "high",
+                  "name": "No background checks on new-hires",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "cond": "secprog_background_checks_no",
+                  "id": "warn_secprog_bgcheck"
+                },
+                {
+                  "type": "block",
+                  "text": "Background Checks",
+                  "cond": "secprog_background_checks_yes",
+                  "id": "block_background_checks",
+                  "items": [
+                    {
+                      "type": "checkgroup",
+                      "text": "What kinds of background checks do you perform for employees who potentially have access to confidential information? Select all that apply.",
+                      "defaultChoice": false,
+                      "choices": [
+                        {"secprog_bgcheck_cv": "CV/resume checks"},
+                        {"secprog_bgcheck_reference": "Reference checks"},
+                        {"secprog_bgcheck_criminal": "Criminal record/conviction checks"},
+                        {"secprog_bgcheck_credit": "Credit checks"},
+                        {"secprog_bgcheck_ssntrace": "Social security (or other national identifier) trace"},
+                        {"secprog_bgcheck_other": "Other background checks, as described below"}
+                      ]
+                    },
+                    {
+                      "type": "box",
+                      "text": "Describe the other checks you perform for new hires:",
+                      "cond": "secprog_bgcheck_other",
+                      "id": "secprog_bgcheck_other_desc"
+                    },
+                    {
+                      "type": "tip",
+                      "text": "New hire background checks should always be performed, both to ensure that an informed hiring decision is made  and to verify the trustworthiness of new employees. Many legislatures limit the kinds of background checks that are permissible; make sure your checks comply with all applicable laws. CV/resume checks, reference checks, and criminal record checks are allowed in most countries, and are recommended for new hires who may potentially get access to confidential information.",
+                      "warn": "yes",
+                      "severity": "high",
+                      "name": "No background checks on new-hires",
+                      "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                      "cond": "!secprog_bgcheck_cv || !secprog_bgcheck_reference || !secprog_bgcheck_criminal",
+                      "id": "warn_secprog_bgcheck_not_enough"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "box",
+              "text": "Is there anything else you want us to know about your security program?",
+              "id": "secprog_other"
+            }
+          ]
+        },
+        {
+          "type": "block",
+          "text": "Feedback",
+          "id": "block_feedback",
+          "items": [
+            {
+              "type": "box",
+              "text": "<b>Good news!</b> You have made it to the end of this questionnaire. If you can spare another minute, please let us know how we can improve it. Any feedback is highly appreciated.",
+              "id": "feedback"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+

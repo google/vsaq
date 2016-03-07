@@ -1,0 +1,353 @@
+/**
+ * Copyright 2016 Google Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * Normal body and header styles.
+ */
+.right {
+  float: right;
+}
+.left {
+  float: left;
+}
+.center_text {
+  text-align: center;
+}
+
+/**
+ * Styles of various questionnaire items.
+ */
+#_vsaq_body fieldset {
+  border:1px solid #ccc;
+  padding:0px 16px 16px 16px;
+  margin-bottom:16px;
+}
+#_vsaq_body fieldset>legend {
+  font-size: 20px;
+  color: #DD4B39;
+}
+#_vsaq_body fieldset fieldset>legend {
+  font-size: 16px;
+  color: #00549A;
+}
+#_vsaq_body fieldset fieldset fieldset>legend {
+  font-size: 14px;
+  font-weight: bold;
+  color: #4173C9;
+}
+#_vsaq_body legend {
+  padding: 0 6px;
+  margin-bottom: 16px;
+  display: block !important; /* override maia.css display:none; of legend */
+}
+#_vsaq_body ul {
+  list-style-type: disc;
+  margin-bottom: 18px;
+}
+#_vsaq_body li {
+  margin-left: 30px;
+  margin-bottom: 0px;
+  padding-left: 20px;
+  text-indent: -20px;
+}
+#_vsaq_butterbar {
+  background-color: #F9BECA;
+  text-align: center;
+  z-index: 999;
+  padding: 0px 4px 0px 4px;
+  font-size: 12px;
+}
+#_vsaq_sections_header {
+  padding: 3px 3px 3px 3px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #1155CC;
+}
+.vsaq-section-status {
+  font-size: 10px;
+}
+.vsaq-spacer {
+  margin-top: 24px;
+  border: 0px;
+}
+.vsaq-question-title {
+  margin-top: 18px;
+  margin-bottom: 4px;
+}
+.vsaq-yesno-block {
+  margin-bottom: 12px;
+}
+.vsaq-info-item {
+  margin-bottom: 24px;
+  font-weight: bold;
+}
+.vsaq-info-item p {
+  margin-bottom: 16px;
+}
+.vsaq-question-title {
+  font-weight: bold;
+}
+.vsaq-bubble-block {
+  position: relative;
+  padding-bottom: 6px;
+}
+.vsaq-bubble-medium {
+  background-color: #F9EDBE !important;
+}
+.vsaq-bubble-high {
+  background-color: #F9CFBE !important;
+}
+.vsaq-bubble-critical {
+  background-color: #F9BECA !important;
+}
+.vsaq-checkbox-item label {
+  font-weight: normal;
+  text-indent: -18px;
+  padding-left: 20px;
+  margin-left: 20px;
+}
+.vsaq-radio-item label {
+  font-weight: normal;
+  text-indent: -18px;
+  padding-left: 20px;
+  margin-left: 20px;
+}
+.vsaq-yesno-block label {
+  font-weight: normal;
+  text-indent: -18px;
+  padding-left: 20px;
+  margin-left: 20px;
+}
+.vsaq-line {
+  width: 100% !important;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.vsaq-box {
+  width: 100%;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+.vsaq-compensating-desc {
+  margin-top: 18px;
+  margin-bottom: 16px;
+}
+.vsaq-invisible {
+  display: none;
+}
+.vsaq-group-item {
+  padding-bottom: 10px;
+}
+.vsaq-nowrap {
+  white-space: nowrap;
+}
+.vsaq-progressbar {
+  display: block;
+  width: 200px;
+  height: 16px;
+  margin: 0 0 2px;
+  float: right;
+  border: 1px solid #E5E5E5;
+}
+.vsaq-progressbar div.blue {
+  background: #8a8a8a;
+  height: 16px;
+  width: 75%;
+  text-align: center;
+  display: block;
+  float: left;
+}
+.vsaq-statsbox {
+  background: #F1F1F1;
+  max-width: 300px;
+  padding: 5px;
+  overflow: auto;
+  font-size: 10px;
+  margin: 8px 0px 8px 0px;
+}
+.vsaq-stats-title {
+  color: #a1a1a1;
+  font-weight: bold;
+}
+.vsaq-statsbox label {
+  float: left;
+  padding-right: 5px;
+  display: block;
+  width: 80px;
+}
+.vsaq-statsitem {
+  clear: both;
+  display: block;
+}
+.vsaq-saved-status {
+  margin-left: 20px;
+  color: #666;
+}
+.vsaq-tooltip {
+  background-color: #F9EDBE;
+  border: 2px solid #8c8c8c;
+  margin: 5px;
+  padding: 20px;
+  width: 33%;
+  z-index: 999;
+}
+.vsaq-block-link {
+  font-size: 85%;
+  padding-left: 5px;
+  color: black;
+  font-weight: initial;
+}
+a.vsaq-block-link:visited,
+a.vsaq-block-link:hover,
+a.vsaq-block-link:active {
+  color: black;
+  text-decoration: none;
+}
+
+.vsaq-normal-weight {
+  font-weight: normal;
+}
+
+#vsaq_todo_ul {
+  list-style-type: none !important;
+  margin-left: -30px;
+}
+
+/**
+ * Closure styles that need adjustment.
+ */
+.ac-renderer {
+  z-index: 110;
+}
+
+.tooltip-link {
+  border-bottom: 1px dotted;
+}
+
+.butterbar-container {
+  top: 0px;
+  width: 75%;
+  position: fixed;
+  left: 50%;
+  margin: 0 0 0 -37.5%;
+}
+
+.butterbar {
+  display: inline-block;
+}
+
+table.borders,
+div.table {
+  background: #fff;
+  border-collapse: collapse;
+  border-bottom: 1px solid #e5e5e5;
+  border-top: 1px solid #e5e5e5;
+  margin: 0 0 20px 0;
+  padding: 0;
+  width: 100%;
+}
+
+table.borders.hover tbody tr:hover td,
+.table div.table-item:hover {
+  background: #fffed6;
+  cursor: default;
+}
+
+table.borders tr.alt td {
+  background: #c5d6f1;
+}
+
+table.borders thead .meta {
+  color: #555;
+  float: right;
+  font-size: 11px;
+  font-weight: normal;
+  padding: 2px 4px;
+}
+
+table.borders thead.sub td {
+  background: #d4dbde;
+}
+
+table.borders thead td,
+.table div.table-header {
+  background: #f1f1f1;
+  font-weight: bold;
+  margin: 0;
+}
+
+table.borders td,
+table.borders th {
+  border-bottom: 1px solid #e5e5e5;
+  padding: 5px;
+}
+
+div.table-row {
+  overflow: hidden;
+}
+
+table.borders tr td:first-child {
+  width: auto;
+}
+
+table.borders tr td img.icon {
+  border: 0;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+table.borders tr td a img {
+  border: 0;
+  margin-top: -2px;
+  vertical-align: middle;
+}
+
+table.borders thead tr th {
+  background: #f1f1f1;
+  text-align: left;
+  cursor: pointer;
+}
+
+.little-meta {
+  color: #666;
+  font-size: 11px;
+}
+
+body .loading-content {
+  display: none;
+}
+
+body.done-loading .loading-mask {
+  display: none;
+}
+
+body.done-loading .loading-content {
+  display: inherit;
+}
+
+body .loading-mask {
+  font-size: 18px;
+}
+
+/**
+ * Reduce space between navigation and page content
+ */
+#maia-nav-x.maia-complex+#maia-main {
+  margin-top: 5px !important;
+}
+

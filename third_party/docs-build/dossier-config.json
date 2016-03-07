@@ -1,0 +1,13 @@
+{
+  "output": "docs/api/",
+  "sources": ["vsaq", "client_side_only_impl", "build/templates", "third_party/closure-templates-compiler/soyutils_usegoog.js"],
+  "externs" : ["third_party/closure-compiler/contrib/externs/chrome_extensions.js"],
+  "closureLibraryDir": "third_party/closure-library/closure/goog/",
+  "excludes": ["vsaq/**_test.js"],
+  "typeFilters": [
+    "^goog",
+    "^soy",
+    "^soydata"
+  ],
+  "readme": "README.md"
+}

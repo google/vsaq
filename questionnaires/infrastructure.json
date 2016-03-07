@@ -1,0 +1,1824 @@
+
+// Copyright 2016 Google Inc. All rights reserved.
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//   http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+{
+  "questionnaire": [
+    {
+      "type": "block",
+      "text": "Infrastructure Security Questionnaire",
+      "items": [
+        {
+          "type": "block",
+          "text": "Questionnaire Options",
+          "items": [
+            {
+              "type": "info",
+              "text": "Select the options that describe your project. These settings configure the questionnaire to fit different scenarios."
+            },
+            {
+              "type": "checkgroup",
+              "id": "options",
+              "defaultChoice": false,
+              "choices": [
+                {"req_sensitive": "<b>Sensitive data</b>: This project involves processing Personally Identifiable Information (PII), Sensitive PII, or other information your customers may consider sensitive."},
+                {"req_nodata": "<b>Remote access only</b>: All information processing occurs on your customers' systems, and this project accesses those systems remotely."}
+              ]
+            }
+          ]
+        },
+        {
+          "type": "block",
+          "id": "block_network",
+          "text": "Network",
+          "items": [
+            {
+              "type": "info",
+              "text": "<b>Why this section matters:</b> Your network is the foundation of your IT infrastructure and the first line of defense against external attackers. If the devices that make up your network are not adequately maintained and secured, an attacker might gain access to confidential information."
+            },
+            {
+              "type": "radiogroup",
+              "id": "network_config_guidelines",
+              "text": "It's essential to have a written set of guidelines for the configuration, maintenance, and use of your network. Written guidelines and rules help preserve the availability, integrity, and confidentiality of the network itself, and well as the information transmitted over it.",
+              "defaultChoice": false,
+              "choices": [
+                {"network_config_guidelines_yes": "We have clearly defined network guidelines. They are regularly reviewed and applied to all appropriate networking devices."},
+                {"network_config_guidelines_no": "We don't currently have guidelines, or they're not consistently applied."}
+              ]
+            },
+            {
+              "type": "tip",
+              "id": "warn_no_network_config_guidelines",
+              "cond": "network_config_guidelines_no",
+              "text": "<p>It's important to follow a strict set of guidelines for maintaining, configuring, and using network devices. Common topics to address:</p><ul><li>Acceptable networking devices</li><li>Protocol requirements (for example, strong authentication, encrypted data)</li><li>Monitoring standards</li><li>Change management requirements</li><li>Firewall policy</li></ul>",
+              "warn": "yes",
+              "name": "No hardening guidelines for network infrastructure",
+              "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+              "severity": "high"
+            },
+            {
+              "type": "radiogroup",
+              "id": "network_firewalls",
+              "text": "Firewalls are a basic network security control. Does your company use firewalls to restrict traffic into and out of your network at strategic points?",
+              "defaultChoice": false,
+              "choices": [
+                {"network_firewalls_yes": "Yes, we have firewalls for filtering all inbound and outbound traffic."},
+                {"network_firewalls_no": "We do not use firewalls."}
+              ]
+            },
+            {
+              "type": "tip",
+              "id": "warn_no_network_firewalls",
+              "cond": "network_firewalls_no",
+              "text": "Even small networks should be protected by firewalls that are configured to filter both incoming and outgoing traffic, and to allow only those services that have been explicitly whitelisted. Firewalls provide a great basic defense layer, and they are rather easy to configure and maintain.",
+              "warn": "yes",
+              "name": "Lack of firewall",
+              "why": "Explain why firewalls are not necessary in your setup:",
+              "severity": "critical"
+            },
+            {
+              "type": "block",
+              "id": "block_firewalls",
+              "cond": "network_firewalls_yes",
+              "text": "Firewalls",
+              "items": [
+                {
+                  "type": "radiogroup",
+                  "id": "network_dmz",
+                  "text": "Does your company place all externally exposed systems in a DMZ, separated from the internal network by a network filter?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"network_dmz_yes": "Yes, all of our externally exposed systems are hosted in a DMZ and separate from our internal systems."},
+                    {"network_dmz_no": "Some of our exposed systems may be on the internal network."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_no_network_dmz",
+                  "cond": "network_dmz_no",
+                  "text": "A <a href=\"http://en.wikipedia.org/wiki/DMZ_(computing)\">DMZ</a> (demilitarized zone) is a subnetwork for systems that are exposed to an untrusted network (i.e., the Internet). The purpose of a DMZ is to ensure that even if an externally exposed system is compromised, the attacker only has access to systems within the DMZ &mdash; not the internal network. Without a DMZ in place, a single missing security patch or a 0-day vulnerability in one of the exposed services can lead to a full compromise of the internal network.",
+                  "warn": "yes",
+                  "name": "Externally exposed systems on internal network",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "high"
+                },
+                {
+                  "type": "radiogroup",
+                  "id": "network_separation",
+                  "text": "Does your company implement a network zoning concept that separates systems by function, value, and risk level?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"network_separation_yes": "Yes, we operate multiple network zones, separated by filters, that group systems by their value, function, or risk level."},
+                    {"network_separation_no": "No, all of our systems are hosted in a single zone and have network-level access to each other."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_no_network_separation",
+                  "cond": "network_separation_no",
+                  "text": "A network zoning concept that groups and separates systems can help tremendously in the event of a system compromise. Confining an attacker to a zone ensures that even if that zone is lost, other systems that may be more valuable are still protected. Unless your network is very small, zoning is essential and is difficult to replace with other security controls. Without zoning, a compromise in a completely unrelated system might expose our confidential information.",
+                  "warn": "yes",
+                  "name": "No appropriate network zoning",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "high"
+                }
+              ]
+            },
+            {
+              "type": "radiogroup",
+              "id": "network_encryption",
+              "text": "Is encryption and integrity protection in place for all internal network traffic that potentially carries sensitive information (including passwords, emails, files, source code, management traffic, etc.)?",
+              "defaultChoice": false,
+              "choices": [
+                {"network_encryption_yes": "Yes"},
+                {"network_encryption_no": "Some unencrypted protocols may carry sensitive information."}
+              ]
+            },
+            {
+              "type": "tip",
+              "id": "warn_no_network_encryption",
+              "cond": "network_encryption_no",
+              "text": "<p>Traffic sniffing is usually easily done, both within and outside of the internal network. Even on switched networks, an attacker can use ARP spoofing to route other systems' network packets through their computer and read the contents on the way through. The only effective protection is cryptography. All sensitive traffic should be both encrypted and signed: encrypted to protect against eavesdropping, and signed to make sure an attacker cannot simply modify the content of the transmitted messages.</p><p>Encrypted protocols are readily available for most purposes. In addition, many protocols &mdash; even those originally conceived as plain-text protocols &mdash; can be tunneled through SSL/TLS to add an encrypted and signed layer.</p><p>Encryption must be in place to protect confidential information that is transmitted over the network.</p>",
+              "warn": "yes",
+              "name": "Not all important network traffic encrypted",
+              "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+              "severity": "high"
+            },
+            {
+              "type": "block",
+              "id": "block_plaintext",
+              "cond": "network_encryption_no",
+              "text": "Compensating Controls for Plain-Text Protocols",
+              "items": [
+                {
+                  "type": "checkgroup",
+                  "text": "Select the purposes for which you're using unencrypted networking protocols:",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"network_encryption_protocols_management": "Device management (e.g., telnet, writable SNMP, plain-text HTTP, etc.)"},
+                    {"network_encryption_protocols_monitoring": "Monitoring (e.g., read-only SNMP, plain-text HTTP, etc.)"},
+                    {"network_encryption_protocols_filetransfer": "File transfer (e.g., NFS, plain-text WebDAV, etc.)"},
+                    {"network_encryption_protocols_other": "Other"}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_network_encryption_protocols_management",
+                  "cond": "network_encryption_protocols_management",
+                  "text": "You should never use plain-text protocols for remote device administration and management. These protocols should use encryption to protect credentials passing over the network, and they should also protect the integrity of the transmitted commands in order to guard against manipulation.",
+                  "warn": "yes",
+                  "name": "Plain-text protocols used for network management",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "high"
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_network_encryption_protocols_monitoring",
+                  "cond": "network_encryption_protocols_monitoring",
+                  "text": "In monitoring contexts, encryption requirements depend on the sensitivity of the information made accessible by the protocol. If sensitive information can be fetched, the protocol should be encrypted. Information gathered through monitoring interfaces can be highly valuable to an attacker; it often contains network and server details that can be used in subsequent attacks.",
+                  "warn": "yes",
+                  "name": "Plain-text protocols used for network monitoring",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "medium"
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_network_encryption_protocols_filetransfer",
+                  "cond": "network_encryption_protocols_filetransfer",
+                  "text": "Protocols that allow access to files on the network should generally be encrypted, unless all of the information on the associated network shares is public. Unencrypted protocols for file access put both the confidentiality and the integrity of data at risk because an attacker can not only steal the information, but also modify it.",
+                  "warn": "yes",
+                  "name": "Plaintext protocols used for file access",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "high"
+                },
+                {
+                  "type": "box",
+                  "id": "network_unencrypted_protocols",
+                  "text": "Describe the unencrypted protocols that might carry sensitive information. Explain why these protocols cannot be replaced by encrypted variants, and what measures you have taken to ensure that these protocols cannot be used to endanger our confidential information."
+                },
+                {
+                  "type": "radiogroup",
+                  "id": "network_arpspoofing",
+                  "text": "Do you have controls in place to protect your systems from <a href='http://en.wikipedia.org/wiki/ARP_spoofing'>ARP spoofing</a>?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"network_arpspoofing_yes": "Yes, our switches protect against ARP spoofing, and where this feature is not available, we monitor for spoofed ARP packets in order to quickly identify attacks."},
+                    {"network_arpspoofing_no": "Not all of our network zones are protected against ARP spoofing."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_network_arpspoofing",
+                  "cond": "network_arpspoofing_no",
+                  "text": "<p>ARP spoofing was conceived to allow sniffing even on switched networks that don't send all traffic to a subnet. Because the ARP protocol does not have integrity protection, the attack is trivial.</p><p>Luckily, ARP spoofing is relatively easy to prevent, and even easier to identify. Switches that are capable of working on the IP layer have built-in defenses against this attack (they register when systems on two different ports claim the same IP address). Additionally, open source tools such as <a href='http://en.wikipedia.org/wiki/Arpwatch'>arpwatch</a> can be used to identify an active attack and send out alerts.</p><p>It's very important to have controls in place to protect against this kind of attack.</p>",
+                  "warn": "yes",
+                  "name": "No adequate protection against ARP spoofing",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "medium"
+                },
+                {
+                  "type": "radiogroup",
+                  "id": "network_management_segment",
+                  "cond": "network_encryption_protocols_management",
+                  "text": "Do you have a separate management network for managing network devices?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"network_management_segment_yes": "Yes, management of networking devices is done through a separate network with strong access restrictions (e.g., 802.1x, or additional physical security for ports that allow access to the management network). All management interfaces of networking devices are only accessible from the management network."},
+                    {"network_management_segment_no": "No, management interfaces for networking devices are accessible from the regular network."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_network_management_segment",
+                  "cond": "network_management_segment_no",
+                  "text": "<p>A separate network for device management can help mitigate the risk associated with devices that do not support encrypted protocols. The dedicated management zone should generally not be routable from the regular internal network, and access to the zone should be restricted. Restriction methods include access control (such as 802.1x) and physical port protection.</p><p>For sensitive projects, it's best if networking devices are either administered exclusively through encrypted and integrity-protected protocols, or are managed through a separate and protected management network.</p>",
+                  "warn": "yes",
+                  "name": "No separate network for device management",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "medium"
+                }
+              ]
+            },
+            {
+              "type": "radiogroup",
+              "id": "network_monitoring",
+              "text": "Have you implemented monitoring and alerting for your network?",
+              "defaultChoice": false,
+              "choices": [
+                {"network_monitoring_yes": "Yes"},
+                {"network_monitoring_no": "No"}
+              ]
+            },
+            {
+              "type": "tip",
+              "id": "warn_no_network_monitoring",
+              "cond": "network_monitoring_no",
+              "text": "<p>It's essential to monitor your network for events that may affect the availability, integrity, and confidentiality of data. Network events are numerous and varied, so it's important to find the right signals for your company's infrastructure, architecture, and services.</p><p>It's extremely important to understand what's happening on your network, and to identify security events. Not only should you monitor your network and its events, but you also need to identify people to alert when important signals occur.</p>",
+              "warn": "yes",
+              "name": "No monitoring and alerting for network",
+              "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+              "severity": "high"
+            },
+            {
+              "type": "block",
+              "id": "block_network_monitoring",
+              "cond": "network_monitoring_yes",
+              "text": "Network Monitoring",
+              "items": [
+                {
+                  "type": "radiogroup",
+                  "id": "network_monitoring_availability",
+                  "text": "Do you monitor the availability of your network and the devices on it?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"network_monitoring_availability_yes": "Yes, we watch the network for outages, and we alert the right people when issues occur."},
+                    {"network_monitoring_availability_no": "No, the availability of our network is not monitored or not sufficiently monitored."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_no_network_monitoring_availability",
+                  "cond": "network_monitoring_availability_no",
+                  "text": "<p>It's important to monitor your network for events that may affect the availability of your (and our) data. Monitoring helps ensure that outages are swiftly identified and addressed.</p>",
+                  "warn": "yes",
+                  "name": "Network availability not monitored",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "medium"
+                },
+                {
+                  "type": "radiogroup",
+                  "id": "network_monitoring_security",
+                  "text": "Do you monitor your network for security events?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"network_monitoring_security_yes": "Yes, we monitor for unauthorized access, unexpected behavior, certain attack signatures, and other indicators of a security incident."},
+                    {"network_monitoring_security_no": "We do not currently have extensive monitoring for security incidents on our network."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_no_network_monitoring_security",
+                  "cond": "network_monitoring_security_no",
+                  "text": "<p>Monitoring and alerting is strongly recommended, to ensure that unauthorized access and other security incidents are swiftly identified and addressed.</p><p>Note that this does not necessarily mean you need an intrusion detection/prevention system (IDS/IPS) on your network. In many cases, it can be just as effective to identify specific and custom signals that indicate a potential incident.</p>",
+                  "warn": "yes",
+                  "name": "Security events on network not monitored",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "high"
+                },
+                {
+                  "type": "radiogroup",
+                  "id": "network_monitoring_logging",
+                  "text": "Do you retain logs produced by networking devices (such as firewalls, routers, DNS servers, DHCP servers, etc.) for at least six months, and do you monitor them regularly?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"network_monitoring_logging_yes": "Yes, we regularly review these logs and retain them in case we need to investigate an incident."},
+                    {"network_monitoring_logging_no": "No, these logs are not retained and/or monitored."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_no_network_monitoring_logging",
+                  "cond": "network_monitoring_logging_no",
+                  "text": "<p>Log files from devices like firewalls, DNS servers, DHCP servers, and routers are indispensable in the event of a security incident. They're also a great source of signals to help identify security-impacting events in the first place. Network devices should produce adequate log files that are retained for at least six months, so that historic events can also be appropriately investigated.</p>",
+                  "warn": "yes",
+                  "name": "Short retention period for network logs",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "high"
+                },
+                {
+                  "type": "radiogroup",
+                  "id": "network_centrallogging",
+                  "text": "Are the logs produced by networking devices (such as firewalls, DNS servers, DHCP servers, routers, etc.) stored in a central location?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"network_centrallogging_yes": "Yes, all devices that support logging write logs to one or more dedicated log systems."},
+                    {"network_centrallogging_no": "No, each device stores log files separately."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_no_network_centrallogging",
+                  "cond": "network_centrallogging_no",
+                  "text": "<p>With a central log collection location for all relevant networking systems, you can more easily correlate security-impacting events across multiple sources. Centralizing also simplifies log review. For sensitive projects, a central logging system is strongly recommended.</p>",
+                  "warn": "yes",
+                  "name": "Network devices log collection not centralized",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "medium"
+                }
+              ]
+            },
+            {
+              "type": "radiogroup",
+              "id": "network_wifi",
+              "text": "Do you operate wireless networks that allow access to private aspects of your infrastructure (i.e., Wi-Fi networks, excluding networks that only allow guests access to the Internet)?",
+              "defaultChoice": false,
+              "choices": [
+                {"network_wifi_yes": "Yes."},
+                {"network_wifi_no": "No, we only have Wi-Fi networks that allow guests to access the Internet; they don't have access to any private aspects of our infrastructure."}
+              ]
+            },
+            {
+              "type": "block",
+              "id": "block_wifi",
+              "cond": "network_wifi_yes",
+              "text": "Wireless Networking",
+              "items": [
+                {
+                  "type": "radiogroup",
+                  "text": "How are your wireless networks encrypted? (If you have multiple Wi-Fi networks, choose the weakest encryption that gives access to an internal network.)",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"network_wifi_enc_no": "No encryption"},
+                    {"network_wifi_enc_wep": "WEP"},
+                    {"network_wifi_enc_wpapsk": "WPA/WPA2 with a preshared key (WPA[2]-PSK)"},
+                    {"network_wifi_enc_wpaenterprise": "WPA/WPA2 with RADIUS authentication (WPA[2]-Enterprise)"}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_network_wifi_enc_bad",
+                  "cond": "network_wifi_enc_no || network_wifi_enc_wep",
+                  "text": "<p>Because your Wi-Fi can be used to access a private/internal network, no encryption or WEP encryption is not sufficient. WEP was broken years ago and does not offer any real protection. Enterprise environments require WPA2-Enterprise.</p>",
+                  "warn": "yes",
+                  "name": "Inadequate WiFi network protection",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "critical"
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_network_wifi_enc_psk",
+                  "cond": "network_wifi_enc_wpapsk",
+                  "text": "WPA-PSK is not suitable for a corporate environment: on the one hand, one user on the network can sniff all other users' traffic, and on the other hand, the management of the preshared key is usually very challenging because it must be changed when an employee leaves the company. For companies that would need to share the key with 20 or more employees, the use of WPA/WPA2-Enterprise is strongly recommended instead.",
+                  "warn": "yes",
+                  "name": "Inadequate WiFi network protection",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "high"
+                }
+              ]
+            },
+            {
+              "type": "radiogroup",
+              "id": "network_vpn",
+              "text": "Do you operate a VPN that allows remote access to your network?",
+              "defaultChoice": false,
+              "choices": [
+                {"network_vpn_yes": "Yes"},
+                {"network_vpn_no": "No"}
+              ]
+            },
+            {
+              "type": "block",
+              "id": "block_vpn",
+              "cond": "network_vpn_yes",
+              "text": "VPN/Remote Network Access",
+              "items": [
+                {
+                  "type": "checkgroup",
+                  "text": "How is access to the VPN authenticated? (Check all that apply.)",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"network_vpn_auth_pwd": "Username and password"},
+                    {"network_vpn_auth_machine_cert_os": "Machine certificate, stored by the operating system or on the file system"},
+                    {"network_vpn_auth_machine_cert_tpm": "Machine certificate, stored in a Trusted Platform Module (TPM)"},
+                    {"network_vpn_auth_2nd_factor": "Second factor (e.g., token)"}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_network_vpn_no2ndfactor",
+                  "cond": "req_sensitive && network_vpn_auth_pwd && !network_vpn_auth_2nd_factor",
+                  "text": "Because your project seems to handle sensitive data, remote access to your internal network via VPN should be protected by strong authentication, such as a second factor or machine certificates stored on the system's TPM.",
+                  "warn": "yes",
+                  "name": "No 2nd factor for VPN access",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "high"
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_network_vpn_nostrongauth",
+                  "cond": "network_vpn_auth_pwd && !network_vpn_auth_machine_cert_os && !network_vpn_auth_machine_cert_tpm && !network_vpn_auth_2nd_factor && !^warn_network_vpn_no2ndfactor",
+                  "text": "VPN authentication with a username and password alone is considered insufficient. It is very easy to phish users, and password reuse across services is extremely common (even when policies are in place to explicitly disallow password reuse). Remote access to the internal network should require strong authentication, such as a second factor and/or machine certificates (ideally stored in a TPM). The latter have an additional advantage: certificates are not easily transferred to non-corporate machines.",
+                  "warn": "yes",
+                  "name": "Insufficient authentication for VPN access",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "high"
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_network_vpn_nopwd",
+                  "cond": "!network_vpn_auth_pwd && (network_vpn_auth_machine_cert_os || network_vpn_auth_machine_cert_tpm || network_vpn_auth_2nd_factor)",
+                  "text": "Using this authentication method without at least a username and password is highly unusual. Did you forget to check the \"Username and password\" box?",
+                  "warn": "yes",
+                  "why": "If your VPN really doesn't require username and password credentials for authentication, explain why below:"
+                },
+                {
+                  "type": "radiogroup",
+                  "text": "Is it possible for devices that are not owned and managed by your company to connect to your internal network remotely through VPN?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"network_vpn_noncorp_yes": "Yes."},
+                    {"network_vpn_noncorp_policy": "No, this is prohibited by policy."},
+                    {"network_vpn_noncorp_technical": "No, this is prevented by technical measures."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_network_vpn_noncorp",
+                  "cond": "network_vpn_noncorp_yes || (network_vpn_noncorp_policy && req_sensitive)",
+                  "text": "Because non-corporate machines cannot be centrally updated, managed, and malware-checked, allowing these machines access to the local network via VPN is extremely dangerous. Please ensure that technical controls are in place to prevent unmanaged machines from connecting via VPN.",
+                  "warn": "yes",
+                  "name": "Access to VPN from non-corporate machines",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "high"
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_network_vpn_noncorp_technical",
+                  "cond": "network_vpn_noncorp_technical && !network_vpn_auth_machine_cert_tpm && !network_vpn_auth_machine_cert_os && req_sensitive",
+                  "text": "Because non-corporate machines cannot be centrally updated, managed, and malware-checked, allowing these machines access to the local network via VPN is extremely dangerous. You've indicated that technical controls exist but you don't use a certificate. Describe the controls that are in place.",
+                  "warn": "yes",
+                  "name": "Access to VPN from non-corporate machines",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "high"
+                }
+              ]
+            },
+            {
+              "type": "radiogroup",
+              "id": "network_outsourced",
+              "text": "Is the management of your network (or parts thereof) outsourced?",
+              "defaultChoice": false,
+              "choices": [
+                {"network_outsourced_yes": "Yes"},
+                {"network_outsourced_no": "No"}
+              ]
+            },
+            {
+              "type": "line",
+              "id": "network_outsourced_company",
+              "cond": "network_outsourced_yes",
+              "text": "What company is network management outsourced to?"
+            },
+            {
+              "type": "radiogroup",
+              "id": "network_outsourced_audits",
+              "cond": "network_outsourced_yes",
+              "text": "Do you regularly audit your outsourcing provider to ensure compliance with the policies you set, and the use of safe security practices?",
+              "defaultChoice": false,
+              "choices": [
+                {"network_outsourced_audits_yes": "Yes, we audit our outsourcing providers at least annually."},
+                {"network_outsourced_audits_no": "We don't audit our outsourcing providers as often as we probably should."}
+              ]
+            },
+            {
+              "type": "tip",
+              "id": "warn_network_outsourced_audits",
+              "cond": "network_outsourced_audits_no",
+              "text": "To ensure that outsourcing providers adhere to your policies and employ adequate security practices, it's important to regularly audit them. These security audits should be done at least annually so the providers can adapt to changing security requirements and identify possible issues quickly.",
+              "warn": "yes",
+              "name": "Outsourcing providers not audited",
+              "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+              "severity": "high"
+            },
+            {
+              "type": "box",
+              "id": "network_other",
+              "text": "Do you have any other comments about the security of your network? If yes, please provide them below:"
+            }
+          ]
+        },
+        {
+          "type": "block",
+          "id": "block_servers",
+          "text": "Servers",
+          "items": [
+            {
+              "type": "info",
+              "text": "<b>Why this section is relevant:</b> Servers are an important piece of the overall attack surface of any IT infrastructure. Even seemingly less-sensitive systems should be carefully evaluated, because a single poorly configured system can help an attacker get a foot in the door. From there, they might gain access to more sensitive systems nearby (other servers, clients, etc.)."
+            },
+            {
+              "type": "radiogroup",
+              "id": "servers_hardening",
+              "text": "Do you have operating system hardening in place, or build standards for server systems?",
+              "defaultChoice": false,
+              "choices": [
+                {"servers_hardening_yes": "Yes, all of our servers are configured according to these standards."},
+                {"servers_hardening_no": "We do not have these standards, or we don't apply them uniformly across the fleet."}
+              ]
+            },
+            {
+              "type": "tip",
+              "id": "warn_no_servers_hardening",
+              "cond": "servers_hardening_no",
+              "text": "<p>A set of hardening and/or build standards for servers helps to ensure that all systems are appropriately hardened. These standards should be applied to internally and externally exposed systems, and should include requirements such as:</p><ul><li>Removing or disabling all non-essential services</li><li>Disabling all default accounts and/or changing the password</li><li>Review/tightening of permissions for key files and directories</li><li>Setting up logging</li><li>Securely configuring remote access and management interfaces</li><li>Setting up appropriate host-based firewall rules</li><li>Securely configuring a backup mechanism</li></ul><p></p><p>You probably won't have to create these standards from scratch. Publicly available hardening guides can help you set requirements for your company's systems.</p>",
+              "warn": "yes",
+              "name": "No hardening guidelines for servers",
+              "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+              "severity": "high"
+            },
+            {
+              "type": "block",
+              "cond": "servers_hardening_yes",
+              "text": "Hardening and Build Standards",
+              "items": [
+                {
+                  "type": "radiogroup",
+                  "id": "servers_hardening_requirements",
+                  "text": "<p>Do your hardening and build standards cover the following topics?</p><ul><li>Removing or disabling all non-essential services</li><li>Disabling all default accounts and/or changing the password</li><li>Review/tightening of permissions for key files and directories</li><li>Setting up logging</li><li>Securely configuring remote access and management interfaces</li><li>Setting up appropriate host-based firewall rules</li><li>Securely configuring a backup mechanism</li></ul>",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"servers_hardening_requirements_yes": "Yes, these are all pretty much covered by our standards."},
+                    {"servers_hardening_requirements_no": "No, we might have missed a few of these."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_servers_hardening_requirements",
+                  "cond": "servers_hardening_requirements_no",
+                  "text": "The topics listed in this question should be part of any set of hardening and build standards. You probably won't have to create these standards from scratch. Publicly available hardening guides can help you set requirements for your company's systems.",
+                  "warn": "yes",
+                  "name": "Inadequate hardening guidelines for servers",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "high"
+                },
+                {
+                  "type": "radiogroup",
+                  "id": "servers_hardening_intandext",
+                  "text": "Are your hardening and build standards applied to both internal servers and externally exposed systems, and all services that run on them?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"servers_hardening_intandext_yes": "Yes"},
+                    {"servers_hardening_intandext_no": "No, we apply them only to externally exposed servers."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_servers_hardening_intandext",
+                  "cond": "servers_hardening_intandext_no",
+                  "text": "Even though internal servers (and the services they provide) might not be directly exposed to the Internet, it is important to harden them as a second layer of defense. If an attacker manages to compromise a single system, it should still be difficult for them to expand their access. Also, internal servers might be exposed indirectly as backends.",
+                  "warn": "yes",
+                  "name": "Hardening guidelines not applied to internal servers",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "medium"
+                },
+                {
+                  "type": "radiogroup",
+                  "id": "servers_hardening_requirements_writing",
+                  "text": "Are your hardening and build standards documented?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"servers_hardening_requirements_writing_yes": "Yes, we document our hardening and build standards, and we make sure they are consistently applied."},
+                    {"servers_hardening_requirements_writing_no": "No, our hardening and build standards haven't been written down."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_servers_hardening_requirements_no_writing",
+                  "cond": "servers_hardening_requirements_writing_no",
+                  "text": "Because your project seems to handle sensitive data, it's important to document your hardening and build standards. Documentation helps ensure that standards are consistently applied, no matter which employee actually performs the hardening.",
+                  "warn": "yes",
+                  "name": "Hardening guidelines not documented in writing",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "medium"
+                },
+                {
+                  "type": "radiogroup",
+                  "id": "servers_configmgmt",
+                  "text": "Do you have processes in place for managing the configuration of your servers and services?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"servers_configmgmt_yes": "Yes, we have processes in place to ensure that configuration updates are deployed consistently across the entire fleet. Our processes are comprehensive, so it's very unlikely that any systems will be overlooked during important configuration changes."},
+                    {"servers_configmgmt_no": "No, our servers are configured on an ad-hoc basis. The processes for rolling out updates to all of our servers could be improved."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_servers_configmgmt",
+                  "cond": "servers_configmgmt_no",
+                  "text": "Server and service configuration tends to become more complex over time. Without established processes, configuration can become inconsistent among similar systems within the fleet. This is a common source of security issues: some systems are overlooked and continue to have issues that are caused by the configuration. Because your project has stricter requirements for confidentiality, integrity, and/or availability, it's important to establish configuration management processes.",
+                  "warn": "yes",
+                  "name": "No appropriate processes for configuration management",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "high"
+                },
+                {
+                  "type": "radiogroup",
+                  "id": "servers_configmgmt_audit",
+                  "cond": "servers_configmgmt_yes",
+                  "text": "Do you review and/or audit your configuration files, to ensure that they conform to your security policies?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"servers_configmgmt_audit_yes": "Yes, the configuration files of important systems are regularly reviewed or audited."},
+                    {"servers_configmgmt_audit_no": "No; unless there is a specific reason to look at them, configuration files are rarely reviewed."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_servers_configmgmt_audit",
+                  "cond": "servers_configmgmt_audit_no",
+                  "text": "Your project seems to handle sensitive data. Processes should be in place for regularly reviewing configuration files and settings, to ensure that they are appropriate and safe.",
+                  "warn": "yes",
+                  "name": "Configuration files not audited",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "medium"
+                }
+              ]
+            },
+            {
+              "type": "radiogroup",
+              "id": "servers_patching",
+              "text": "Do you have a process for installing operating system and application updates and security patches on servers?",
+              "defaultChoice": false,
+              "choices": [
+                {"servers_patching_yes": "Yes, we are very diligent about applying security updates to operating systems and applications."},
+                {"servers_patching_no": "No, we don't have a process for patching. Some updates might fall through the cracks."}
+              ]
+            },
+            {
+              "type": "tip",
+              "id": "warn_servers_patching",
+              "cond": "servers_patching_no",
+              "text": "Unfortunately, security bugs and vulnerabilities cannot always be caught during the development process, particularly if the software is complex. Software vendors often issue patches and security fixes to address vulnerabilities that were identified after rollout. It is essential to have processes in place to monitor vulnerabilities in software and apply patches as soon as possible. Note that once a patch has been released, the vulnerability is public, so attackers can easily exploit it.",
+              "warn": "yes",
+              "name": "Lack of patch/updates process",
+              "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+              "severity": "critical"
+            },
+            {
+              "type": "block",
+              "id": "block_server_updates",
+              "cond": "servers_patching_yes",
+              "text": "Security Updates and Vulnerability Management",
+              "items": [
+                {
+                  "type": "radiogroup",
+                  "id": "servers_patching_schedule_exceptions",
+                  "text": "Do you also have an emergency process for installing patches outside of the regular patching schedule when high-risk vulnerabilities are identified?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"servers_patching_schedule_exceptions_yes": "Yes, we carefully consider the risk associated with each new vulnerability and decide whether the patch should be deployed outside of the regular schedule."},
+                    {"servers_patching_schedule_exceptions_no": "No, we generally don't deviate from our standard patching schedule, even for critical vulnerabilities."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_servers_patching_schedule_exceptions",
+                  "cond": "servers_patching_schedule_exceptions_no",
+                  "text": "Not all patches are equally important; some must be installed very quickly to protect against likely compromise. Your patching process should include carefully considering the risk caused by each vulnerability, and triggering emergency procedures when appropriate so that affected systems are patched as soon as possible.",
+                  "warn": "yes",
+                  "name": "No emergency patch application procedures",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "high"
+                },
+                {
+                  "type": "checkgroup",
+                  "text": "How do you determine whether your systems are affected by vulnerabilities that require patching? (Check all that apply.)",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"servers_patching_infosource_scanning": "We use automated security scans to find software that requires patching."},
+                    {"servers_patching_infosource_mailinglists": "The employees who are responsible for patching subscribe to vendor mailing lists that inform them about security issues."},
+                    {"servers_patching_infosource_osupdate": "We use the patching mechanisms that are built into the operating systems (e.g., Windows Update, apt-get, Red Hat Network, etc.)."},
+                    {"servers_patching_infosource_outsourced": "We hired a company that specializes in informing customers about vulnerabilities in the software they use."},
+                    {"servers_patching_infosource_other": "We use a method not listed here."}
+                  ]
+                },
+                {
+                  "type": "box",
+                  "id": "servers_patching_infosource_other_explain",
+                  "cond": "servers_patching_infosource_other",
+                  "text": "Describe your method for finding out which patches apply to your systems:"
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_servers_patching_infosource_osupdate_only",
+                  "cond": "servers_patching_infosource_osupdate && !servers_patching_infosource_other && !servers_patching_infosource_outsourced && !servers_patching_infosource_mailinglists && !servers_patching_infosource_scanning",
+                  "text": "Relying on the update mechanism built into the operating system is generally not sufficient; typically, many applications are not covered. You should maintain an inventory of all software that is not covered by built-in updates, and your administrators should subscribe to the key sources of information on updates for that software.",
+                  "warn": "yes",
+                  "name": "Not all software covered by existing patch management solutions",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "high"
+                },
+                {
+                  "type": "radiogroup",
+                  "id": "servers_patching_tests",
+                  "text": "Do you test security patches before you deploy them to your production systems?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"servers_patching_tests_yes": "Yes, for important servers we have systems that we test patches on before deploying them to production."},
+                    {"servers_patching_tests_no": "No, patches get deployed directly to production."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_servers_patching_tests",
+                  "cond": "servers_patching_tests_no",
+                  "text": "Patches that are deployed without prior testing may have an adverse affect on the availability and integrity of the data hosted on your servers. Unfortunately, there is a long history of faulty security patches. It is generally impossible to test security updates exhaustively in all possible scenarios, so to be safe, you should first deploy patches on test systems that closely mimic your production environment.",
+                  "warn": "yes",
+                  "name": "No patch testing prior to deployment",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "medium"
+                }
+              ]
+            },
+            {
+              "type": "radiogroup",
+              "id": "servers_logging",
+              "text": "Are your systems configured to log security-relevant events, such as authentication, data access, etc.?",
+              "defaultChoice": false,
+              "choices": [
+                {"servers_logging_yes": "Yes, we have comprehensive logging, including security events, for all relevant services."},
+                {"servers_logging_no": "No, our logging is basic or incidental."}
+              ]
+            },
+            {
+              "type": "tip",
+              "id": "warn_servers_logging",
+              "cond": "servers_logging_no",
+              "text": "Comprehensive logging of security events is absolutely essential for both the identification and the investigation of security incidents. Comprehensive logging is strongly recommended for systems with direct access to confidential information, as well as for surrounding systems.",
+              "warn": "yes",
+              "name": "Systems do not log security relevant events",
+              "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+              "severity": "high"
+            },
+            {
+              "type": "block",
+              "id": "block_server_logging",
+              "cond": "servers_logging_yes",
+              "text": "Logging",
+              "items": [
+                {
+                  "type": "radiogroup",
+                  "id": "servers_logging_retention",
+                  "text": "Do you retain security event logs for at least six months, and do you monitor them regularly?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"servers_logging_retention_yes": "Yes, we regularly review these logs and retain them in case we need to investigate a security incident."},
+                    {"servers_logging_retention_no": "No, these logs are not retained and/or monitored."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_servers_logging_retention",
+                  "cond": "servers_logging_retention_no",
+                  "text": "Unfortunately, not all security incidents can be identified right away. Log files should be retained for at least six months so incidents can be appropriately investigated, even when they're discovered later on.",
+                  "warn": "yes",
+                  "name": "Short security events log retention",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "medium"
+                },
+                {
+                  "type": "radiogroup",
+                  "id": "servers_logging_central",
+                  "text": "Are the logs produced by your servers stored in a central location?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"servers_logging_central_yes": "Yes, all devices that support logging write logs to one or more dedicated log systems."},
+                    {"servers_logging_central_no": "No, each device stores log files separately."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_servers_logging_central",
+                  "cond": "servers_logging_central_no",
+                  "text": "With a central log collection location for all relevant networking systems, you can more easily correlate significant events across multiple sources. Centralizing also simplifies log review.",
+                  "warn": "yes",
+                  "name": "Security event logs collection not centralized",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "medium"
+                }
+              ]
+            },
+            {
+              "type": "block",
+              "id": "block_admin_access",
+              "text": "Administrative Access",
+              "items": [
+                {
+                  "type": "checkgroup",
+                  "text": "Select the operating systems that are currently in use on your servers:",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"servers_admin_windows": "Microsoft Windows"},
+                    {"servers_admin_unix": "Unix (including Linux, Solaris, etc.)"}
+                  ]
+                },
+                {
+                  "type": "block",
+                  "cond": "servers_admin_windows",
+                  "text": "Windows Server Administration",
+                  "items": [
+                    {
+                      "type": "radiogroup",
+                      "id": "servers_admin_windows_da_accounts",
+                      "text": "Do your Windows domain administrators have separate accounts with lower privileges that they use for day-to-day tasks?",
+                      "defaultChoice": false,
+                      "choices": [
+                        {"servers_admin_windows_da_accounts_yes": "Yes. Our domain administrators use their highly privileged accounts only when necessary. For day-to-day tasks, they use regular accounts with fewer privileges."},
+                        {"servers_admin_windows_da_accounts_no": "No, our domain administrators are usually logged in with their domain-admin accounts for day-to-day work."}
+                      ]
+                    },
+                    {
+                      "type": "tip",
+                      "id": "warn_servers_admin_windows_da_accounts",
+                      "cond": "servers_admin_windows_da_accounts_no",
+                      "text": "Using domain administrator accounts all the time is fairly dangerous. When a system is compromised, the attacker inherits the privileges of the compromised user, so it's especially problematic when the user is a domain administrator. Administrators should use separate, regular accounts for most tasks, and that they authenticate as domain admins only when necessary. Readily available Windows tools (such as runas.exe) make this fairly simple.",
+                      "warn": "yes",
+                      "name": "No separate accounts for domain administrators",
+                      "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                      "severity": "medium"
+                    }
+                  ]
+                },
+                {
+                  "type": "block",
+                  "id": "block_unix_linux_admin",
+                  "cond": "servers_admin_unix",
+                  "text": "Unix/Linux Server Administration",
+                  "items": [
+                    {
+                      "type": "radiogroup",
+                      "id": "servers_admin_linux_sudo",
+                      "text": "Do your administrators have personal user accounts and use sudo when elevated privileges are necessary?",
+                      "defaultChoice": false,
+                      "choices": [
+                        {"servers_admin_linux_sudo_yes": "Yes, our administrators use sudo (or a similar tool)."},
+                        {"servers_admin_linux_sudo_no": "No, our administrators know the root password and log in as root when they need to make changes that require elevated privileges."}
+                      ]
+                    },
+                    {
+                      "type": "tip",
+                      "id": "warn_servers_admin_linux_sudo",
+                      "cond": "servers_admin_linux_sudo_no",
+                      "text": "When the root account is used for privileged actions, it's impossible to later trace the action to a specific person. The root password for *nix systems should be a highly guarded secret that is kept in a secure physical location (e.g., in an envelope in a safe), retrieved only when absolutely necessary, and changed after each use.",
+                      "warn": "yes",
+                      "name": "Shared high-privileged accounts",
+                      "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                      "severity": "medium"
+                    },
+                    {
+                      "type": "radiogroup",
+                      "id": "servers_admin_linux_root",
+                      "cond": "servers_admin_linux_sudo_yes",
+                      "text": "Where is the root password kept?",
+                      "defaultChoice": false,
+                      "choices": [
+                        {"servers_admin_linux_root_yes": "We keep the root password in a secure location (e.g., in an envelope in a safe). It is retrieved only when absolutely necessary. Processes are in place to ensure accountability, and the password is changed after every use."},
+                        {"servers_admin_linux_root_no": "We are not quite that protective of root passwords."}
+                      ]
+                    },
+                    {
+                      "type": "tip",
+                      "id": "warn_servers_admin_linux_root",
+                      "cond": "servers_admin_linux_root_no",
+                      "text": "When the root account is used for privileged actions, it's impossible to later trace the action to a specific person. The root password for *nix systems should be a highly guarded secret that is kept in a secure physical location (e.g., in an envelope in a safe), retrieved only when absolutely necessary, and changed after each use.",
+                      "warn": "yes",
+                      "name": "Inappropriate protection of high-privileged account password",
+                      "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                      "severity": "high"
+                    },
+                    {
+                      "type": "radiogroup",
+                      "id": "servers_admin_linux_ldap",
+                      "text": "Are your *nix systems connected to a central directory for managing access (e.g., LDAP)?",
+                      "defaultChoice": false,
+                      "choices": [
+                        {"servers_admin_linux_ldap_yes": "Yes. It's easy for us to centrally disable accounts."},
+                        {"servers_admin_linux_ldap_no": "No, we create individual accounts separately on each of our *nix servers."}
+                      ]
+                    },
+                    {
+                      "type": "tip",
+                      "id": "warn_servers_admin_linux_ldap",
+                      "cond": "servers_admin_linux_ldap_no",
+                      "text": "When you have separate individual accounts on each system, you can't centrally disable accounts or change a password for all machines. Individual accounts can be overlooked when an employee leaves the company, or you might forget to change a password on a specific machine. Having a central directly for authentication makes account management much easier and safer.",
+                      "warn": "yes",
+                      "name": "System access management not centralized",
+                      "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                      "severity": "medium"
+                    }
+                  ]
+                },
+                {
+                  "type": "radiogroup",
+                  "id": "servers_admin_auditing",
+                  "cond": "req_sensitive",
+                  "text": "Do you have procedures in place for regularly auditing administrative access to your servers?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"servers_admin_auditing_yes": "Yes, we review the actions our administrators take to make sure we catch issues, such as a compromised account."},
+                    {"servers_admin_auditing_no": "No, we generally don't audit administrative access unless prompted by an issue."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_servers_admin_auditing",
+                  "cond": "servers_admin_auditing_no",
+                  "text": "It appears that your project has strict requirements for confidentiality, integrity, and/or availability. To meet these requirements, you should regularly review administrative actions in order to catch and revert unauthorized changes.",
+                  "warn": "yes",
+                  "name": "No audit of high-privileged accounts",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "medium"
+                }
+              ]
+            },
+            {
+              "type": "block",
+              "id": "block_backups",
+              "text": "Backups",
+              "items": [
+                {
+                  "type": "radiogroup",
+                  "id": "servers_backup_dcsync",
+                  "cond": "req_sensitive",
+                  "text": "Do you sync data to a different site in near real time?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"servers_backup_dcsync_yes": "Yes. If a disaster occurs at one site, very little data will be lost because almost everything will already have been copied to our backup site."},
+                    {"servers_backup_dcsync_no": "No, we don't have a backup site, or we don't synchronize data in near real time."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_servers_backup_dcsync",
+                  "cond": "servers_backup_dcsync_no",
+                  "text": "If availability and integrity are important to your project, you should synchronize data between your primary site and a data center. Having a backup site helps ensure that an incident at one site does not result in data loss or inconsistencies.",
+                  "warn": "yes",
+                  "name": "Lack of synchronized backup data center",
+                  "why": "If you feel that this project does not require near-real-time synchronization of data, or you have other mitigating controls in place, please explain below:",
+                  "severity": "medium"
+                },
+                {
+                  "type": "radiogroup",
+                  "id": "servers_backup_media",
+                  "cond": "!req_nodata",
+                  "text": "Do you store backups on disks, tapes, or other kinds of removable media?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"servers_backup_media_yes": "Yes."},
+                    {"servers_backup_media_no": "No."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_servers_backup_media",
+                  "cond": "servers_backup_media_no",
+                  "text": "Even if you synchronize data in near real time with an alternate site, you may also need to maintain a backup on tape or other removable media. Synchronization issues sometimes cause inconsistencies and mistakes that are propagated through multiple data centers, resulting in permanent data loss. Only regular backups that are stored offline can ensure recovery (for example, if something is accidentally deleted). Note that backups on removable media should be encrypted and stored off-site at a safe location.",
+                  "warn": "yes",
+                  "name": "Lack of data backup",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "medium"
+                },
+                {
+                  "type": "radiogroup",
+                  "id": "servers_backup_media_encryption",
+                  "cond": "servers_backup_media_yes",
+                  "text": "Are the backups that are stored on removable media (e.g., disks, tapes, etc.) encrypted?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"servers_backup_media_encryption_yes": "Yes, we encrypt backups to ensure the safety of data during transport and storage."},
+                    {"servers_backup_media_encryption_no": "No, backups are not encrypted."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_servers_backup_media_encryption",
+                  "cond": "servers_backup_media_encryption_no",
+                  "text": "Data on backup media is generally exposed to certain elevated risks, such as during transport to an off-site storage facility. Confidential data should be encrypted on backups. Encryption also makes it easier to destroy data &mdash; if the backup key is destroyed, the data can no longer be recovered and therefore can also be considered destroyed.",
+                  "warn": "yes",
+                  "name": "Data backups not encrypted",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "high"
+                },
+                {
+                  "type": "radiogroup",
+                  "id": "servers_backup_media_offsite",
+                  "cond": "servers_backup_media_yes",
+                  "text": "Do you store backup media in an off-site facility that is protected against potential disaster?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"servers_backup_media_offsite_yes": "Yes, our backup media is stored in a protected facility that is far enough away from our other facilities to mitigate the impact in the event of a disaster."},
+                    {"servers_backup_media_offsite_no": "No, backup media is stored on site."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_servers_backup_media_offsite",
+                  "cond": "servers_backup_media_offsite_no",
+                  "text": "When backup media is stored near the main systems, there is a chance that in a disaster, both might be destroyed at the same time and significant data loss will occur.",
+                  "warn": "yes",
+                  "name": "Data backup media stored on-site only",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "medium"
+                },
+                {
+                  "type": "radiogroup",
+                  "id": "servers_backup_frequency",
+                  "text": "Do you have procedures in place for working with customers to determine an appropriate backup frequency?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"servers_backup_frequency_yes": "Yes, we talk to our customers to gather requirements for backup frequency, and we implement backup intervals accordingly."},
+                    {"servers_backup_frequency_no": "No, we have a fixed backup cycle."}
+                  ]
+                },
+                {
+                  "type": "radiogroup",
+                  "id": "servers_backup_test",
+                  "text": "Do you regularly test your backups?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"servers_backup_test_yes": "Yes, we test the entire process of recovery, including restoring entire systems from backup."},
+                    {"servers_backup_test_no": "We don't usually test backups."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_servers_backup_test",
+                  "cond": "servers_backup_test_no",
+                  "text": "Backups can only help if they work as expected, of course, and to make sure that is the case, recovery should be tested regularly. Testing should include both the common case of recovering small amounts of very specific data from backup media (e.g., files that have been accidentally deleted), as well as the (with luck, much rarer) case of restoring an entire system from backup.",
+                  "warn": "yes",
+                  "name": "Data backups not tested",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "medium"
+                }
+              ]
+            },
+            {
+              "type": "radiogroup",
+              "id": "servers_outsourced",
+              "text": "Is the management of your servers (or parts thereof) outsourced?",
+              "defaultChoice": false,
+              "choices": [
+                {"servers_outsourced_yes": "Yes"},
+                {"servers_outsourced_no": "No"}
+              ]
+            },
+            {
+              "type": "line",
+              "id": "servers_outsourced_company",
+              "cond": "servers_outsourced_yes",
+              "text": "What company is server management outsourced to?"
+            },
+            {
+              "type": "radiogroup",
+              "id": "servers_outsourced_audits",
+              "cond": "servers_outsourced_yes",
+              "text": "Do you regularly audit your outsourcing provider to ensure compliance with the policies you set, and the use of safe security practices?",
+              "defaultChoice": false,
+              "choices": [
+                {"servers_outsourced_audits_yes": "Yes, we audit our outsourcing providers at least annually."},
+                {"servers_outsourced_audits_no": "We don't audit our outsourcing providers quite as often as we probably should."}
+              ]
+            },
+            {
+              "type": "tip",
+              "id": "warn_servers_outsourced_audits",
+              "cond": "servers_outsourced_audits_no",
+              "text": "To ensure that outsourcing providers adhere to your policies and employ adequate security practices, it's important to regularly audit them. These security audits should be done at least annually so the providers can adapt to changing security requirements and identify possible issues quickly.",
+              "warn": "yes",
+              "name": "Server management outsourcing providers not audited",
+              "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+              "severity": "high"
+            },
+            {
+              "type": "box",
+              "id": "servers_other",
+              "text": "Is there anything else you want us to know about the security of your servers?"
+            }
+          ]
+        },
+        {
+          "type": "block",
+          "id": "block_clients",
+          "text": "Clients (Workstation, Laptops, etc.)",
+          "items": [
+            {
+              "type": "info",
+              "text": "<b>Why this section matters:</b> In most companies, almost all IT-related work is performed from client computers. Even if certain data is stored in the cloud or on highly secure servers, it's the laptops and desktops that are used to access this information. An attacker who manages to compromise a client computer will in most cases be able to completely impersonate the user of the machine, gaining the same access rights. If an administrator's client machine is affected by an attack, the attacker will likely be able to escalate their foothold to many other important systems in your company. It's therefore critical to ensure the security of the client machines used by your employees."
+            },
+            {
+              "type": "radiogroup",
+              "id": "clients_hardening",
+              "text": "Do you have operating system hardening and/or build standards for client systems?",
+              "defaultChoice": false,
+              "choices": [
+                {"clients_hardening_yes": "Yes, all of our client systems are configured according to these standards, and/or they are built from standard images that comply with our hardening guidelines."},
+                {"clients_hardening_no": "We do not have hardening or build standards, or we don't apply them uniformly across the fleet."}
+              ]
+            },
+            {
+              "type": "tip",
+              "id": "warn_no_clients_hardening",
+              "cond": "clients_hardening_no",
+              "text": "<p>A set of hardening and/or build standards should be applied to all client systems that are provided to users, and should include requirements such as:</p><ul><li>Removing or disabling all non-essential services</li><li>Disabling guest and default accounts</li><li>Review/tightening of permissions for key files and directories</li><li>Setting up logging</li><li>Setting up appropriate host-based firewall rules</li><li>Configuring anti-malware tools</li><li>Securely configuring VPN client software (where appropriate)</li><li>Ensuring the security of local administrative accounts</li><li>Setting up whole-disk encryption.</li></ul><p></p><p>>You probably won't have to create these standards from scratch. Publicly available hardening guides can help you set requirements for your company's systems.</p>",
+              "warn": "yes",
+              "name": "No hardening guidelines for client machines",
+              "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+              "severity": "high"
+            },
+            {
+              "type": "block",
+              "cond": "clients_hardening_yes",
+              "text": "Hardening and build standards",
+              "items": [
+                {
+                  "type": "radiogroup",
+                  "id": "clients_hardening_requirements",
+                  "text": "<p>Do your hardening and build standards cover the following topics?</p><ul><li>Removing or disabling all non-essential services</li><li>Disabling guest and default accounts</li><li>Review/tightening of permissions for key files and directories</li><li>Setting up logging</li><li>Setting up appropriate host-based firewall rules</li><li>Configuring anti-malware tools</li><li>Securely configuring VPN client software (where appropriate)</li><li>Ensuring the security of local administrative accounts</li><li>Setting up whole-disk encryption</li></ul><p></p>",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"clients_hardening_requirements_yes": "Yes, these are all pretty much covered by our standards."},
+                    {"clients_hardening_requirements_no": "No, we might have missed a few of these."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_clients_hardening_requirements",
+                  "cond": "clients_hardening_requirements_no",
+                  "text": "Techniques such as the ones listed above should be part of any set of hardening and build standards for client systems. You probably won't have to create these standards from scratch. Publicly available hardening guides can help you set requirements for your company's systems.",
+                  "warn": "yes",
+                  "name": "Inadequate hardening guidelines for client machines",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "high"
+                },
+                {
+                  "type": "radiogroup",
+                  "id": "clients_configmgmt",
+                  "text": "Do you have processes in place for managing the configuration of your client systems?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"clients_configmgmt_yes": "Yes, we have processes in place to ensure that configuration updates are deployed consistently across the entire fleet, covering all operating systems provided to users. Our processes are comprehensive, so it's very unlikely that any systems will be overlooked during important configuration changes."},
+                    {"clients_configmgmt_no": "No, our client systems are configured on an ad-hoc basis. The processes for rolling out updates to all of our client systems could be improved."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_clients_configmgmt",
+                  "cond": "clients_configmgmt_no",
+                  "text": "Security requirements and other client system settings can be very difficult to manage, particularly with a large fleet of client systems. Mobile devices make this even more difficult, as they are often not in the same place and are easily overlooked. This is a common source of security issues; you should have a central way to manage client devices.",
+                  "warn": "yes",
+                  "name": "Client machines configuration not centralized",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "high"
+                },
+                {
+                  "type": "radiogroup",
+                  "id": "clients_standardbuild_audit",
+                  "cond": "req_sensitive",
+                  "text": "Do you review and/or audit the standard builds that form the basis of your client fleet, to ensure that they conform to your security policies and requirements?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"clients_standardbuild_audit_yes": "Yes, standard builds are regularly reviewed or audited."},
+                    {"clients_standardbuild_audit_no": "No, unless there is a specific reason to look at them, the standard builds are rarely reviewed."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_clients_standardbuild_audit",
+                  "cond": "clients_standardbuild_audit_no",
+                  "text": "Availability, integrity, and/or confidentiality seem to be critically important for the data, systems, or services you provide. Processes should be in place for regularly reviewing standard client builds, to ensure that they are appropriate and safe.",
+                  "warn": "yes",
+                  "name": "Standard builds not reviewed",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "medium"
+                }
+              ]
+            },
+            {
+              "type": "radiogroup",
+              "id": "clients_patching",
+              "text": "Do you have a process for installing operating system and application updates and security patches on client systems?",
+              "defaultChoice": false,
+              "choices": [
+                {"clients_patching_yes": "Yes, we diligently apply security updates to operating systems and applications."},
+                {"clients_patching_no": "No, we don't have a process for patching. Some updates might fall through the cracks."}
+              ]
+            },
+            {
+              "type": "tip",
+              "id": "warn_clients_patching",
+              "cond": "clients_patching_no",
+              "text": "Unfortunately, security bugs and vulnerabilities cannot always be caught during the development process, particularly if the software is complex. Software vendors often issue patches and security fixes to address vulnerabilities that were identified after rollout. It is essential to have processes in place to monitor vulnerabilities in software and apply patches as soon as possible. Note that once a patch has been released, the vulnerability is public, so attackers can easily exploit it.",
+              "warn": "yes",
+              "name": "Lack of patching process for client machines",
+              "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+              "severity": "critical"
+            },
+            {
+              "type": "block",
+              "id": "block_client_updates",
+              "cond": "clients_patching_yes",
+              "text": "Security Updates and Vulnerability Management",
+              "items": [
+                {
+                  "type": "radiogroup",
+                  "id": "clients_patching_schedule_exceptions",
+                  "text": "Do you also have an emergency process for installing patches outside of the regular schedule when high-risk vulnerabilities are identified?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"clients_patching_schedule_exceptions_yes": "Yes, we carefully consider the risk associated with each vulnerability and decide whether the patch should be deployed outside of the regular schedule."},
+                    {"clients_patching_schedule_exceptions_no": "No, we generally don't deviate from our standard patching schedule, even for critical vulnerabilities.."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_clients_patching_schedule_exceptions",
+                  "cond": "clients_patching_schedule_exceptions_no",
+                  "text": "Not all patches are equally important. Patches that fix remotely exploitable issues in client systems must be installed very quickly to protect against compromise. Your patching process should include carefully considering the risk caused by each vulnerability, and triggering emergency procedures when appropriate so that affected systems are patched as soon as possible.",
+                  "warn": "yes",
+                  "name": "No emergency patch application procedures for client machines",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "high"
+                },
+                {
+                  "type": "checkgroup",
+                  "text": "How do you know whether your systems are affected by vulnerabilities that require patching? (Check all that apply.)",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"clients_patching_infosource_agents": "We run agents on our client systems to discover what software is installed and report that information back to a central repository."},
+                    {"clients_patching_infosource_mailinglists": "The employees who are responsible for patching subscribe to vendor mailing lists that inform them about security issues."},
+                    {"clients_patching_infosource_osupdate": "We use the patching mechanisms built into the operating systems (e.g. Windows Update, apt-get, Red Hat Network, etc.)."},
+                    {"clients_patching_infosource_outsourced": "We hired a company that specializes in informing customers about vulnerabilities in the software they use."},
+                    {"clients_patching_infosource_other": "We use a method not listed here."}
+                  ]
+                },
+                {
+                  "type": "box",
+                  "id": "clients_patching_infosource_other_explain",
+                  "cond": "clients_patching_infosource_other",
+                  "text": "Describe your method for finding out which patches apply to your systems:"
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_clients_patching_infosource_osupdate_only",
+                  "cond": "clients_patching_infosource_osupdate && !clients_patching_infosource_other && !clients_patching_infosource_outsourced && !clients_patching_infosource_mailinglists && !clients_patching_infosource_agents",
+                  "text": "Relying on the update mechanism built into the operating system is generally not sufficient; typically, many applications are not covered. You should maintain an inventory of all software that is not covered by built-in updates, and your administrators should subscribe to the key sources of information on updates for that software.",
+                  "warn": "yes",
+                  "name": "Client software not patched",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "high"
+                },
+                {
+                  "type": "box",
+                  "id": "clients_patching_applications",
+                  "cond": "!^warn_clients_patching_infosource_osupdate_only",
+                  "text": "Describe your process for rolling out patches for non-operating-system software that may be installed on your client systems. Examples include Mozilla Firefox, Adobe Acrobat Reader, Oracle Java Runtime Environment, Adobe Flash, etc."
+                }
+              ]
+            },
+            {
+              "type": "radiogroup",
+              "id": "clients_av",
+              "text": "Do you have controls in place to protect client systems from malware?",
+              "defaultChoice": false,
+              "choices": [
+                {"clients_av_yes": "Yes, we regularly scan our client systems for known malware, or we limit client systems to whitelisted software identified by cryptographic hashes."},
+                {"clients_av_no": "Some systems in our client fleet may not be fully protected."}
+              ]
+            },
+            {
+              "type": "tip",
+              "id": "warn_clients_av",
+              "cond": "clients_av_no",
+              "text": "Malware has become one of the most pervasive problems in computer security. Many computers on the Internet are infected with malware. It's important to have effective controls in place that detect, and ideally avert, malware infections.<p>Unfortunately, correctly identifying malware has become extremely difficult; it's very easy for malware authors to slightly modify their creations and evade detection. For best results, limit client systems to a whitelist of identified known <i>good</i> software. Products that facilitate a whitelist approach include <a href='https://github.com/google/santa'>Google Santa</a>, Microsoft AppLocker and Bit9 Parity.",
+              "warn": "yes",
+              "name": "Client machines without adequate malware protection",
+              "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+              "severity": "high"
+            },
+            {
+              "type": "radiogroup",
+              "id": "clients_logging",
+              "text": "Are your client systems configured to log security-relevant events, such as authentication, data access, etc.?",
+              "defaultChoice": false,
+              "choices": [
+                {"clients_logging_yes": "Yes, we have comprehensive logging enabled on client systems, including security events."},
+                {"clients_logging_no": "No, our logging is basic or incidental."}
+              ]
+            },
+            {
+              "type": "tip",
+              "id": "warn_clients_logging",
+              "cond": "clients_logging_no",
+              "text": "Comprehensive logging of security events is absolutely essential for both the identification and the investigation of security incidents. Client systems are often the first target a serious attacker will attempt to compromise, so it's important to have logging in place to catch such events.",
+              "warn": "yes",
+              "name": "Incomplete logging on client machines",
+              "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+              "severity": "high"
+            },
+            {
+              "type": "block",
+              "id": "block_client_logging",
+              "cond": "clients_logging_yes",
+              "text": "Logging",
+              "items": [
+                {
+                  "type": "radiogroup",
+                  "id": "clients_logging_retention",
+                  "text": "Do you retain client system security event logs for at least three months?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"clients_logging_retention_yes": "Yes, we keep them around in case we need to investigate an incident."},
+                    {"clients_logging_retention_no": "No, these logs are not retained for three months."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_clients_logging_retention",
+                  "cond": "clients_logging_retention_no",
+                  "text": "Unfortunately, security incidents can't always be identified right away. Log files should be retained for at least six months so incidents can be appropriately investigated, even when they're discovered later on.",
+                  "warn": "yes",
+                  "name": "Security events log retention too short",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "medium"
+                },
+                {
+                  "type": "radiogroup",
+                  "id": "clients_logging_central",
+                  "cond": "req_sensitive",
+                  "text": "Are the logs produced by your client systems stored in a central location?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"clients_logging_central_yes": "Yes, all devices that support logging write logs to one or more dedicated log systems."},
+                    {"clients_logging_central_no": "No, each device stores log files separately."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_clients_logging_central",
+                  "cond": "clients_logging_central_no",
+                  "text": "With a central log collection location for all relevant client systems, you can more easily correlate significant events across multiple sources. Centralizing also simplifies log review.",
+                  "warn": "yes",
+                  "name": "Security event log collection not centralized",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "medium"
+                }
+              ]
+            },
+            {
+              "type": "radiogroup",
+              "id": "clients_admin_restricted",
+              "text": "What level of access do regular users have on their workstation/laptop?",
+              "defaultChoice": false,
+              "choices": [
+                {"clients_admin_restricted_yes": "Regular users have (unprivileged) user access on their machines. We have a process in place for granting local administrative access to users who demonstrate a clear need."},
+                {"clients_admin_restricted_no": "Users are local administrators on their machines."}
+              ]
+            },
+            {
+              "type": "tip",
+              "id": "warn_clients_admin",
+              "cond": "clients_admin_restricted_no",
+              "text": "Allowing users to have administrator access is generally considered dangerous. In a malware attack or vulnerability exploit, the attacker inherits the user's privileges. It's fine to grant local administrative access on a need-to-have basis, but administrator privileges should be considered a risk, particularly for users who are not very well-versed in IT.",
+              "warn": "yes",
+              "name": "Administrative privileges available to users without clear need",
+              "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+              "severity": "high"
+            },
+            {
+              "type": "radiogroup",
+              "id": "clients_admin_samepassword",
+              "text": "Do all clients use the same local administrator/root password?",
+              "defaultChoice": false,
+              "choices": [
+                {"clients_admin_samepassword_yes": "Yes, the local root or administrator password is the same for all (or many) client systems."},
+                {"clients_admin_samepassword_no": "No, local Administrator/root accounts are disabled, or a different password is set for all machines."}
+              ]
+            },
+            {
+              "type": "tip",
+              "id": "warn_clients_admin_samepassword",
+              "cond": "clients_admin_samepassword_yes",
+              "text": "On both Windows and Linux machines, it is relatively easy to steal the hashes of the local administrator/root account. Using modern brute-force methods (such as rainbow tables, GPU cracking, etc.), literally billions of passwords can be tried each second. At that rate, even strong passwords can be found out in a very short amount of time. For best results, disable local administrative accounts or set different passwords for each machine. Otherwise an attacker who cracks the local administrator/root password will be able to expand their access to your entire fleet of client machines. Microsoft has released the <a href='https://support.microsoft.com/en-us/kb/3062591'>Local Administrator Password Solution (LAPS)</a> tool to help address this issue in Windows environments.",
+              "warn": "yes",
+              "name": "Local administrator password identical on many machines",
+              "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+              "severity": "high"
+            },
+            {
+              "type": "radiogroup",
+              "id": "clients_winxp",
+              "text": "One major risk factor in many corporate environments is the use of older versions of Windows. Does your company still have systems running  Windows XP or even earlier versions?",
+              "defaultChoice": false,
+              "choices": [
+                {"clients_winxp_yes": "Yes, some or all of our client machines still run Windows XP or earlier versions."},
+                {"clients_winxp_no": "No, our client machines do not run Windows XP or earlier versions. Legacy installations have been completely separated from our main infrastructure and cannot access any of your information."}
+              ]
+            },
+            {
+              "type": "tip",
+              "id": "warn_clients_winxp",
+              "cond": "clients_winxp_yes",
+              "text": "As of April 8, 2014, Windows XP is no longer supported and does not receive security updates or patches for critical vulnerabilities. Windows XP was originally released more than a decade ago, and it lacks many of the security controls that are common in more modern operating systems. Many exploits do not work on newer operating systems, thanks to mitigations that make buffer overflows and other memory corruption issues hard to exploit. Using up-to-date software and operating systems is an absolute necessity.",
+              "warn": "yes",
+              "name": "Windows XP in use",
+              "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+              "severity": "critical"
+            },
+            {
+              "type": "block",
+              "id": "block_client_encryption",
+              "text": "Encryption",
+              "items": [
+                {
+                  "type": "radiogroup",
+                  "id": "clients_laptops_hd_encrypted",
+                  "text": "Do you fully encrypt the hard disks of laptops and other portable client devices?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"clients_laptops_hd_encrypted_yes": "Yes, we use full-disk encryption for our laptop fleet."},
+                    {"clients_laptops_hd_encrypted_no": "No, laptop hard disks are not fully encrypted. Users are responsible for protecting sensitive information on laptops."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_clients_laptops_hd_encrypted",
+                  "cond": "clients_laptops_hd_encrypted_no",
+                  "text": "Trusting users to encrypt sensitive information on laptops is almost never an effective strategy. Full-disk encryption is strongly recommended. If a laptop contains information that might directly or indirectly compromise our confidential data (including data that indirectly gives access to our information, such as SSH keys, password hashes that may be reused on production systems, etc.), the hard disk <i>must</i> be fully encrypted. It's vital to ensure that the loss or theft of a laptop will not result in a data leak.",
+                  "warn": "yes",
+                  "name": "No disk encryption on laptops/mobile devices",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "high"
+                },
+                {
+                  "type": "radiogroup",
+                  "id": "clients_mobile_phones",
+                  "text": "Do you allow access to confidential information (e.g., email) from unencrypted mobile devices such as phones and tablets?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"clients_mobile_phones_yes": "Yes, our users can sync potentially confidential information like email onto their mobile phones or tablets."},
+                    {"clients_mobile_phones_no": "No, we do not allow access to corporate information from unencrypted devices such as mobile phones or tablets."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_clients_mobile_phones",
+                  "cond": "clients_mobile_phones_yes",
+                  "text": "Mobile devices are extremely easy to lose or steal. If your users can access confidential information (or other information that might be used to indirectly gain access to confidential data) from mobile devices, adequate encryption is essential. Ideally, a device policy should be rolled out to all corporate phones to enforce encryption and password requirements, and to provide remote wipe functions.",
+                  "warn": "yes",
+                  "name": "Corporate information access from unencrypted devices",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "medium"
+                },
+                {
+                  "type": "radiogroup",
+                  "id": "clients_workstation_hd_encrypted",
+                  "cond": "req_sensitive",
+                  "text": "Do you fully encrypt the hard disks of workstations and other devices in the office that have access to our confidential information?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"clients_workstation_hd_encrypted_yes": "Yes, our workstations use full-disk encryption."},
+                    {"clients_workstation_hd_encrypted_no": "No, devices that cannot be brought outside the office are generally unencrypted, even if they provide access to confidential information."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_clients_workstation_hd_encrypted",
+                  "cond": "clients_workstation_hd_encrypted_no",
+                  "text": "Your project seems to deal with confidential information. On devices that contain information that might directly or indirectly compromise confidential data (including data that indirectly gives access to information, such as SSH keys, password hashes that may be reused on production systems, etc.), full-disk encryption <i>must</i> be enabled.",
+                  "warn": "yes",
+                  "name": "No disk encryption on workstations",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "high"
+                },
+                {
+                  "type": "radiogroup",
+                  "id": "clients_media_encryption",
+                  "cond": "!req_nodata && req_sensitive",
+                  "text": "Do you require users to encrypt confidential information on mobile media such as external hard drives, thumb drives, DVDs, etc., and do you provide them with adequate tools?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"clients_media_encryption_yes": "Yes, any information that goes on mobile media is encrypted."},
+                    {"clients_media_encryption_no": "No, we should establish better requirements for encryption of mobile media."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_clients_media_encryption",
+                  "cond": "clients_media_encryption_no",
+                  "text": "Because this project seems to deal with sensitive data, you should ensure that all confidential information is encrypted anytime it is stored on media that may be taken outside of a physically secure facility.",
+                  "warn": "yes",
+                  "name": "Removable media not encrypted",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "high"
+                }
+              ]
+            },
+            {
+              "type": "box",
+              "id": "clients_other",
+              "text": "Is there anything else you want us to know about the security of your client systems?"
+            }
+          ]
+        },
+        {
+          "type": "block",
+          "id": "block_security_testing",
+          "text": "Technical Security Testing",
+          "items": [
+            {
+              "type": "info",
+              "text": "<b>Why this section matters:</b> In addition to audits of your information security program, you should perform technical security testing of information systems to make sure they function as intended, and that the data is properly protected. Some security issues, particularly in proprietary software, can only be identified manually; therefore both manual and automated testing should be performed. Even if the project exclusively uses standard off-the-self software, technical security testing helps ensure that software and infrastructure are configured securely and free of known security issues."
+            },
+            {
+              "type": "radiogroup",
+              "id": "testing_pentests",
+              "text": "Does an independent third party regularly perform penetration tests on all systems used to provide services to customers?",
+              "defaultChoice": false,
+              "choices": [
+                {"testing_pentests_yes": "Yes."},
+                {"testing_pentests_no": "No, we rarely or never have independent third parties do penetration tests."}
+              ]
+            },
+            {
+              "type": "tip",
+              "id": "warn_no_testing_pentests",
+              "cond": "testing_pentests_no",
+              "text": "Technical testing by security specialists is absolutely necessary to ensure the security and proper configuration of all software that's used to handle confidential and sensitive information.",
+              "warn": "yes",
+              "name": "No 3rd party penetration testing",
+              "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+              "severity": "critical"
+            },
+            {
+              "type": "block",
+              "id": "block_3rd_party_pentests",
+              "cond": "testing_pentests_yes",
+              "text": "3rd Party Penetration Tests",
+              "items": [
+                {
+                  "type": "box",
+                  "id": "testing_pentests_scope",
+                  "text": "Describe the scope of the penetration tests (in terms of both depth and width) and how the tests are applied to the systems used to provide services to customers."
+                },
+                {
+                  "type": "radiogroup",
+                  "id": "testing_pentests_manual",
+                  "text": "Many vulnerabilities cannot be found by automated scanners. Do the penetration tests include manual security testing?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"testing_pentests_manual_yes": "Yes, the experts we hire use both automated and manual testing methods."},
+                    {"testing_pentests_manual_no": "No, the penetration testing is fully automated."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_no_testing_pentests_manual",
+                  "cond": "testing_pentests_manual_no",
+                  "text": "Unfortunately, automated security testing is insufficient. Many security issues can only be discovered by manual tests. Automated security scans can (and should) be performed internally as well. It's not necessary to hire outside consultants for internal scans.",
+                  "warn": "yes",
+                  "name": "No manual penetration testing",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "high"
+                },
+                {
+                  "type": "line",
+                  "id": "testing_pentests_companies",
+                  "text": "What company/companies did you use for the three most recent penetration tests?"
+                },
+                {
+                  "type": "radiogroup",
+                  "text": "How often (on average) are penetration tests done for the scope you described?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"testing_pentests_freq_often": "Multiple times per year."},
+                    {"testing_pentests_freq_annually": "Annually."},
+                    {"testing_pentests_freq_rarely": "Less frequently."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_testing_pentests_freq_rarely",
+                  "cond": "testing_pentests_freq_rarely",
+                  "text": "Information systems are usually subject to frequent changes, and security threats also evolve rapidly. For these reasons, it's important to repeat security testing frequently (at least annually) to make sure security issues were not introduced by recent changes.",
+                  "warn": "yes",
+                  "name": "Infrequent penetration testing",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "high"
+                },
+                {
+                  "type": "radiogroup",
+                  "id": "testing_pentests_sharesummary",
+                  "text": "Are you willing to share a management summary of the most recent penetration testing reports?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"testing_pentests_sharesummary_yes": "Yes, if this helps to accelerate the partner audit process, we're willing to share them under NDA."},
+                    {"testing_pentests_sharesummary_no": "No, this information is considered confidential and is not shared even under NDA."}
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "radiogroup",
+              "id": "testing_scans",
+              "text": "Are all of the systems used in this project scanned for host-level vulnerabilities? (<i>Note</i>: This question does <i>not</i> refer to anti-malware scans. Instead, it refers to scans that look for known vulnerabilities and misconfiguration of the software running on servers.)",
+              "defaultChoice": false,
+              "choices": [
+                {"testing_scans_yes": "Yes"},
+                {"testing_scans_no": "No"}
+              ]
+            },
+            {
+              "type": "tip",
+              "id": "warn_no_testing_scans",
+              "cond": "testing_scans_no",
+              "text": "Automated security scans are a low-cost, low-effort way to make sure that known vulnerabilities and insecure misconfiguration in standard software are quickly identified and can be addressed. For best results, perform automated security scans at least quarterly. Ideally, scans should apply to both externally exposed and internal-only systems.",
+              "warn": "yes",
+              "name": "No automated security scans",
+              "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+              "severity": "high"
+            },
+            {
+              "type": "block",
+              "id": "block_security_scanning",
+              "cond": "testing_scans_yes",
+              "text": "Security Scanning",
+              "items": [
+                {
+                  "type": "line",
+                  "id": "testing_scans_software",
+                  "text": "What software or company do you use for vulnerability scans?"
+                },
+                {
+                  "type": "radiogroup",
+                  "text": "How often do you run vulnerability scans?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"testing_scans_monthly": "Once per month or more often"},
+                    {"testing_scans_quarterly": "Once per quarter"},
+                    {"testing_scans_rarely": "Less frequently"}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_testing_scans_rarely",
+                  "cond": "testing_scans_rarely",
+                  "text": "Information systems are usually subject to frequent changes, and security threats also evolve rapidly. For these reasons, it's important to repeat security scans frequently (at least quarterly) to make sure security issues have not been introduced by recent changes or recently discovered in off-the-shelf software.",
+                  "warn": "yes",
+                  "name": "Infrequent automated scans",
+                  "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
+                  "severity": "high"
+                },
+                {
+                  "type": "radiogroup",
+                  "id": "testing_scans_intext",
+                  "text": "Which systems are covered by the security scans?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"testing_scans_intext_yes": "Both internal systems and externally exposed systems are regularly scanned."},
+                    {"testing_scans_intext_no": "Our scans cover only those systems that are exposed on the Internet."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "id": "warn_warn_testing_scans_extonly",
+                  "cond": "testing_scans_intext_no",
+                  "text": "It's important to scan both externally exposed <i>and</i> internal systems. The results of these scans are extremely valuable for vulnerability and patch management. They can &mdash; with very low effort &mdash; quickly identify components that have not received necessary patches."
+                }
+              ]
+            },
+            {
+              "type": "radiogroup",
+              "id": "testing_inhouse",
+              "text": "In addition to third-party penetration tests and security scans, do you have security know-how internally, and do you use that know-how to conduct in-house security testing?",
+              "defaultChoice": false,
+              "choices": [
+                {"testing_inhouse_yes": "Yes, our security team does technical security reviews of the systems used for this project."},
+                {"testing_inhouse_no": "No, we don't do in-house security testing."}
+              ]
+            },
+            {
+              "type": "tip",
+              "id": "warn_no_testing_inhouse_sensitive",
+              "cond": "testing_inhouse_no && req_sensitive",
+              "text": "Not every company can have the necessary know-how to do technical security/penetration tests on their own. But because your project has very high confidentiality and/or integrity requirements, it's important to have sufficient know-how and resources to do in-house technical testing of the services you provide."
+            },
+            {
+              "type": "tip",
+              "id": "warn_no_testing_inhouse",
+              "cond": "testing_inhouse_no && !req_sensitive",
+              "text": "Not every company can have the necessary know-how to do technical security/penetration tests on their own. To compensate, in-depth and frequent third-party penetration tests should be performed on both externally exposed services and internal-only systems."
+            },
+            {
+              "type": "block",
+              "id": "block_inhouse_testing",
+              "cond": "testing_inhouse_yes",
+              "text": "In-house Security Testing/Reviews",
+              "items": [
+                {
+                  "type": "checkgroup",
+                  "text": "What kinds of security testing and security reviews are done internally?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"testing_inhouse_pentestext": "Red-team-style penetration tests of externally exposed systems."},
+                    {"testing_inhouse_pentestint": "Red-team-style penetration tests of internal systems."},
+                    {"testing_inhouse_blackbox": "Black-box security testing of software developed internally."},
+                    {"testing_inhouse_codereviews": "Security code reviews of software developed internally."},
+                    {"testing_inhouse_designreviews": "Security design reviews of software developed internally."},
+                    {"testing_inhouse_other": "Other kinds of testing."}
+                  ]
+                },
+                {
+                  "type": "box",
+                  "id": "testing_inhouse_other_details",
+                  "cond": "testing_inhouse_other",
+                  "text": "Describe the other kinds of testing your security team is conducting."
+                },
+                {
+                  "type": "tip",
+                  "id": "tip_testing_good",
+                  "cond": "testing_inhouse_pentestext && testing_inhouse_pentestint && testing_inhouse_blackbox && testing_inhouse_codereviews && testing_inhouse_designreviews",
+                  "text": "Thank you for your diligence!"
+                },
+                {
+                  "type": "line",
+                  "id": "testing_inhouse_fte",
+                  "cond": "testing_inhouse_pentestext || testing_inhouse_pentestint || testing_inhouse_blackbox || testing_inhouse_codereviews || testing_inhouse_other || testing_inhouse_designreviews",
+                  "text": "Approximately how many FTE (full-time equivalents) are working on this kind of testing?"
+                }
+              ]
+            },
+            {
+              "type": "box",
+              "id": "testing_other",
+              "text": "Is there anything else you want us to know about the security testing of your infrastructure and/or product?"
+            }
+          ]
+        },
+        {
+          "type": "block",
+          "id": "block_security_contact",
+          "text": "Security Contact",
+          "items": [
+            {
+              "type": "line",
+              "id": "security_contacts",
+              "text": "Please provide the email addresses (separated by semicolons) of team members who should be contacted about any security issues:"
+            }
+          ]
+        },
+        {
+          "type": "block",
+          "id": "block_feedback",
+          "text": "Feedback",
+          "items": [
+            {
+              "type": "box",
+              "id": "feedback",
+              "text": "<b>Good news!</b> You have made it to the end of this questionnaire. If you can spare another minute, please let us know how we can improve it. Any feedback is highly appreciated."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
