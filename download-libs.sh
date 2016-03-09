@@ -45,8 +45,13 @@ if [[ $jversion < "1.7" ]]; then
   exit 1
 fi
 
+# if repo was downloaded as zip from github, init git and clear submodules
 if [ ! -d .git ]; then
   git init
+  rm -rf $THIRD_PARTY_DIRECTORY/closure-compiler
+  rm -rf $THIRD_PARTY_DIRECTORY/closure-library
+  rm -rf $THIRD_PARTY_DIRECTORY/closure-stylesheets
+  rm -rf $THIRD_PARTY_DIRECTORY/js-dossier
 fi
 
 if [ ! -d $THIRD_PARTY_DIRECTORY ]; then
@@ -108,3 +113,4 @@ curl https://raw.githubusercontent.com/google/closure-templates/0cbc8543c34d3f77
 cd ..
 
 cd ..
+
