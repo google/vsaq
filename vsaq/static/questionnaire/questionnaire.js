@@ -44,6 +44,7 @@ goog.require('goog.array');
 goog.require('goog.debug.Console');
 goog.require('goog.debug.Error');
 goog.require('goog.dom');
+goog.require('goog.dom.TagName');
 goog.require('goog.events');
 goog.require('goog.events.Event');
 goog.require('goog.events.EventTarget');
@@ -189,7 +190,7 @@ vsaq.Questionnaire = function(rootElement) {
    * @type {!Element}
    * @private
    */
-  this.todoListElement_ = goog.dom.createDom('div');
+  this.todoListElement_ = goog.dom.createDom(goog.dom.TagName.DIV);
 
   /**
    * If true, the template for the questionnaire contains TODOs in old format.
@@ -276,14 +277,16 @@ vsaq.Questionnaire.prototype.answerChanged_ = function(e) {
 
 
 /**
- * Fixes all <a href=...> links to open in a new window.
+ * Fixes all <a href=...> links that have no target attribute specified to open
+ * in a new window.
  * @param {!Element} start Element to start fixing the links from.
  * @private
  */
 vsaq.Questionnaire.prototype.fixLinks_ = function(start) {
   goog.events.listen(start, goog.events.EventType.CLICK, function(e) {
-    if (e.target instanceof HTMLAnchorElement)
+    if (e.target instanceof HTMLAnchorElement && e.target.target == '') {
       e.target.target = '_blank';
+    }
     return true;
   });
 };

@@ -39,6 +39,7 @@ var qjson = {};
  *   inputType: string,
  *   inputPattern: string,
  *   inputTitle: string,
+ *   maxlength: number,
  *   name: string,
  *   no: string,
  *   placeholder: string,

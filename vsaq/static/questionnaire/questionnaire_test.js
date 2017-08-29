@@ -21,7 +21,6 @@ goog.require('goog.array');
 goog.require('goog.dom');
 goog.require('goog.events');
 goog.require('goog.events.EventType');
-goog.require('goog.json');
 goog.require('goog.object');
 goog.require('goog.testing.MockControl');
 goog.require('goog.testing.jsunit');
@@ -295,7 +294,7 @@ function testSetValues() {
   assertEquals('', q.items_[RADIO2.id].getValue());
   assertEquals('yes', q.items_[YESNO.id].getValue());
 
-  var verify = goog.json.parse(q.getValuesAsJson());
+  var verify = JSON.parse(q.getValuesAsJson());
   assertEquals('boxvalue', verify[BOX.id]);
   assertEquals('linevalue', verify[LINE.id]);
   assertEquals('yes', verify[YESNO.id]);
@@ -310,7 +309,7 @@ function testSetValues() {
   assertEquals('', q.items_[CHECK.id].getValue());
   assertEquals('no', q.items_[YESNO.id].getValue());
 
-  verify = goog.json.parse(q.getValuesAsJson());
+  verify = JSON.parse(q.getValuesAsJson());
   assertEquals('', verify[CHECK.id]);
   assertEquals('no', verify[YESNO.id]);
 }

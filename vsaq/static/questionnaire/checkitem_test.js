@@ -59,7 +59,7 @@ function endsWith(str, suffix) {
 function testCheckItem() {
   var el = check.container;
 
-  assertEquals(goog.dom.TagName.DIV, el.tagName);
+  assertEquals(String(goog.dom.TagName.DIV), el.tagName);
   assertContains('vsaq-checkbox-item', el.className);
   assert(check.checkBox_ instanceof HTMLInputElement);
   var label = goog.dom.getLastElementChild(el);

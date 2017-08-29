@@ -69,11 +69,11 @@ function tearDown() {
 function testUploadItem() {
   var el = upload.container;
 
-  assertEquals(goog.dom.TagName.DIV, el.tagName);
+  assertEquals(String(goog.dom.TagName.DIV), el.tagName);
   var desc = goog.dom.getFirstElementChild(el);
   assertEquals(CAPTION, goog.dom.getTextContent(desc));
   var fileTypeDesc = goog.dom.getNextElementSibling(desc);
-  assertEquals(goog.dom.TagName.DIV, fileTypeDesc.tagName);
+  assertEquals(String(goog.dom.TagName.DIV), fileTypeDesc.tagName);
   var form = goog.dom.getNextElementSibling(fileTypeDesc);
   assertEquals(upload.form_, form);
   assertEquals('multipart/form-data', form.enctype);
@@ -81,13 +81,13 @@ function testUploadItem() {
   assertEquals('uploaditem_id-label', label.id);
   assertEquals(upload.label_, label);
   var input = goog.dom.getNextElementSibling(label);
-  assertEquals(goog.dom.TagName.INPUT, input.tagName);
+  assertEquals(String(goog.dom.TagName.INPUT), input.tagName);
   assertEquals('uploaditem_id-file', input.id);
   var dlLink = goog.dom.getNextElementSibling(input);
-  assertEquals(goog.dom.TagName.A, dlLink.tagName);
+  assertEquals(String(goog.dom.TagName.A), dlLink.tagName);
   assertEquals('uploaditem_id-download', dlLink.id);
   var delLink = goog.dom.getNextElementSibling(dlLink);
-  assertEquals(goog.dom.TagName.A, delLink.tagName);
+  assertEquals(String(goog.dom.TagName.A), delLink.tagName);
   assertEquals('uploaditem_id-delete', delLink.id);
 }
 
@@ -170,7 +170,7 @@ function testUploadItemHandleUpload() {
       'IframeIo');
 
   // need to mock out fileInput_ as file input elements have a readonly value.
-  upload.fileInput_ = goog.dom.createDom('input');
+  upload.fileInput_ = goog.dom.createDom(goog.dom.TagName.INPUT);
   upload.fileInput_.value = 'test.pdf';
 
   mockIframeIoConstructor().$returns(mockIframeIo);
@@ -199,7 +199,7 @@ function testUploadItemHandleUpload() {
  */
 function testUploadItemHandleUploadIllegalExtension() {
   // need to mock out fileInput_ as file input elements have a readonly value.
-  upload.fileInput_ = goog.dom.createDom('input');
+  upload.fileInput_ = goog.dom.createDom(goog.dom.TagName.INPUT);
   upload.fileInput_.value = 'test.illegal';
 
   upload.handleUpload_();

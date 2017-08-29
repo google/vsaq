@@ -49,7 +49,7 @@ function setUp() {
 function testBoxItem() {
   var el = box.container;
 
-  assertEquals(goog.dom.TagName.DIV, el.tagName);
+  assertEquals(String(goog.dom.TagName.DIV), el.tagName);
   var desc = goog.dom.getFirstElementChild(el);
   assertTrue('Class not set',
       goog.dom.classlist.contains(desc, 'vsaq-question-title'));

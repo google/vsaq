@@ -46,9 +46,9 @@ function setUp() {
 function testSpacerItem() {
   var el = spacer.container;
 
-  assertEquals(goog.dom.TagName.DIV, el.tagName);
+  assertEquals(String(goog.dom.TagName.DIV), el.tagName);
   assertNotUndefined(el.firstChild);
-  assertEquals(goog.dom.TagName.HR, el.firstChild.tagName);
+  assertEquals(String(goog.dom.TagName.HR), el.firstChild.tagName);
   assertTrue(goog.dom.classlist.contains(el.firstChild, 'vsaq-spacer'));
 }
 

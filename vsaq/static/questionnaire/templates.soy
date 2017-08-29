@@ -321,6 +321,7 @@
  * @param inputPattern {string} Input pattern.
  * @param inputTitle {string} Input title.
  * @param isRequired {boolean} True iff the item is required.
+ * @param maxlength {number} Input maxlength attribute value.
  */
 {template .box}
   <div class="vsaq-item" data-vsaq-container-for="{$id}">
@@ -334,6 +335,7 @@
       {if $inputPattern}pattern="{$inputPattern}" {/if}
       {if $inputTitle}title="{$inputTitle}" {/if}
       {if $isRequired}required {/if}
+      {if $maxlength}maxlength="{$maxlength}" {/if}
       class="vsaq-box"></textarea>
   </div>
 {/template}
@@ -348,6 +350,7 @@
  * @param inputPattern {string} Input pattern.
  * @param inputTitle {string} Input title.
  * @param isRequired {boolean} True iff the item is required.
+ * @param maxlength {number} Input maxlength attribute value.
  */
 {template .line}
   <div class="vsaq-item" data-vsaq-container-for="{$id}">
@@ -361,6 +364,7 @@
       {if $isRequired}required {/if}
       {if $inputPattern}pattern="{$inputPattern}" {/if}
       {if $inputTitle}title="{$inputTitle}" {/if}
+      {if $maxlength}maxlength="{$maxlength}" {/if}
       {if $type}type="{$type}" {/if}
       class="vsaq-line">
     <p></p>

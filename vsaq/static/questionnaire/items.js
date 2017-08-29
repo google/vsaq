@@ -483,11 +483,15 @@ vsaq.questionnaire.items.Item.prototype.exportItem = function() {
  *     field. See {@link
  *     https://html.spec.whatwg.org/multipage/forms.html#attr-input-title}.
  * @param {boolean=} opt_isRequired Iff true, the item value is required.
+ * @param {number=} opt_maxlength HTML maxlength attribute value for the input
+ *     field. See {@link
+ *     https://html.spec.whatwg.org/multipage/forms.html#attr-fe-maxlength}
  * @extends {vsaq.questionnaire.items.Item}
  * @constructor
  */
 vsaq.questionnaire.items.ValueItem = function(id, conditions, text,
-    opt_placeholder, opt_inputPattern, opt_inputTitle, opt_isRequired) {
+    opt_placeholder, opt_inputPattern, opt_inputTitle, opt_isRequired,
+    opt_maxlength) {
   if (!id)
     throw new vsaq.questionnaire.items.ParseError('ValueItem must have an ID.');
 
@@ -529,6 +533,11 @@ vsaq.questionnaire.items.ValueItem = function(id, conditions, text,
    * @type {string|undefined}
    */
   this.inputTitle = opt_inputTitle;
+  /**
+   * HTML5 title attribute value for the input field.
+   * @type {number|undefined}
+   */
+  this.maxlength = opt_maxlength;
 };
 goog.inherits(vsaq.questionnaire.items.ValueItem,
               vsaq.questionnaire.items.Item);

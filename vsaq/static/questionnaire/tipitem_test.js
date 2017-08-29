@@ -68,14 +68,14 @@ function setUp() {
  */
 function testTipItem() {
   var el = tip.container;
-  assertEquals(goog.dom.TagName.DIV, el.tagName);
+  assertEquals(String(goog.dom.TagName.DIV), el.tagName);
   assertEquals(TIP_ID, tip.id);
   assertContains('Tip', goog.dom.getTextContent(el));
   assertContains(CAPTION, goog.dom.getTextContent(el));
   assertNotContains('Warning', goog.dom.getTextContent(el));
 
   el = warn_tip.container;
-  assertEquals(goog.dom.TagName.DIV, el.tagName);
+  assertEquals(String(goog.dom.TagName.DIV), el.tagName);
   assertEquals(WARN_ID, warn_tip.id);
   assertNotContains('Tip', goog.dom.getTextContent(el));
   assertContains(CAPTION, goog.dom.getTextContent(el));
@@ -83,7 +83,7 @@ function testTipItem() {
   assertContains('vsaq-bubble-medium', el.innerHTML);
 
   el = why_tip.container;
-  assertEquals(goog.dom.TagName.DIV, el.tagName);
+  assertEquals(String(goog.dom.TagName.DIV), el.tagName);
   assertEquals(WHY_ID, why_tip.id);
   assertNotContains('Tip', goog.dom.getTextContent(el));
   assertContains(CAPTION, goog.dom.getTextContent(el));

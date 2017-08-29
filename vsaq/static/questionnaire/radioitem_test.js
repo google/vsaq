@@ -59,7 +59,7 @@ function setUp() {
 function testRadioItem() {
   var el = radio.container;
 
-  assertEquals(goog.dom.TagName.DIV, el.tagName);
+  assertEquals(String(goog.dom.TagName.DIV), el.tagName);
   assertContains('vsaq-radio-item', el.className);
   assert(radio.radioButton instanceof HTMLInputElement);
   assertContains(CAPTION, goog.dom.getTextContent(el.firstChild));

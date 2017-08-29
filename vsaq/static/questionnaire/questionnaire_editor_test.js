@@ -136,8 +136,7 @@ function setUp() {
   stubs.set(vsaq, 'initQuestionnaire', function() {
     var q = new vsaq.Questionnaire(root);
     // Deep copy the questionnaire object here.
-    var dummyQuestionnaire = goog.json.parse(
-        goog.json.serialize(QUESTIONNAIRE));
+    var dummyQuestionnaire = JSON.parse(goog.json.serialize(QUESTIONNAIRE));
     q.setTemplate(dummyQuestionnaire);
     var mockQpage = {};
     mockQpage.questionnaire = q;

@@ -55,12 +55,12 @@ function testBlockItem() {
   var el = block.container;
   var legend = goog.dom.getFirstElementChild(el);
 
-  assertEquals(goog.dom.TagName.FIELDSET, el.tagName);
+  assertEquals(String(goog.dom.TagName.FIELDSET), el.tagName);
   assert(goog.dom.classlist.contains(el, 'vsaq-block'));
-  assertEquals(goog.dom.TagName.LEGEND, legend.tagName);
+  assertEquals(String(goog.dom.TagName.LEGEND), legend.tagName);
 
   var span = goog.dom.getFirstElementChild(legend);
-  assertEquals(goog.dom.TagName.SPAN, span.tagName);
+  assertEquals(String(goog.dom.TagName.SPAN), span.tagName);
   assertEquals(CAPTION, span.innerHTML);
 }
 

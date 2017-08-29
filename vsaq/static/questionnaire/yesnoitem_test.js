@@ -51,11 +51,11 @@ function setUp() {
 function testYesNoItem() {
   var el = yesno.container;
 
-  assertEquals(el.tagName, goog.dom.TagName.DIV);
+  assertEquals(el.tagName, String(goog.dom.TagName.DIV));
   assertTrue(goog.dom.classlist.contains(el, 'vsaq-yesno-block'));
 
   var desc = goog.dom.getFirstElementChild(el);
-  assertEquals(goog.dom.TagName.DIV, desc.tagName);
+  assertEquals(String(goog.dom.TagName.DIV), desc.tagName);
   assertTrue(goog.dom.classlist.contains(desc, 'vsaq-question-title'));
   assertEquals(CAPTION, goog.dom.getTextContent(desc));
 

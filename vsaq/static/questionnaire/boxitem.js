@@ -46,13 +46,17 @@ goog.require('vsaq.questionnaire.utils');
  *     field. See {@link
  *     https://html.spec.whatwg.org/multipage/forms.html#attr-input-title}.
  * @param {boolean=} opt_isRequired Iff true, the item value is required.
+ * @param {number=} opt_maxlength HTML maxlength attribute value for the input
+ *     field. See {@link
+ *     https://html.spec.whatwg.org/multipage/forms.html#attr-fe-maxlength}
  * @extends {vsaq.questionnaire.items.ValueItem}
  * @constructor
  */
 vsaq.questionnaire.items.BoxItem = function(id, conditions, caption,
-    opt_placeholder, opt_inputPattern, opt_inputTitle, opt_isRequired) {
+    opt_placeholder, opt_inputPattern, opt_inputTitle, opt_isRequired,
+    opt_maxlength) {
   goog.base(this, id, conditions, caption, opt_placeholder, opt_inputPattern,
-      opt_inputTitle, opt_isRequired);
+      opt_inputTitle, opt_isRequired, opt_maxlength);
 
   /**
    * The text area where the user can provide an answer.
@@ -78,7 +82,8 @@ vsaq.questionnaire.items.BoxItem.prototype.render = function() {
     placeholder: this.placeholder,
     inputPattern: this.inputPattern,
     inputTitle: this.inputTitle,
-    isRequired: Boolean(this.required)
+    isRequired: Boolean(this.required),
+    maxlength: this.maxlength
   });
   goog.dom.replaceNode(this.container, oldNode);
 
@@ -116,7 +121,8 @@ vsaq.questionnaire.items.BoxItem.parse = function(questionStack) {
     throw new vsaq.questionnaire.items.ParseError('Wrong parser chosen.');
 
   return new vsaq.questionnaire.items.BoxItem(item.id, item.cond, item.text,
-      item.placeholder, item.inputPattern, item.inputTitle, item.required);
+      item.placeholder, item.inputPattern, item.inputTitle, item.required,
+      item.maxlength);
 };
 
 

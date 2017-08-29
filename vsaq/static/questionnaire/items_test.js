@@ -50,7 +50,7 @@ var TEST_ITEMS = [
   {type: 'block', id: 'block_id', text: 'block_text'},
   {type: 'line', id: 'line_id', text: 'line_text',
     placeholder: 'placeholder', required: true, inputType: 'date',
-    inputPattern: '.*', inputTitle: 'input_title'},
+    inputPattern: '.*', inputTitle: 'input_title', maxlength: 100},
   {type: 'radio', id: 'radio1_id', text: 'radio1_text'},
   {type: 'radio', id: 'radio2_id', text: 'radio2_text'},
   {type: 'check', id: 'check1_id', text: 'check1_text'},
@@ -239,10 +239,11 @@ function testItemVisibility() {
 function testValueItemProperties() {
   var items = setUpTestQuestionnaire();
   var inputElement = items['line_id'];
-  assertEquals(inputElement.inputTitle, 'input_title');
-  assertEquals(inputElement.placeholder, 'placeholder');
-  assertEquals(inputElement.inputPattern, '.*');
-  assertEquals(inputElement.inputType, 'date');
+  assertEquals('input_title', inputElement.inputTitle);
+  assertEquals('placeholder', inputElement.placeholder);
+  assertEquals('.*', inputElement.inputPattern);
+  assertEquals(100, inputElement.maxlength);
+  assertEquals('date', inputElement.inputType);
   assertTrue(inputElement.required);
 }
 

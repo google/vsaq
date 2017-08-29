@@ -22,6 +22,7 @@
 goog.provide('vsaq.helpers.Dialog');
 
 goog.require('goog.dom');
+goog.require('goog.dom.TagName');
 goog.require('goog.events');
 goog.require('goog.events.EventType');
 goog.require('goog.soy');
@@ -41,7 +42,8 @@ goog.require('goog.soy');
 vsaq.helpers.Dialog = function(place, template, opt_parameters,
     opt_clickCallback) {
   this.element_ = goog.soy.renderAsElement(template, opt_parameters);
-  this.backdrop_ = goog.dom.createDom('div', 'vsaq-overlay-backdrop');
+  this.backdrop_ =
+      goog.dom.createDom(goog.dom.TagName.DIV, 'vsaq-overlay-backdrop');
   goog.dom.appendChild(place, this.element_);
   goog.dom.appendChild(place, this.backdrop_);
   if (opt_clickCallback)

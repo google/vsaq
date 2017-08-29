@@ -140,7 +140,7 @@ vsaq.Qpage.prototype.loadAnswersFromServer_ = function(id, server) {
           // Render the questionnaire's template.
           this.questionnaire.render();
           this.questionnaire.setValues(
-              /** @type {!Object.<string, string>} */ (goog.json.parse(text)));
+              /** @type {!Object.<string, string>} */ (JSON.parse(text)));
         } else {
           alert('Couldn\'t load questionnaire answers!');
         }
@@ -159,7 +159,7 @@ vsaq.Qpage.prototype.updateStorage_ = function(data) {
   var newStorageData = null;
   var storageData = this.readStorage_();
   if (storageData) {
-    storageData = goog.json.parse(storageData);
+    storageData = JSON.parse(storageData);
     goog.object.extend(storageData, data);
     newStorageData = goog.json.serialize(storageData);
   } else {
@@ -217,7 +217,7 @@ vsaq.Qpage.prototype.loadAnswersFromFile = function(evt) {
     return goog.bind(function(e) {
       var answers = e.target.result;
       this.questionnaire.setValues(
-          /** @type {!Object.<string, string>} */ (goog.json.parse(answers)));
+          /** @type {!Object.<string, string>} */ (JSON.parse(answers)));
     }, this);
   }, this)(answer_file);
   reader.readAsText(answer_file);
@@ -259,7 +259,7 @@ vsaq.Qpage.prototype.loadExtensionThenQuestionnaire = function(
           text = vsaq.utils.vsaqonToJson(text);
           var extension = {};
           try {
-            extension = goog.json.parse(text);
+            extension = JSON.parse(text);
           } catch (err) {
             alert('Loading the extension failed. It does not appear to be ' +
                   'valid json');
@@ -297,7 +297,7 @@ vsaq.Qpage.prototype.loadQuestionnaire = function(opt_path, opt_extension) {
             text = vsaq.utils.vsaqonToJson(text);
             var template = {};
             try {
-              template = goog.json.parse(text);
+              template = JSON.parse(text);
             } catch (err) {
               alert('Loading the template failed. It does not appear to be ' +
                     'valid json');
@@ -322,7 +322,7 @@ vsaq.Qpage.prototype.loadQuestionnaire = function(opt_path, opt_extension) {
             if (storageData) {
               this.questionnaire.setValues(
                   /** @type {!Object.<string, string>} */
-                  (goog.json.parse(storageData)));
+                  (JSON.parse(storageData)));
               this.updateDownloadAnswersUrl();
             }
 
@@ -403,7 +403,7 @@ if (!goog.getObjectByName('goog.testing.TestRunner')) {
   new vsaq.QuestionnaireEditor();
 
   vsaq.utils.initClickables({
-    'eh-clear': vsaq.clearAnswers,
+    'eh-clear': vsaq.clearAnswers
   });
 
 }

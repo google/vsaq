@@ -47,11 +47,11 @@ function setUp() {
 function testLineItem() {
   var el = line.container;
 
-  assertEquals(goog.dom.TagName.DIV, el.tagName);
+  assertEquals(String(goog.dom.TagName.DIV), el.tagName);
   var desc = goog.dom.getFirstElementChild(el);
   assertEquals(CAPTION, goog.dom.getTextContent(desc));
   var input = goog.dom.getNextElementSibling(desc);
-  assertEquals(goog.dom.TagName.INPUT, input.tagName);
+  assertEquals(String(goog.dom.TagName.INPUT), input.tagName);
   assertEquals('', input.value);
   assertEquals(ID, input.id);
 }
@@ -80,6 +80,7 @@ function testLineItemParse() {
     'inputTitle': 'input_title',
     'inputType': 'date',
     'placeholder': 'placeholder',
+    'maxlength': 100,
   }];
   line = vsaq.questionnaire.items.LineItem.parse(testStack);
   assert(line instanceof vsaq.questionnaire.items.LineItem);
@@ -88,6 +89,7 @@ function testLineItemParse() {
   assertEquals(0, testStack.length);
   assertEquals('input_title', line.inputTitle);
   assertEquals('placeholder', line.placeholder);
+  assertEquals(100, line.maxlength);
   assertEquals('.*', line.inputPattern);
   assertEquals('date', line.inputType);
   assertTrue(line.required);

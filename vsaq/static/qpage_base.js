@@ -22,6 +22,7 @@ goog.provide('vsaq.QpageBase');
 
 goog.require('goog.array');
 goog.require('goog.dom');
+goog.require('goog.dom.TagName');
 goog.require('goog.events');
 goog.require('goog.events.EventType');
 goog.require('goog.structs');
@@ -48,7 +49,7 @@ vsaq.QpageBase = function() {
   this.isReadOnly = goog.dom.getElement('_rom_').value == 'true';
 
   this.statusIndicator = goog.dom.getElement('_vsaq_saved_status') ||
-      goog.dom.createDom('span');
+      goog.dom.createDom(goog.dom.TagName.SPAN);
   this.questionnaire.setReadOnlyMode(this.isReadOnly);
 
   vsaq.utils.initClickables({

@@ -1093,6 +1093,74 @@
               ]
             },
             {
+              "type": "block",
+              "text": "Email",
+              "id": "block_email",
+              "cond": "req_sensitive",
+              "items": [
+                {
+                  "type": "radiogroup",
+                  "text": "Do you use third-party (e.g. hosted email, email marketing services, etc.) email providers?",
+                  "id": "servers_email_third_party",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"servers_email_third_party_yes": "Yes, we use a third-party email provider for some or all of our email."},
+                    {"servers_email_third_party_no": "No, we use our own internal email infrastructure (e.g. Microsoft Exchange) for all of our email."}
+                  ]
+                },
+                {
+                  "type": "checkgroup",
+                  "text": "Which of the following security controls do you use to protect against spoofed or forged emails on the domains you own and use?",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"email_security_spf_policy": "Restricted <a href=\"https://en.wikipedia.org/wiki/Sender_Policy_Framework\">Sender Policy Framework (SPF)</a> policies (i.e. the fewest hosts possible are allowed with a default SOFTFAIL or FAIL qualifier)."},
+                    {"email_security_dkim": "<a href=\"https://en.wikipedia.org/wiki/DomainKeys_Identified_Mail\">DomainKeys Identified Mail (DKIM)</a> email authentication."},
+                    {"email_security_dmarc": "<a href=\"https://en.wikipedia.org/wiki/DMARC\">Domain-based Message Authentication, Reporting and Conformance (DMARC)</a> email validation."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "text": "A key step when securing email infrastructure is preventing spoofed and forged emails, which are used in social engineering, phishing and fraud attacks. Without the use of industry standard email security controls, it is difficult to stop spoofed emails. People, even those with high security awareness, do not always recognise potentially dangerous emails.",
+                  "why": "If you have compensating controls in place or feel that this does not constitute a risk in your specific circumstances, please explain below. If you are working to address this, please also include an approximate timeframe for the resolution of this concern:",
+                  "warn": "yes",
+                  "name": "Lack of email security controls",
+                  "severity": "medium",
+                  "cond": "!(email_security_spf_policy || email_security_dkim || email_security_dmarc)",
+                  "id": "warn_servers_email_security_spoof"
+                },
+                {
+                  "type": "radiogroup",
+                  "text": "Does your inbound email infrastructure support Transport Layer Security (TLS) 1.2 with cipher suites with <a href=\"https://en.wikipedia.org/wiki/Forward_secrecy\">forward secrecy</a> (e.g. ECDHE)?",
+                  "id": "servers_email_inbound_tls",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"servers_email_inbound_tls_yes": "Yes, our inbound SMTP servers support at least TLS 1.2 and cipher suites with forward secrecy for all inbound email."},
+                    {"servers_email_inbound_tls_no": "No, our inbound SMTP servers do not support encryption or do not meet this level of encryption in transit."}
+                  ]
+                },
+                {
+                  "type": "radiogroup",
+                  "text": "Does your outbound email infrastructure use <a href=\"https://en.wikipedia.org/wiki/Opportunistic_TLS\">Opportunistic TLS (STARTTLS)</a> to request remote servers upgrade to an encrypted connection?",
+                  "id": "servers_email_outbound_starttls",
+                  "defaultChoice": false,
+                  "choices": [
+                    {"servers_email_outbound_starttls_yes": "Yes, our outbound SMTP servers will upgrade to an encrypted connection if the STARTTLS extension is available."},
+                    {"servers_email_outbound_starttls_no": "No, our outbound SMTP servers do not support STARTTLS."}
+                  ]
+                },
+                {
+                  "type": "tip",
+                  "text": "Emails sent without using Transport Layer Security (TLS) are as open to snoopers as a postcard in the mail. When an email is encrypted in transit with TLS, it makes it harder for others to read what you’re sending. Since your project has a moderate or high confidentiality requirement, Google generally requires that SMTP traffic between the vendor and Google is encrypted using TLS 1.2 with cipher suites that support forward secrecy. Ensure you use <a href=\"https://wiki.mozilla.org/Security/Server_Side_TLS\">trusted and peer reviewed guidance</a> when selecting cipher suites and configuring network service encryption.",
+                  "why": "If you have compensating controls in place or feel that this does not constitute a risk in your specific circumstances, please explain below. If you are working to address this, please also include an approximate timeframe for the resolution of this concern:",
+                  "warn": "yes",
+                  "name": "Email encryption in transit may be inadequate",
+                  "severity": "medium",
+                  "cond": "servers_email_inbound_tls_no || servers_email_outbound_starttls_no",
+                  "id": "warn_servers_email_security_encryption"
+                }
+              ]
+            },
+            {
               "type": "radiogroup",
               "id": "servers_outsourced",
               "text": "Is the management of your servers (or parts thereof) outsourced?",
@@ -1447,20 +1515,20 @@
             {
               "type": "radiogroup",
               "id": "clients_winxp",
-              "text": "One major risk factor in many corporate environments is the use of older versions of Windows. Does your company still have systems running  Windows XP or even earlier versions?",
+              "text": "One major risk factor in many corporate environments is the use of older versions of Windows. Does your company still have systems running  Windows Vista or earlier versions?",
               "defaultChoice": false,
               "choices": [
-                {"clients_winxp_yes": "Yes, some or all of our client machines still run Windows XP or earlier versions."},
-                {"clients_winxp_no": "No, our client machines do not run Windows XP or earlier versions. Legacy installations have been completely separated from our main infrastructure and cannot access any of your information."}
+                {"clients_winxp_yes": "Yes, some or all of our client machines still run Windows Vista or earlier versions."},
+                {"clients_winxp_no": "No, our client machines do not run Windows Vista or earlier versions. Legacy installations have been completely separated from our main infrastructure and cannot access any of your information."}
               ]
             },
             {
               "type": "tip",
               "id": "warn_clients_winxp",
               "cond": "clients_winxp_yes",
-              "text": "As of April 8, 2014, Windows XP is no longer supported and does not receive security updates or patches for critical vulnerabilities. Windows XP was originally released more than a decade ago, and it lacks many of the security controls that are common in more modern operating systems. Many exploits do not work on newer operating systems, thanks to mitigations that make buffer overflows and other memory corruption issues hard to exploit. Using up-to-date software and operating systems is an absolute necessity.",
+              "text": "As of April 8, 2014, Windows XP is no longer supported, and as of April 11th 2017, neither is Windows Vista. Security updates or patches for critical vulnerabilities are no longer provided. These Windows versions were originally released more than a decade ago, and lack many of the security controls that are common in more modern operating systems. Many exploits do not work on newer operating systems, thanks to mitigations that make buffer overflows and other memory corruption issues hard to exploit. Using up-to-date software and operating systems is an absolute necessity.",
               "warn": "yes",
-              "name": "Windows XP in use",
+              "name": "Unsupported version of Windows in use",
               "why": "If you have compensating controls in place or feel that this issue does not constitute a risk in your specific circumstances, please explain below. If you're working to address this issue, include an estimate of when it will be resolved:",
               "severity": "critical"
             },

@@ -1,4 +1,3 @@
---language_in=ECMASCRIPT5
 --jscomp_error=accessControls
 --jscomp_error=ambiguousFunctionDecl
 --jscomp_error=checkDebuggerStatement
@@ -14,7 +13,6 @@
 --jscomp_error=es5Strict
 --jscomp_error=es3
 --jscomp_error=externsValidation
---jscomp_error=fileoverviewTags
 --jscomp_error=globalThis
 --jscomp_error=internetExplorerChecks
 --jscomp_error=invalidCasts

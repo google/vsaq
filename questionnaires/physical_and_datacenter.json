@@ -94,7 +94,7 @@
             {
               "type": "tip",
               "id": "warn_office_controls_swipe_cards",
-              "cond": "office_facilities_excl_no && !office_controls_swipe_cards",
+              "cond": "(office_facilities_excl_no || office_facilities_excl_yes) && !office_controls_swipe_cards",
               "text": "Electronic access control is strongly recommended for office facilities that deal with confidential or sensitive data or have network-level access to it. Standard (non-electronic) keys are very difficult to control (short of changing the entire lock), and access is generally not logged in an auditable way.",
               "warn": "yes",
               "name": "No electronic access controls at the office",

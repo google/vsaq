@@ -46,7 +46,7 @@ function setUp() {
 function testInfoItem() {
   var el = info.container;
 
-  assertEquals(goog.dom.TagName.DIV, el.tagName);
+  assertEquals(String(goog.dom.TagName.DIV), el.tagName);
   assertEquals(ID, el.id);
   assertEquals(CAPTION, goog.dom.getTextContent(el));
 }

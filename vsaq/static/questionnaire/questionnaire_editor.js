@@ -406,7 +406,7 @@ vsaq.QuestionnaireEditor.prototype.tryParseTemplate_ = function() {
   var jsonTemplate = vsaq.utils.vsaqonToJson(vsaqonTemplate);
   var template = {};
   try {
-    template = goog.json.parse(jsonTemplate)['questionnaire'];
+    template = JSON.parse(jsonTemplate)['questionnaire'];
   } catch (err) {
     this.highlightElement_(this.editTemplateElement_, false);
     return false;
@@ -488,7 +488,8 @@ vsaq.QuestionnaireEditor.prototype.editItemTextEntry = function(el) {
   // Inform other methods that a property is currently being edited.
   this.itemClickTextEditMutex_ = true;
 
-  if (el.firstChild && el.firstChild.tagName === goog.dom.TagName.TEXTAREA)
+  if (el.firstChild &&
+      el.firstChild.tagName === String(goog.dom.TagName.TEXTAREA))
     return;
 
   // Ensure that once the text was clicked focus doesn't get lost.
@@ -496,7 +497,8 @@ vsaq.QuestionnaireEditor.prototype.editItemTextEntry = function(el) {
   if (el.hasAttribute('for'))
     el.removeAttribute('for');
   // Remove any label divs (else a checkbox/radio could be clicked instead).
-  if (el.parentNode && el.parentNode.tagName === goog.dom.TagName.LABEL) {
+  if (el.parentNode &&
+      el.parentNode.tagName === String(goog.dom.TagName.LABEL)) {
     var labelElement = el.parentNode;
     var fragment = document.createDocumentFragment();
     while (labelElement.firstChild)
@@ -564,8 +566,10 @@ vsaq.QuestionnaireEditor.prototype.saveItemEntry_ = function(el, targetItem) {
   if (!editItemEntryDOM)
     return;
 
-  var isSelectDOM = (editItemEntryDOM.tagName === goog.dom.TagName.SELECT);
-  var isTextareaDOM = (editItemEntryDOM.tagName === goog.dom.TagName.TEXTAREA);
+  var isSelectDOM =
+      (editItemEntryDOM.tagName === String(goog.dom.TagName.SELECT));
+  var isTextareaDOM =
+      (editItemEntryDOM.tagName === String(goog.dom.TagName.TEXTAREA));
   if (!isSelectDOM && !isTextareaDOM)
     return;
 
