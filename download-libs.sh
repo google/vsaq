@@ -58,7 +58,7 @@ if [ ! -d $THIRD_PARTY_DIRECTORY ]; then
   mkdir $THIRD_PARTY_DIRECTORY
 fi
 cd $THIRD_PARTY_DIRECTORY
-
+git init
 git submodule add -f https://github.com/google/closure-compiler closure-compiler
 git submodule add -f https://github.com/google/closure-library closure-library
 git submodule add -f https://github.com/google/closure-stylesheets closure-stylesheets
