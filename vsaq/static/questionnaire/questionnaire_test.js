@@ -232,7 +232,8 @@ function testQuestionnaireUpdates() {
   assertObjectEquals(expectedChanges, realChanges);
 
   // Tests updates to Lines.
-  expectedChanges = realChanges = {};
+  expectedChanges = {};
+  realChanges = {};
   var line = q.items_[LINE.id];
   line.textBox_.value = 'updated_value';
   e.target = line.textBox_;
@@ -241,7 +242,8 @@ function testQuestionnaireUpdates() {
   assertObjectEquals(expectedChanges, realChanges);
 
   // Tests updates to Radios.
-  expectedChanges = realChanges = {};
+  expectedChanges = {};
+  realChanges = {};
   var radio = q.items_[RADIO1.id];
   radio.setValue(true);
   e.target = radio.radioButton;
@@ -251,7 +253,8 @@ function testQuestionnaireUpdates() {
   assertObjectEquals(expectedChanges, realChanges);
 
   // Tests updates to Checks.
-  expectedChanges = realChanges = {};
+  expectedChanges = {};
+  realChanges = {};
   var check = q.items_[CHECK.id];
   check.setValue(true);
   e.target = check.checkBox_;
@@ -260,7 +263,8 @@ function testQuestionnaireUpdates() {
   assertObjectEquals(expectedChanges, realChanges);
 
   // Tests updates to YesNos.
-  expectedChanges = realChanges = {};
+  expectedChanges = {};
+  realChanges = {};
   var yes = q.items_[YESNO.id];
   yes.setValue('yes');
   e.target = yes.yesRadio_;

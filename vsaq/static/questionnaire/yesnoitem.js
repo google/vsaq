@@ -40,12 +40,14 @@ goog.require('vsaq.questionnaire.utils');
  * @param {string} caption The caption to show next to the radio button.
  * @param {string} yes String shown as label for the first option.
  * @param {string} no String shown as label for the second option.
+ * @param {string=} opt_auth If "readonly", this ValueItem cannot be modified.
  * @extends {vsaq.questionnaire.items.ValueItem}
  * @constructor
  */
 vsaq.questionnaire.items.YesNoItem = function(id, conditions, caption, yes,
-    no) {
-  goog.base(this, id, conditions, caption);
+    no, opt_auth) {
+  goog.base(this, id, conditions, caption, undefined, undefined, undefined,
+            undefined, undefined, opt_auth);
 
   /**
    * The text for the yes choice.
@@ -151,14 +153,15 @@ vsaq.questionnaire.items.YesNoItem.parse = function(questionStack) {
     throw new vsaq.questionnaire.items.ParseError('Wrong parser chosen.');
 
   return new vsaq.questionnaire.items.YesNoItem(item.id, item.cond, item.text,
-                                                item.yes, item.no);
+                                                item.yes, item.no, item.auth);
 };
 
 
 /** @inheritDoc */
 vsaq.questionnaire.items.YesNoItem.prototype.setReadOnly = function(readOnly) {
-  this.yesRadio_.disabled = readOnly;
-  this.noRadio_.disabled = readOnly;
+  // if item marked readonly, always keep it readonly
+  this.yesRadio_.disabled = this.auth == 'readonly' ? true : readOnly;
+  this.noRadio_.disabled = this.auth == 'readonly' ? true : readOnly;
 };
 
 

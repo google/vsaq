@@ -43,7 +43,7 @@ goog.require('vsaq.questionnaire.templates');
  *     for the item to be visible to the user.
  * @param {?string} caption The caption of the block.
  * @param {?string=} opt_auth The needed authorization to get an item displayed.
- *     The auth param on {@code vsaq.questionnaire.items.BlockItem} only
+ *     The auth param on `vsaq.questionnaire.items.BlockItem` only
  *     prevents that items are displayed to the user (hidden by display=none).
  * @param {?string=} opt_className Name of a CSS class to add to the block.
  * @extends {vsaq.questionnaire.items.ContainerItem}

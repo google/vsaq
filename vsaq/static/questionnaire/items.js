@@ -64,7 +64,7 @@ goog.inherits(vsaq.questionnaire.items.ParseError, goog.debug.Error);
 /**
  * Base class for all questionnaire items.
  * <p>All items derived from this base class need to have a property
- * {@code TYPE}, which holds the identifier that is used for the particular item
+ * `TYPE`, which holds the identifier that is used for the particular item
  * kind in the serialized format.</p>
  * @param {?string} id An ID uniquely identifying the question.
  * @param {?string} conditions A string containing conditions which must be met
@@ -358,7 +358,7 @@ vsaq.questionnaire.items.Item.TYPE;
  * a Json structure. This function takes the first element from the passed
  * array of serialized questionnaire items, and returns the parsed item.
  * If an error is encountered parsing the top item, the function will throw a
- * {@code vsaq.questionnaire.items.ParseError}.
+ * `vsaq.questionnaire.items.ParseError`.
  * @param {!Array.<qjson.QuestionnaireItem> | !Array.<!Object>} questionStack
  *     Array of serialized questionnaire items.
  * @return {!vsaq.questionnaire.items.Item} A single parsed item.
@@ -482,16 +482,17 @@ vsaq.questionnaire.items.Item.prototype.exportItem = function() {
  * @param {string=} opt_inputTitle HTML5 title attribute value for the input
  *     field. See {@link
  *     https://html.spec.whatwg.org/multipage/forms.html#attr-input-title}.
- * @param {boolean=} opt_isRequired Iff true, the item value is required.
+ * @param {boolean=} opt_isRequired If true, the item value is required.
  * @param {number=} opt_maxlength HTML maxlength attribute value for the input
  *     field. See {@link
  *     https://html.spec.whatwg.org/multipage/forms.html#attr-fe-maxlength}
+ * @param {string=} opt_auth If "readonly", this ValueItem cannot be modified.
  * @extends {vsaq.questionnaire.items.Item}
  * @constructor
  */
 vsaq.questionnaire.items.ValueItem = function(id, conditions, text,
     opt_placeholder, opt_inputPattern, opt_inputTitle, opt_isRequired,
-    opt_maxlength) {
+    opt_maxlength, opt_auth) {
   if (!id)
     throw new vsaq.questionnaire.items.ParseError('ValueItem must have an ID.');
 
@@ -538,6 +539,13 @@ vsaq.questionnaire.items.ValueItem = function(id, conditions, text,
    * @type {number|undefined}
    */
   this.maxlength = opt_maxlength;
+
+  if (opt_auth == 'readonly')
+    /**
+     * If 'readonly', the ValueItem cannot be modified.
+     * @type {string|undefined}
+     */
+    this.auth = 'readonly';
 };
 goog.inherits(vsaq.questionnaire.items.ValueItem,
               vsaq.questionnaire.items.Item);
@@ -545,7 +553,7 @@ goog.inherits(vsaq.questionnaire.items.ValueItem,
 
 /**
  * Handles changes to the item and dispatches an
- * {@code vsaq.questionnaire.items.Item.CHANGED} event for this item.
+ * `vsaq.questionnaire.items.Item.CHANGED` event for this item.
  * @protected
  */
 vsaq.questionnaire.items.ValueItem.prototype.answerChanged = function() {

@@ -7,7 +7,7 @@
 --jscomp_error=checkVars
 --jscomp_error=const
 --jscomp_error=constantProperty
---jscomp_error=deprecated
+--jscomp_warning=deprecated
 --jscomp_error=duplicate
 --jscomp_error=duplicateMessage
 --jscomp_error=es5Strict
@@ -24,8 +24,6 @@
 --jscomp_error=unknownDefines
 --jscomp_error=uselessCode
 --jscomp_error=visibility
---externs=third_party/closure-compiler/contrib/externs/chrome_extensions.js
 --only_closure_dependencies
 --manage_closure_dependencies
---js third_party/closure-library/closure/goog/deps.js
 --js build/deps.js

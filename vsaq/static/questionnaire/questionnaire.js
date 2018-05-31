@@ -53,7 +53,6 @@ goog.require('goog.json');
 goog.require('goog.log');
 goog.require('goog.object');
 goog.require('goog.soy');
-goog.require('goog.structs');
 goog.require('vsaq.questionnaire.items.BlockItem');
 goog.require('vsaq.questionnaire.items.BoxItem');
 goog.require('vsaq.questionnaire.items.CheckItem');
@@ -92,19 +91,19 @@ goog.inherits(vsaq.questionnaire.QuestionnaireError, goog.debug.Error);
  * An interactive questionnaire.
  *
  * This class allows to display an interactive questionnaire to the user, under
- * the {@code Element} passed as a parameter to the constructor.
+ * the `Element` passed as a parameter to the constructor.
  *
  * <p>After instantiation, the questions and structure of the questionnaire need
- * to be provided by setting an Array of {@code vsaq.questionnaire.items.Item}s
- * with {@code setTemplate}. If previous answers have been recorded, those can
- * be loaded with {@code setValues}.</p>
+ * to be provided by setting an Array of `vsaq.questionnaire.items.Item`s
+ * with `setTemplate`. If previous answers have been recorded, those can
+ * be loaded with `setValues`.</p>
  *
- * <p>Calling {@code render} will display the questionnaire to the user. It
+ * <p>Calling `render` will display the questionnaire to the user. It
  * should be called only after setting a template.</p>
  *
  * <p>Any changes the user makes to the questionnaire cause an {@code
  * goog.events.EventType.CHANGE} event to be raised. At any given time, the
- * currently selected answers can be exported through {@code getValuesAsJson}
+ * currently selected answers can be exported through `getValuesAsJson`
  * in JSON format.</p>
  *
  * @constructor
@@ -119,7 +118,7 @@ vsaq.Questionnaire = function(rootElement) {
 
   /**
    * A dictionary of all items, where their ID is the key.
-   * @type {!Object.<string, (!vsaq.questionnaire.items.Item)>}
+   * @type {!Object.<string, !vsaq.questionnaire.items.Item>}
    * @private
    */
   this.items_ = {};
@@ -133,7 +132,7 @@ vsaq.Questionnaire = function(rootElement) {
 
   /**
    * Stores the values of the answers to the questions in a dictionary where
-   * the keys are the items' ids (see {@code vsaq.questionnaire.items.Item.id}),
+   * the keys are the items' ids (see `vsaq.questionnaire.items.Item.id`),
    * and the values are the answers.
    * @type {!Object.<string, string>}
    * @private
@@ -149,7 +148,7 @@ vsaq.Questionnaire = function(rootElement) {
 
   /**
    * Whether events are captured or not. This is because while the questionnaire
-   * is updated through {@code setValues} no events must be sent.
+   * is updated through `setValues` no events must be sent.
    * @type {boolean}
    * @private
    */
@@ -320,7 +319,8 @@ vsaq.Questionnaire.prototype.reevaluateConditions_ = function() {
   var todos = [];
   var todoStatus = {};
   // Show and hide items in the questionnaire
-  goog.structs.forEach(this.items_, function(item, id, items) {
+  goog.object.forEach(this.items_, function(item, id, items) {
+    if (!items) return;
     if (item instanceof vsaq.questionnaire.items.ValueItem)
       item.setReadOnly(this.readonlyMode_);
 
@@ -487,7 +487,7 @@ vsaq.Questionnaire.prototype.done = function() {
 
 /**
  * Sets the template object for the questionnaire. If the template is not
- * in a valid format, a {@code vsaq.questionnaire.items.ParseError} is thrown.
+ * in a valid format, a `vsaq.questionnaire.items.ParseError` is thrown.
  * @param {!vsaq.questionnaire.items.ItemArray} template The template for
  *     questionnaire.
  * @throws {vsaq.questionnaire.items.ParseError}
@@ -525,7 +525,7 @@ vsaq.Questionnaire.prototype.setTemplate = function(template) {
  *
  * Note: The order in which template extension are passed matters.
  * If the extension templates is not in a valid format, a
- * {@code vsaq.questionnaire.QuestionnaireError} is thrown.
+ * `vsaq.questionnaire.QuestionnaireError` is thrown.
  *
  * @param {!Object} baseTemplate The base template for the questionnaire.
  * @param {...!Object} var_args Template extensions that extend the baseTemplate
@@ -569,7 +569,7 @@ vsaq.Questionnaire.prototype.setMultipleTemplates = function(
  * Inserts all items of an extension template into the specified position of the
  * baseTemplate.
  * If extension templates are not in a valid format, a
- * {@code vsaq.questionnaire.QuestionnaireError} is thrown.
+ * `vsaq.questionnaire.QuestionnaireError` is thrown.
  * @param {!Object} baseTemplate The base template where items will be insteted.
  * @param {!Object} extensionTemplate Template that extends the baseTemplate
  *     (e.g. company specific questions).
@@ -644,12 +644,12 @@ vsaq.Questionnaire.prototype.insertItemIntoTemplate_ = function(
 
     // We need to go deeper.
     if (item.hasOwnProperty('items')) {
-      success |= this.insertItemIntoTemplate_(
+      success = success || this.insertItemIntoTemplate_(
           item['items'], newItem, targetItemId, opt_insertAfter);
     }
   }
 
-  return success;
+  return !!success;
 };
 
 
@@ -691,7 +691,7 @@ vsaq.Questionnaire.prototype.setValues = function(values, opt_scrollThere) {
   // Set the new values. We need to disable events during that time, as
   // we don't want to dispatch CHANGE events for change *to* the desired state.
   this.isCapturingEvents_ = false;
-  goog.structs.forEach(this.values_, function(value, id) {
+  goog.object.forEach(this.values_, function(value, id) {
     var item = this.items_[id];
     if (!item) {
       this.logger_.warning(

@@ -124,10 +124,53 @@ function testGroupItemParse() {
   var testStack = [TEST_CHECKGROUP];
   checkgroupItem = vsaq.questionnaire.items.CheckgroupItem.parse(testStack);
   assert(checkgroupItem instanceof vsaq.questionnaire.items.CheckgroupItem);
+  for (var i = 0; i < checkgroupItem.containerItems.length; ++i)
+    assertFalse('readonly' == checkgroupItem.containerItems[i].auth);
 
   testStack = [TEST_RADIOGROUP];
   radiogroupItem = vsaq.questionnaire.items.RadiogroupItem.parse(testStack);
   assert(radiogroupItem instanceof vsaq.questionnaire.items.RadiogroupItem);
+  for (var i = 0; i < radiogroupItem.containerItems.length; ++i)
+    assertFalse('readonly' == radiogroupItem.containerItems[i].auth);
+
+  // Verify all items once again
+  testGroupItem();
+
+  // testing readonly functionality
+  var TEST_CHECKGROUP2 = {
+    "type": "checkgroup",
+    "defaultChoice": true,
+    "text": "caption",
+    "choices": [
+      {"choice_id_1": "Text 1"},
+      {"choice_id_2": "Text 2"}
+    ],
+    "choicesConds": [],
+    "auth": "readonly"
+  };
+
+  var TEST_RADIOGROUP2 = {
+    'type': 'radiogroup',
+    'text': 'caption',
+    'defaultChoice': false,
+    'choices': [
+      {'choice_id_1': 'Text 1'},
+      {'choice_id_2': 'Text 2'}
+    ],
+    'choicesConds': [],
+    'auth': 'readonly'
+  };
+  testStack = [TEST_CHECKGROUP2];
+  checkgroupItem = vsaq.questionnaire.items.CheckgroupItem.parse(testStack);
+  assert(checkgroupItem instanceof vsaq.questionnaire.items.CheckgroupItem);
+  for (var i = 0; i < checkgroupItem.containerItems.length; ++i)
+    assertEquals('readonly', checkgroupItem.containerItems[i].auth);
+
+  testStack = [TEST_RADIOGROUP2];
+  radiogroupItem = vsaq.questionnaire.items.RadiogroupItem.parse(testStack);
+  assert(radiogroupItem instanceof vsaq.questionnaire.items.RadiogroupItem);
+  for (var i = 0; i < radiogroupItem.containerItems.length; ++i)
+    assertEquals('readonly', radiogroupItem.containerItems[i].auth);
 
   // Verify all items once again
   testGroupItem();

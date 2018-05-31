@@ -88,4 +88,22 @@ function testBoxItemParse() {
   assertEquals('placeholder', box.placeholder);
   assertTrue(box.required);
   assertEquals(0, testStack.length);
+  assertTrue(box.auth != 'readonly');
+
+  testStack = [{
+    'type': 'box',
+    'text': CAPTION,
+    'id': ID,
+    'required' : true,
+    'placeholder': 'placeholder',
+    'auth': 'readonly'
+  }];
+  box = vsaq.questionnaire.items.BoxItem.parse(testStack);
+  assert(box instanceof vsaq.questionnaire.items.BoxItem);
+  assertEquals(ID, box.id);
+  assertEquals(CAPTION, box.text);
+  assertEquals('placeholder', box.placeholder);
+  assertTrue(box.required);
+  assertEquals(0, testStack.length);
+  assertEquals('readonly', box.auth);
 }

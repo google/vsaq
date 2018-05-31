@@ -33,7 +33,7 @@ goog.require('vsaq.questionnaire.utils');
 
 
 /**
- * A tip that provides advice to the user. If {@code clarification} is set to
+ * A tip that provides advice to the user. If `clarification` is set to
  * true, additionally a text area is shown to the user where they can provide
  * additional information.
  * @param {string} id An ID uniquely identifying the tip.
@@ -48,12 +48,15 @@ goog.require('vsaq.questionnaire.utils');
  * @param {string=} opt_name Name of the issue.
  * @param {string=} opt_todo Todo list entry associated with the tip.
  * @param {string=} opt_customTitle Title of bubble defined in JSON.
+ * @param {string=} opt_auth If "readonly", this ValueItem cannot be modified.
  * @extends {vsaq.questionnaire.items.ValueItem}
  * @constructor
  */
 vsaq.questionnaire.items.TipItem = function(id, conditions, text, warn,
-    opt_severity, opt_clarification, opt_name, opt_todo, opt_customTitle) {
-  goog.base(this, id, conditions, text);
+    opt_severity, opt_clarification, opt_name, opt_todo, opt_customTitle,
+    opt_auth) {
+  goog.base(this, id, conditions, text, undefined, undefined, undefined,
+            undefined, undefined, opt_auth);
 
   /**
    * Indicating whether the tip is a warning or only informational.
@@ -192,14 +195,16 @@ vsaq.questionnaire.items.TipItem.parse = function(questionStack) {
 
   var isWarn = goog.string.makeSafe(item.warn) == 'yes';
   return new vsaq.questionnaire.items.TipItem(item.id, item.cond, item.text,
-      isWarn, item.severity, item.why, item.name, item.todo, item.customTitle);
+      isWarn, item.severity, item.why, item.name, item.todo, item.customTitle,
+      item.auth);
 };
 
 
 /** @inheritDoc */
 vsaq.questionnaire.items.TipItem.prototype.setReadOnly = function(readOnly) {
   if (this.textArea_)
-    this.textArea_.readOnly = readOnly;
+    // if item marked readonly, always keep it readonly
+    this.textArea_.readOnly = this.readonly ? true : readOnly;
 };
 
 

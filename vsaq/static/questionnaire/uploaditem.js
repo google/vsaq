@@ -44,11 +44,13 @@ goog.require('vsaq.questionnaire.utils');
  * @param {?string} conditions A string containing conditions which must be met
  *     for the item to be visible to the user.
  * @param {string} caption The caption to show above the file upload.
+ * @param {string=} opt_auth If "readonly", this ValueItem cannot be modified.
  * @extends {vsaq.questionnaire.items.ValueItem}
  * @constructor
  */
-vsaq.questionnaire.items.UploadItem = function(id, conditions, caption) {
-  goog.base(this, id, conditions, caption);
+vsaq.questionnaire.items.UploadItem = function(id, conditions, caption, opt_auth) {
+  goog.base(this, id, conditions, caption, undefined, undefined, undefined,
+            undefined, undefined, opt_auth);
 
   /**
    * The form through which the file is uploaded.
@@ -258,13 +260,14 @@ vsaq.questionnaire.items.UploadItem.parse = function(questionStack) {
   if (item.type != vsaq.questionnaire.items.UploadItem.TYPE)
     throw new vsaq.questionnaire.items.ParseError('Wrong parser chosen.');
 
-  return new vsaq.questionnaire.items.UploadItem(item.id, item.cond, item.text);
+  return new vsaq.questionnaire.items.UploadItem(item.id, item.cond, item.text, item.auth);
 };
 
 
 /** @inheritDoc */
 vsaq.questionnaire.items.UploadItem.prototype.setReadOnly = function(readOnly) {
-  this.fileInput_.readOnly = readOnly;
+  // if item marked readonly, always keep it readonly
+  this.fileInput_.readOnly = this.auth == 'readonly' ? true : readOnly;
 };
 
 

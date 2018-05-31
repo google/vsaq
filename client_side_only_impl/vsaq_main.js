@@ -159,7 +159,7 @@ vsaq.Qpage.prototype.updateStorage_ = function(data) {
   var newStorageData = null;
   var storageData = this.readStorage_();
   if (storageData) {
-    storageData = JSON.parse(storageData);
+    storageData = /** @type {Object|null} */ (JSON.parse(storageData));
     goog.object.extend(storageData, data);
     newStorageData = goog.json.serialize(storageData);
   } else {
@@ -259,7 +259,7 @@ vsaq.Qpage.prototype.loadExtensionThenQuestionnaire = function(
           text = vsaq.utils.vsaqonToJson(text);
           var extension = {};
           try {
-            extension = JSON.parse(text);
+            extension = /** @type {Object|null} */ (JSON.parse(text));
           } catch (err) {
             alert('Loading the extension failed. It does not appear to be ' +
                   'valid json');
@@ -297,7 +297,7 @@ vsaq.Qpage.prototype.loadQuestionnaire = function(opt_path, opt_extension) {
             text = vsaq.utils.vsaqonToJson(text);
             var template = {};
             try {
-              template = JSON.parse(text);
+              template = /** @type {Object|null} */ (JSON.parse(text));
             } catch (err) {
               alert('Loading the template failed. It does not appear to be ' +
                     'valid json');
@@ -328,7 +328,7 @@ vsaq.Qpage.prototype.loadQuestionnaire = function(opt_path, opt_extension) {
 
             this.questionnaire.listen(
             goog.events.EventType.CHANGE, goog.bind(function(e) {
-              goog.structs.forEach(e.changedValues, function(val, key) {
+              goog.object.forEach(e.changedValues, function(val, key) {
                 this.changes[key] = val;
               }, this);
               if (goog.structs.getCount(this.changes) > 0) {

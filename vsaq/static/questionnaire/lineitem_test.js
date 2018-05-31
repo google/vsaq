@@ -93,4 +93,30 @@ function testLineItemParse() {
   assertEquals('.*', line.inputPattern);
   assertEquals('date', line.inputType);
   assertTrue(line.required);
+  assertTrue(line.auth != 'readonly');
+
+  testStack = [{
+    'type': 'line',
+    'text': CAPTION,
+    'id': ID,
+    'required' : true,
+    'inputPattern': '.*',
+    'inputTitle': 'input_title',
+    'inputType': 'date',
+    'placeholder': 'placeholder',
+    'maxlength': 100,
+    'auth': 'readonly',
+  }];
+  line = vsaq.questionnaire.items.LineItem.parse(testStack);
+  assert(line instanceof vsaq.questionnaire.items.LineItem);
+  assertEquals(ID, line.id);
+  assertEquals(CAPTION, line.text);
+  assertEquals(0, testStack.length);
+  assertEquals('input_title', line.inputTitle);
+  assertEquals('placeholder', line.placeholder);
+  assertEquals(100, line.maxlength);
+  assertEquals('.*', line.inputPattern);
+  assertEquals('date', line.inputType);
+  assertTrue(line.required);
+  assertEquals('readonly', line.auth);
 }

@@ -19,8 +19,22 @@
 export JAVA_TOOL_OPTIONS=-Dfile.encoding=UTF8
 THIRD_PARTY_DIRECTORY="third_party"
 
+
+
+type unzip >/dev/null 2>&1 || {
+  echo >&2 "Unzip is required to build VSAQ dependencies."
+  exit 1
+}
+type wget >/dev/null 2>&1 || {
+  echo >&2 "Wget is required to build VSAQ dependencies."
+  exit 1
+}
 type ant >/dev/null 2>&1 || {
   echo >&2 "Ant is required to build VSAQ dependencies."
+  exit 1
+}
+type mvn >/dev/null 2>&1 || {
+  echo >&2 "Apache Maven is required to build VSAQ dependencies."
   exit 1
 }
 type javac >/dev/null 2>&1 || {
@@ -52,6 +66,7 @@ if [ ! -d .git ]; then
   rm -rf $THIRD_PARTY_DIRECTORY/closure-library
   rm -rf $THIRD_PARTY_DIRECTORY/closure-stylesheets
   rm -rf $THIRD_PARTY_DIRECTORY/js-dossier
+  rm -rf $THIRD_PARTY_DIRECTORY/closure-templates
 fi
 
 if [ ! -d $THIRD_PARTY_DIRECTORY ]; then
@@ -62,41 +77,50 @@ cd $THIRD_PARTY_DIRECTORY
 git submodule add -f https://github.com/google/closure-compiler closure-compiler
 git submodule add -f https://github.com/google/closure-library closure-library
 git submodule add -f https://github.com/google/closure-stylesheets closure-stylesheets
+git submodule add -f https://github.com/google/closure-templates closure-templates
 git submodule add -f https://github.com/jleyba/js-dossier js-dossier
+git submodule add -f https://github.com/google/safe-html-types safe-html-types
 
 git submodule init
 git submodule update
 
 # Pin submodules to particular commits
 cd closure-compiler
-git checkout -b 59b42c9fc8fc752b3ff3aabe04ad89a96f9a7bf7 59b42c9fc8fc752b3ff3aabe04ad89a96f9a7bf7
+git checkout -b 0441c526dc7ed322034d4f708062c00802184e8f 0441c526dc7ed322034d4f708062c00802184e8f
 cd ..
 cd closure-library
-git checkout -b dc369cde87d7ef6dfb46d3b873f872ebee7d07cd dc369cde87d7ef6dfb46d3b873f872ebee7d07cd
+git checkout -b 26de3253e443d36f64c2ea380faee879dfcf1c54 26de3253e443d36f64c2ea380faee879dfcf1c54
 cd ..
 cd js-dossier
-git checkout -b 6f2d09ee26925b7417f9f6bd1547dffe700ab60f 6f2d09ee26925b7417f9f6bd1547dffe700ab60f
+git checkout -b e6e55806ea97a4fcf4157661ee809eb8b48fe848 e6e55806ea97a4fcf4157661ee809eb8b48fe848
+cd ..
+cd closure-templates
+git checkout -b 17dad0f13db94ca43a2e4c436658682a0403ced1 17dad0f13db94ca43a2e4c436658682a0403ced1
+cd ..
+cd safe-html-types
+git checkout -b 8507735457ea41a37dfa027fb176d49d5783c4ba 8507735457ea41a37dfa027fb176d49d5783c4ba
 cd ..
 
 # build closure compiler
 if [ ! -f closure-compiler/build/compiler.jar ] && [ -d closure-compiler ]; then
   cd closure-compiler
-  ant clean
-  ant jar
+#  ant clean
+#  ant jar
+  mvn -DskipTests -pl externs/pom.xml,pom-main.xml,pom-main-shaded.xml
   cd ..
 fi
 
-# checkout closure templates compiler
-if [ ! -d closure-templates-compiler ]; then
-  curl https://dl.google.com/closure-templates/closure-templates-for-javascript-latest.zip -O
-  unzip closure-templates-for-javascript-latest.zip -d closure-templates-compiler
-  rm closure-templates-for-javascript-latest.zip
+# build closure templates compiler
+if [ -d closure-templates ] && [ ! -d closure-templates/target ]; then
+  cd closure-templates
+  mvn -DskipTests package
+  cd ..
 fi
 
 # build css compiler
-if [ ! -f closure-stylesheets/build/closure-stylesheets.jar ]; then
+if [ ! -f closure-stylesheets/target/closure-stylesheets-1.5.0-SNAPSHOT-jar-with-dependencies.jar ]; then
   cd closure-stylesheets
-  ant
+  mvn compile assembly:single
   cd ..
 fi
 
@@ -104,12 +128,21 @@ if [ -f chrome_extensions.js ]; then
   rm -f chrome_extensions.js
 fi
 
+mkdir protoc; cd protoc
+wget https://github.com/google/protobuf/releases/download/v3.5.1/protoc-3.5.1-linux-x86_64.zip
+unzip protoc-3.5.1-linux-x86_64.zip
+rm protoc-3.5.1-linux-x86_64.zip
+wget https://github.com/google/protobuf/releases/download/v3.5.1/protobuf-js-3.5.1.zip
+unzip protobuf-js-3.5.1.zip
+rm protobuf-js-3.5.1.zip
+cd ..
+
 # Temporary fix
 # Soy file bundled with the compiler does not compile with strict settings:
 # lib/closure-templates-compiler/soyutils_usegoog.js:1762: ERROR - element JS_STR_CHARS does not exist on this enum
-cd closure-templates-compiler
-echo $PWD
-curl https://raw.githubusercontent.com/google/closure-templates/0cbc8543c34d3f7727dd83a2d1938672f16d5c20/javascript/soyutils_usegoog.js -O
-cd ..
+#cd closure-templates/javascript
+#echo $PWD
+#curl https://raw.githubusercontent.com/google/closure-templates/0cbc8543c34d3f7727dd83a2d1938672f16d5c20/javascript/soyutils_usegoog.js -O
+#cd ../..
 
 cd ..

@@ -133,5 +133,27 @@ function testTipItemParse() {
   assertEquals(0, testStack.length);
   assertEquals(TODO, tip.todo);
   assertEquals(CUSTOMTITLE_TEXT, tip.customTitle);
+  assertTrue(tip.auth != 'readonly');
+
+  testStack = [{
+    'type': 'tip',
+    'text': CAPTION,
+    'id': TIP_ID,
+    'warn': 'yes',
+    'why': WHY_TEXT,
+    'todo': TODO,
+    'customTitle' : CUSTOMTITLE_TEXT,
+    'auth': 'readonly',
+  }];
+  tip = vsaq.questionnaire.items.TipItem.parse(testStack);
+  assert(tip instanceof vsaq.questionnaire.items.TipItem);
+  assertEquals(TIP_ID, tip.id);
+  assertEquals(CAPTION, tip.text);
+  assertEquals(true, tip.warn);
+  assertEquals(WHY_TEXT, tip.clarification);
+  assertEquals(0, testStack.length);
+  assertEquals(TODO, tip.todo);
+  assertEquals(CUSTOMTITLE_TEXT, tip.customTitle);
+  assertEquals('readonly', tip.auth);
 }
 

@@ -37,12 +37,13 @@ goog.require('vsaq.questionnaire.utils');
  * @param {?string} conditions A string containing conditions which must be met
  *     for the item to be visible to the user.
  * @param {string} caption The caption to show next to the checkbox.
+ * @param {string=} opt_auth If "readonly", this ValueItem cannot be modified.
  * @extends {vsaq.questionnaire.items.ValueItem}
  * @constructor
  */
-vsaq.questionnaire.items.CheckItem = function(id, conditions, caption) {
-  goog.base(this, id, conditions, caption);
-
+vsaq.questionnaire.items.CheckItem = function(id, conditions, caption, opt_auth) {
+  goog.base(this, id, conditions, caption, undefined, undefined, undefined,
+            undefined, undefined, opt_auth);
   /**
    * The checkbox that is the actual control behind this question.
    * @type {!HTMLInputElement}
@@ -104,13 +105,15 @@ vsaq.questionnaire.items.CheckItem.parse = function(questionStack) {
   if (item.type != vsaq.questionnaire.items.CheckItem.TYPE)
     throw new vsaq.questionnaire.items.ParseError('Wrong parser chosen.');
 
-  return new vsaq.questionnaire.items.CheckItem(item.id, item.cond, item.text);
+  return new vsaq.questionnaire.items.CheckItem(item.id, item.cond, item.text,
+      item.auth);
 };
 
 
 /** @inheritDoc */
 vsaq.questionnaire.items.CheckItem.prototype.setReadOnly = function(readOnly) {
-  this.checkBox_.disabled = readOnly;
+  // if item marked readonly, always keep it readonly
+  this.checkBox_.disabled = this.auth == 'readonly' ? true : readOnly;
 };
 
 

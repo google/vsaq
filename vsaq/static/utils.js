@@ -29,7 +29,6 @@ goog.require('goog.events.EventType');
 goog.require('goog.object');
 goog.require('goog.string');
 goog.require('goog.string.format');
-goog.require('goog.structs');
 
 
 /**
@@ -62,7 +61,7 @@ vsaq.utils.addClickHandler = function(elementId, callback) {
 vsaq.utils.initClickables = function(handlers) {
   goog.events.listen(goog.dom.getDocument(), [goog.events.EventType.CLICK],
       function(e) {
-        goog.structs.forEach(handlers, function(handler, className) {
+        goog.object.forEach(handlers, function(handler, className) {
           var clickable = goog.dom.getAncestorByClass(e.target, className);
           if (clickable &&
               !goog.dom.classlist.contains(clickable, 'maia-button-disabled')) {

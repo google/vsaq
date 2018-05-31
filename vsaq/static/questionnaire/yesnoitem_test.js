@@ -100,6 +100,27 @@ function testYesNoItemParse() {
   assertEquals(YES, yesno.yes);
   assertEquals(NO, yesno.no);
   assertEquals(0, testStack.length);
+  assertTrue(yesno.auth != 'readonly');
+
+  assert(yesno.yesRadio_ instanceof HTMLInputElement);
+  assert(yesno.noRadio_ instanceof HTMLInputElement);
+
+  var testStack2 = [{
+    'type': 'yesno',
+    'text': CAPTION,
+    'id': ID,
+    'yes': YES,
+    'no': NO,
+    'auth': 'readonly'
+  }];
+  yesno = vsaq.questionnaire.items.YesNoItem.parse(testStack2);
+  assert(yesno instanceof vsaq.questionnaire.items.YesNoItem);
+  assertEquals(ID, yesno.id);
+  assertEquals(CAPTION, yesno.text);
+  assertEquals(YES, yesno.yes);
+  assertEquals(NO, yesno.no);
+  assertEquals(0, testStack.length);
+  assertEquals('readonly', yesno.auth);
 
   assert(yesno.yesRadio_ instanceof HTMLInputElement);
   assert(yesno.noRadio_ instanceof HTMLInputElement);

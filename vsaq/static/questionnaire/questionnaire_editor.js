@@ -1183,14 +1183,12 @@ vsaq.QuestionnaireEditor.prototype.addItemEditabilityPrefix = function(
 
   // Remove all properties that are mandatory and can already be modified within
   // the rendered item.
-  for (var key in knownPropertiesKeys) {
-    if (!knownPropertiesKeys.hasOwnProperty(key))
-      continue;
-    if (knownPropertiesValues[key].mandatory &&
-        !knownPropertiesValues[key].metadata &&
-        !knownPropertiesValues[key].defaultValues) {
-      delete knownPropertiesKeys[key];
-      delete knownPropertiesValues[key];
+  for (var i=0; i<knownPropertiesKeys.length; i++) {
+    if (knownPropertiesValues[i].mandatory &&
+        !knownPropertiesValues[i].metadata &&
+        !knownPropertiesValues[i].defaultValues) {
+      delete knownPropertiesKeys[i];
+      delete knownPropertiesValues[i];
     }
   }
   targetItem.editItemPrefix = (goog.soy.renderAsElement(

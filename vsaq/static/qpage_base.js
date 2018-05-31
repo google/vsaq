@@ -28,7 +28,6 @@ goog.require('goog.events.EventType');
 goog.require('goog.structs');
 goog.require('goog.ui.Tooltip');
 goog.require('vsaq.Questionnaire');
-goog.require('vsaq.utils');
 
 
 
@@ -51,10 +50,6 @@ vsaq.QpageBase = function() {
   this.statusIndicator = goog.dom.getElement('_vsaq_saved_status') ||
       goog.dom.createDom(goog.dom.TagName.SPAN);
   this.questionnaire.setReadOnlyMode(this.isReadOnly);
-
-  vsaq.utils.initClickables({
-    'eh-edit': goog.bind(this.makeEditable, this)
-  });
 
   goog.events.listen(window, [goog.events.EventType.BEFOREUNLOAD],
       function() {
@@ -120,16 +115,6 @@ vsaq.QpageBase.prototype.isReadOnly;
  * @protected
  */
 vsaq.QpageBase.prototype.statusIndicator;
-
-
-/**
- * Make questionnaire editable.
- */
-vsaq.QpageBase.prototype.makeEditable = function() {
-  this.isReadOnly = false;
-  this.questionnaire.setReadOnlyMode(this.isReadOnly);
-  this.questionnaire.render();
-};
 
 
 /**

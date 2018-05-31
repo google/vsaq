@@ -16,7 +16,7 @@
 
 // Templates for questionnaire.
 
-{namespace vsaq.questionnaire.templates autoescape="strict"}
+{namespace vsaq.questionnaire.templates}
 
 
 /**
@@ -77,12 +77,12 @@
            {if not $propertyInformation.mandatory}
              <option value="">none</option>
            {/if}
-           {foreach $defaultTypeKey in keys($propertyInformation.defaultValues)}
+           {for $defaultTypeKey in keys($propertyInformation.defaultValues)}
              <option value="{$propertyInformation.defaultValues[$defaultTypeKey]}"
                  {if $propertyInformation.defaultValues[$defaultTypeKey] == $propertyInformation.value}selected="selected"{/if}>
                {$propertyInformation.defaultValues[$defaultTypeKey]}
              </option>
-           {/foreach}
+           {/for}
          </select>
     {else}
       {($propertyInformation.value or 'none')}
@@ -104,7 +104,7 @@
 {template .editablePrefix}
   <div>
     <table width="100%">
-      {foreach $knownPropertyIndex in keys($knownPropertiesKeys)}
+      {for $knownPropertyIndex in keys($knownPropertiesKeys)}
         <tr>
           <td>{$knownPropertiesKeys[$knownPropertyIndex]}</td>
           <td>
@@ -121,7 +121,7 @@
             {/if}
           </td>
         </tr>
-      {/foreach}
+      {/for}
     </table>
   </div>
 {/template}
@@ -140,9 +140,9 @@
     <a class="maia-button eh-add-to-item">Add</a>
     &nbsp;
     <select>
-      {foreach $type in $types}
+      {for $type in $types}
         <option value="{$type}" {if $type==$defaultType}selected="selected"{/if}>{$type}</option>
-      {/foreach}
+      {/for}
     </select>
     &nbsp;
     {if $defaultType!='block' and $defaultType!='radiogroup' and $defaultType!='checkgroup'}
@@ -408,14 +408,14 @@
       <p>Based on your selections, we have compiled the following todo list
       for you:</p>
       <ul id='vsaq_todo_ul'>
-      {foreach $todo in $todoListItems}
+      {for $todo in $todoListItems}
         <li><label><input type='checkbox' name='{$todo.key}'
                           class='eh-todo-item'
                           {if $todoStatus[$todo.key] == 'checked'}checked {/if}
                           id='{$todo.key}'
                           value='checked'>
           <span>{$todo.description}</span></label></li>
-      {/foreach}
+      {/for}
       </ul>
     {else}
       <p>Great news, you're all set. There is no todo.</p>

@@ -49,14 +49,15 @@ goog.require('vsaq.questionnaire.utils');
  * @param {number=} opt_maxlength HTML maxlength attribute value for the input
  *     field. See {@link
  *     https://html.spec.whatwg.org/multipage/forms.html#attr-fe-maxlength}
+ * @param {string=} opt_auth If "readonly", this ValueItem cannot be modified.
  * @extends {vsaq.questionnaire.items.ValueItem}
  * @constructor
  */
 vsaq.questionnaire.items.BoxItem = function(id, conditions, caption,
     opt_placeholder, opt_inputPattern, opt_inputTitle, opt_isRequired,
-    opt_maxlength) {
+    opt_maxlength, opt_auth) {
   goog.base(this, id, conditions, caption, opt_placeholder, opt_inputPattern,
-      opt_inputTitle, opt_isRequired, opt_maxlength);
+      opt_inputTitle, opt_isRequired, opt_maxlength, opt_auth);
 
   /**
    * The text area where the user can provide an answer.
@@ -122,13 +123,14 @@ vsaq.questionnaire.items.BoxItem.parse = function(questionStack) {
 
   return new vsaq.questionnaire.items.BoxItem(item.id, item.cond, item.text,
       item.placeholder, item.inputPattern, item.inputTitle, item.required,
-      item.maxlength);
+      item.maxlength, item.auth);
 };
 
 
 /** @inheritDoc */
 vsaq.questionnaire.items.BoxItem.prototype.setReadOnly = function(readOnly) {
-  this.textArea_.readOnly = readOnly;
+  // if item marked readonly, always keep it readonly
+  this.textArea_.readOnly = this.auth == 'readonly' ? true : readOnly;
 };
 
 

@@ -17,7 +17,7 @@
 #
 
 PYTHON_CMD="python"
-JSCOMPILE_CMD="java -jar third_party/closure-compiler/build/compiler.jar --flagfile=compiler.flags"
+JSCOMPILE_CMD="java -jar third_party/closure-compiler/target/closure-compiler-1.0-SNAPSHOT.jar --flagfile=compiler.flags"
 CKSUM_CMD="cksum" # chosen because it's available on most Linux/OS X installations
 BUILD_DIR="build"
 BUILD_TPL_DIR="$BUILD_DIR/templates"
@@ -35,10 +35,9 @@ vsaq_assert_dependencies() {
   fi
   # Check if required files are present.
   files=(third_party/closure-library \
-    third_party/closure-templates-compiler \
-    third_party/closure-stylesheets/build/closure-stylesheets.jar \
-    third_party/closure-compiler/build/compiler.jar \
-    third_party/closure-compiler/contrib/externs/chrome_extensions.js \
+    third_party/closure-templates/target \
+    third_party/closure-stylesheets/target/closure-stylesheets-1.5.0-SNAPSHOT-jar-with-dependencies.jar \
+    third_party/closure-compiler/target/closure-compiler-1.0-SNAPSHOT.jar \
   )
   for var in "${files[@]}"
   do
@@ -62,13 +61,16 @@ vsaq_build_templates() {
   set -e
   mkdir -p "$BUILD_TPL_DIR"
   rm -rf "$BUILD_TPL_DIR/*"
+  mkdir "$BUILD_TPL_DIR/proto"
+  # Compile safe html type proto to JS
+  third_party/protoc/bin/protoc --js_out $BUILD_TPL_DIR/proto \
+    ./third_party/safe-html-types/proto/src/main/protobuf/webutil/html/types/html.proto
   # Compile soy templates
   echo "Compiling Soy templates..."
   rm -f "$BUILD_TPL_DIR/cksum"
   vsaq_get_file_cksum '*.soy' > "$BUILD_TPL_DIR/cksum"
-  find "vsaq" -name '*.soy' -exec java -jar third_party/closure-templates-compiler/SoyToJsSrcCompiler.jar \
-  --shouldProvideRequireSoyNamespaces --shouldGenerateJsdoc --shouldDeclareTopLevelNamespaces --srcs {} \
-  --outputPathFormat "$BUILD_TPL_DIR/{INPUT_DIRECTORY}{INPUT_FILE_NAME}.js" \;
+  find "vsaq" -name '*.soy' -exec java -jar third_party/closure-templates/target/soy-2018-03-14-SoyToJsSrcCompiler.jar \
+    --srcs {} --outputPathFormat "$BUILD_TPL_DIR/{INPUT_DIRECTORY}{INPUT_FILE_NAME}.js" \;
   echo "Done."
 }
 
@@ -110,9 +112,10 @@ vsaq_build_closure_lib_() {
   SRC_DIRS=( \
     vsaq \
     client_side_only_impl \
+    third_party/closure-templates/target \
     third_party/closure-library/closure/goog \
     third_party/closure-library/third_party/closure/goog \
-    third_party/closure-templates-compiler )
+    third_party/protoc/protobuf-3.5.1/js/binary )
   if [ -d "$3" ]; then
     SRC_DIRS+=("$3")
   fi
@@ -122,13 +125,16 @@ vsaq_build_closure_lib_() {
     jscompile_vsaq+=" --js='$var/**.js' --js='!$var/**_test.js' --js='!$var/**_perf.js'"
   done
   jscompile_vsaq+=" --js='!third_party/closure-library/closure/goog/demos/**.js'"
+  jscompile_vsaq+=" --js='!third_party/closure-templates/javascript/examples/**.js'"
   if [ "$4" == "debug" ]; then
      jscompile_vsaq+=" --debug --formatting=PRETTY_PRINT -O WHITESPACE_ONLY"
   elif [ "$4" == "optimized" ]; then
      jscompile_vsaq+=" -O ADVANCED"
   fi
+  cmd="$jscompile_vsaq --closure_entry_point "$ENTRY_POINT" --js_output_file "$FNAME""
+  echo $cmd
   echo -n "."
-  $jscompile_vsaq --closure_entry_point "$ENTRY_POINT" --js_output_file "$FNAME"
+  $cmd
 }
 
 vsaq_build_jsmodule() {
@@ -161,7 +167,7 @@ vsaq_build() {
 
   BUILD_DIR_STATIC="$BUILD_DIR/static"
   mkdir -p "$BUILD_DIR_STATIC"
-  csscompile_vsaq="java -jar third_party/closure-stylesheets/build/closure-stylesheets.jar --allowed-non-standard-function color-stop"
+  csscompile_vsaq="java -jar third_party/closure-stylesheets/target/closure-stylesheets-1.5.0-SNAPSHOT-jar-with-dependencies.jar --allowed-non-standard-function color-stop"
   echo "Compiling CSS files..."
   $csscompile_vsaq "vsaq/static/vsaq_base.css" "vsaq/static/vsaq.css" > "$BUILD_DIR_STATIC/vsaq.css"
   echo "Copying remaining static files..."
@@ -203,7 +209,7 @@ vsaq_generate_jsdeps() {
   $PYTHON_CMD third_party/closure-library/closure/bin/build/depswriter.py \
     --root_with_prefix="build/templates/ build/templates/" \
     --root_with_prefix="vsaq/ vsaq/" \
-    --root_with_prefix="third_party/closure-templates-compiler/ third_party/closure-templates-compiler/" \
+    --root_with_prefix="third_party/closure-templates/javascript third_party/closure-templates/javascript/" \
     > "$BUILD_DIR/deps.js"
 }
 
@@ -215,7 +221,7 @@ vsaq_run() {
   $PYTHON_CMD third_party/closure-library/closure/bin/build/depswriter.py \
     --root_with_prefix="build/templates/ ../../../build/templates/" \
     --root_with_prefix="vsaq/ ../vsaq/" \
-    --root_with_prefix="third_party/closure-templates-compiler/ ../../../../third_party/closure-templates-compiler/" \
+    --root_with_prefix="third_party/closure-templates/javascript/ ../../../../third_party/closure-templates/javascript/" \
     > "$BUILD_DIR/deps-runfiles.js"
 
   rm -f "$BUILD_DIR/all_tests.js"

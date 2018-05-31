@@ -132,6 +132,20 @@ function testUploadItemParse() {
   assertEquals(ID, upload.id);
   assertEquals(CAPTION, upload.text);
   assertEquals(0, testStack.length);
+  assertTrue(upload.auth != 'readonly');
+
+  testStack = [{
+    'type': 'upload',
+    'text': CAPTION,
+    'id': ID,
+    'auth': 'readonly'
+  }];
+  upload = vsaq.questionnaire.items.UploadItem.parse(testStack);
+  assert(upload instanceof vsaq.questionnaire.items.UploadItem);
+  assertEquals(ID, upload.id);
+  assertEquals(CAPTION, upload.text);
+  assertEquals(0, testStack.length);
+  assertEquals('readonly', upload.auth);
 }
 
 
