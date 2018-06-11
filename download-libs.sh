@@ -100,12 +100,13 @@ cd ..
 cd safe-html-types
 git checkout -b 8507735457ea41a37dfa027fb176d49d5783c4ba 8507735457ea41a37dfa027fb176d49d5783c4ba
 cd ..
+cd closure-stylesheets
+git checkout -b d2c0cce5c11891c086a3d055ec84e96d5b9cb559 d2c0cce5c11891c086a3d055ec84e96d5b9cb559
+cd ..
 
 # build closure compiler
 if [ ! -f closure-compiler/build/compiler.jar ] && [ -d closure-compiler ]; then
   cd closure-compiler
-#  ant clean
-#  ant jar
   mvn -DskipTests -pl externs/pom.xml,pom-main.xml,pom-main-shaded.xml
   cd ..
 fi
@@ -136,13 +137,5 @@ wget https://github.com/google/protobuf/releases/download/v3.5.1/protobuf-js-3.5
 unzip protobuf-js-3.5.1.zip
 rm protobuf-js-3.5.1.zip
 cd ..
-
-# Temporary fix
-# Soy file bundled with the compiler does not compile with strict settings:
-# lib/closure-templates-compiler/soyutils_usegoog.js:1762: ERROR - element JS_STR_CHARS does not exist on this enum
-#cd closure-templates/javascript
-#echo $PWD
-#curl https://raw.githubusercontent.com/google/closure-templates/0cbc8543c34d3f7727dd83a2d1938672f16d5c20/javascript/soyutils_usegoog.js -O
-#cd ../..
 
 cd ..
