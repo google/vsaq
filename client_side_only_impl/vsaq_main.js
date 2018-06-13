@@ -307,10 +307,14 @@ vsaq.Qpage.prototype.loadQuestionnaire = function(opt_path, opt_extension) {
               alert('Empty template!');
               return;
             }
-            if (opt_extension) {
-              this.questionnaire.setMultipleTemplates(template, opt_extension);
-            } else {
-              this.questionnaire.setTemplate(template['questionnaire']);
+            try {
+              if (opt_extension) {
+                this.questionnaire.setMultipleTemplates(template, opt_extension);
+              } else {
+                this.questionnaire.setTemplate(template['questionnaire']);
+              }
+            } catch (err) {
+              alert('Error loading template: ' + err);
             }
             // Render the questionnaire's template.
             this.questionnaire.render();
