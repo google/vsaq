@@ -44,13 +44,15 @@ goog.require('vsaq.questionnaire.utils');
  * @param {?string} conditions A string containing conditions which must be met
  *     for the item to be visible to the user.
  * @param {string} caption The caption to show above the file upload.
+ * @param {boolean=} opt_isRequired If true, the item value is required.
  * @param {string=} opt_auth If "readonly", this ValueItem cannot be modified.
  * @extends {vsaq.questionnaire.items.ValueItem}
  * @constructor
  */
-vsaq.questionnaire.items.UploadItem = function(id, conditions, caption, opt_auth) {
+vsaq.questionnaire.items.UploadItem = function(id, conditions, caption,
+    opt_isRequired, opt_auth) {
   goog.base(this, id, conditions, caption, undefined, undefined, undefined,
-            undefined, undefined, opt_auth);
+            opt_isRequired, undefined, opt_auth);
 
   /**
    * The form through which the file is uploaded.
@@ -111,7 +113,8 @@ goog.inherits(vsaq.questionnaire.items.UploadItem,
 /**
  * Render the HTML for this item.
  */
-vsaq.questionnaire.items.UploadItem.prototype.render = function() {
+vsaq.questionnaire.items.UploadItem.prototype.render =
+  function() {
   var oldNode = this.container;
   this.container = goog.soy.renderAsElement(vsaq.questionnaire.templates.upload,
       {
@@ -132,6 +135,8 @@ vsaq.questionnaire.items.UploadItem.prototype.render = function() {
   goog.style.setElementShown(this.downloadLink_, false);
   this.fileInput_ = /** @type {!HTMLInputElement} */
       (vsaq.questionnaire.utils.findById(this.container, this.id + '-file'));
+  // Preserve old value
+  this.setValue(this.getValue() || '');
   goog.events.listen(
       this.downloadLink_, goog.events.EventType.CLICK,
       function(e) {
@@ -260,7 +265,8 @@ vsaq.questionnaire.items.UploadItem.parse = function(questionStack) {
   if (item.type != vsaq.questionnaire.items.UploadItem.TYPE)
     throw new vsaq.questionnaire.items.ParseError('Wrong parser chosen.');
 
-  return new vsaq.questionnaire.items.UploadItem(item.id, item.cond, item.text, item.auth);
+  return new vsaq.questionnaire.items.UploadItem(item.id, item.cond, item.text,
+                                                 item.required, item.auth);
 };
 
 

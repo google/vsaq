@@ -45,6 +45,7 @@ goog.require('goog.debug.Console');
 goog.require('goog.debug.Error');
 goog.require('goog.dom');
 goog.require('goog.dom.TagName');
+goog.require('goog.dom.classlist');
 goog.require('goog.events');
 goog.require('goog.events.Event');
 goog.require('goog.events.EventTarget');
@@ -53,6 +54,7 @@ goog.require('goog.json');
 goog.require('goog.log');
 goog.require('goog.object');
 goog.require('goog.soy');
+goog.require('goog.structs');
 goog.require('vsaq.questionnaire.items.BlockItem');
 goog.require('vsaq.questionnaire.items.BoxItem');
 goog.require('vsaq.questionnaire.items.CheckItem');
@@ -71,6 +73,7 @@ goog.require('vsaq.questionnaire.items.ValueItem');
 goog.require('vsaq.questionnaire.items.YesNoItem');
 goog.require('vsaq.questionnaire.items.factory');
 goog.require('vsaq.questionnaire.templates');
+goog.require('vsaq.questionnaire.utils');
 
 
 
@@ -205,7 +208,6 @@ vsaq.Questionnaire = function(rootElement) {
    * @private
    */
   this.resolver_ = goog.Promise.withResolver();
-
 };
 goog.inherits(vsaq.Questionnaire, goog.events.EventTarget);
 
@@ -619,7 +621,7 @@ vsaq.Questionnaire.prototype.extendBaseTemplate_ = function(
  * Inserts an item before or after a targetItem of a questionaire template.
  * @param {!vsaq.questionnaire.items.ItemArray} template Array of template items
  * @param {!vsaq.questionnaire.items.Item} newItem Item to insert.
- * @param {!string} targetItemId Item id wher new item should get inserted.
+ * @param {string} targetItemId Item id wher new item should get inserted.
  * @param {boolean=} opt_insertAfter If true, item is insert after target item.
  * @return {boolean} True, if operation was successful.
  * @private
@@ -656,7 +658,7 @@ vsaq.Questionnaire.prototype.insertItemIntoTemplate_ = function(
 /**
  * Adds a namespace to ids of all items in a template.
  * @param {!vsaq.questionnaire.items.ItemArray} items Array of template items.
- * @param {!string} namespace Namespace which is added as prefix to item ids.
+ * @param {string} namespace Namespace which is added as prefix to item ids.
  * @private
  */
 vsaq.Questionnaire.prototype.addNamespaceToIds_ = function(items, namespace) {
@@ -801,6 +803,52 @@ vsaq.Questionnaire.prototype.setTodoListElement = function(el) {
   this.todoListElement_ = el;
   this.reevaluateConditions_();
 };
+
+
+/**
+ *
+ * @param {!vsaq.questionnaire.items.Item} item Questionnaire item.
+ * @param {boolean} enabled If true, the item label will be highlighted as
+ * required.
+ */
+vsaq.Questionnaire.prototype.changeRequiredItemWarning = function(
+    item, enabled) {
+  var labelElement = /** @type {!HTMLLabelElement} */ (
+      vsaq.questionnaire.utils.findById(item.container, item.id + '-title'));
+  if (labelElement)
+    goog.dom.classlist.enable(labelElement,
+        goog.getCssName('vsaq-unfilled-highlight'), enabled);
+};
+
+
+/**
+ * Remove all warnings for required questionnaire items.
+ */
+vsaq.Questionnaire.prototype.unsetRequiredItemWarnings = function() {
+  goog.structs.forEach(this.items_, function(item, id, items) {
+    this.changeRequiredItemWarning(item, false);
+  }, this);
+};
+
+
+/**
+ * Return an array of items that are required to be answered but
+ * not currently. Empty array if they don't exist.
+ * @return {!vsaq.questionnaire.items.ItemArray} An array of items
+ * that are required but not answered yet.
+ */
+vsaq.Questionnaire.prototype.getUnfilledRequiredItems = function() {
+  var unfilled = [];
+  goog.structs.forEach(this.items_, function(item, id, items) {
+    if ((item instanceof vsaq.questionnaire.items.ValueItem ||
+         item instanceof vsaq.questionnaire.items.GroupItem) &&
+        item.isUnfilled()) {
+      unfilled.push(item);
+    }
+  });
+  return unfilled;
+};
+
 
 
 // The following questionnaire items are necessary for the questionnaire and

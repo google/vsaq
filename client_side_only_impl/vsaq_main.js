@@ -33,12 +33,14 @@ goog.provide('vsaq.Qpage');
 goog.require('goog.Uri');
 goog.require('goog.debug.Error');
 goog.require('goog.dom');
+goog.require('goog.events');
 goog.require('goog.events.EventType');
 goog.require('goog.json');
 goog.require('goog.net.XhrIo');
 goog.require('goog.object');
 goog.require('goog.storage.Storage');
 goog.require('goog.storage.mechanism.HTML5LocalStorage');
+goog.require('goog.string');
 goog.require('goog.string.path');
 goog.require('goog.structs');
 goog.require('vsaq.QpageBase');
@@ -70,6 +72,11 @@ vsaq.Qpage = function() {
     alert('An error occurred loading the questionnaire: ' + e);
     throw e;
   }
+
+  var downloadLink = goog.dom.getElement('_vsaq_save_questionnaire');
+  // The following event has direct effects on the template.
+  goog.events.listen(downloadLink, goog.events.EventType.CLICK,
+      goog.bind(this.checkQuestionnaireRequirements, this));
 };
 goog.inherits(vsaq.Qpage,
               vsaq.QpageBase);
@@ -96,6 +103,9 @@ goog.inherits(vsaq.Qpage,
 vsaq.Qpage.prototype.submitQuestionnaireToServer_ = function(
   id, server, xsrf, opt_redirect) {
 
+  if(!this.checkQuestionnaireRequirements())
+    return;
+
   if (this.isReadOnly) {
     alert('This questionnaire is readonly and can therefore not be submitted.');
     return;
@@ -110,7 +120,7 @@ vsaq.Qpage.prototype.submitQuestionnaireToServer_ = function(
           if (typeof(opt_redirect) == 'function') {
             opt_redirect();
           } else {
-            document.location = opt_redirect;
+            goog.dom.safe.setLocationHref(window.location, opt_redirect);
           }
         }
       }, this), 'POST', goog.string.format(
@@ -215,12 +225,48 @@ vsaq.Qpage.prototype.loadAnswersFromFile = function(evt) {
   var reader = new FileReader();
   reader.onload = goog.bind(function(f) {
     return goog.bind(function(e) {
-      var answers = e.target.result;
-      this.questionnaire.setValues(
-          /** @type {!Object.<string, string>} */ (JSON.parse(answers)));
+      var answers = /** @type {!Object.<string, string>} */
+          (JSON.parse(e.target.result));
+      this.questionnaire.setValues(answers);
+      this.updateStorage_(answers);
     }, this);
   }, this)(answer_file);
   reader.readAsText(answer_file);
+};
+
+
+/**
+ * Handles required items and displays warnings if necessary.
+ * @return {boolean} Whether all required items have been provided successfully.
+ */
+vsaq.Qpage.prototype.handleRequiredItems = function() {
+  // Remove all old required warnings from the questionnaire items.
+  this.questionnaire.unsetRequiredItemWarnings();
+
+  var unfilled = this.questionnaire.getUnfilledRequiredItems();
+  if (unfilled.length > 0) {
+    // Add a warning to all required but unfilled items.
+    goog.structs.forEach(unfilled, function(item, id, items) {
+      this.questionnaire.changeRequiredItemWarning(item, true);
+    }, this);
+    alert(goog.string.format("You have %d mandatory question/s left unanswered."
+        + " Please answer the question/s in red.", unfilled.length));
+    return false;
+  }
+  return true;
+};
+
+
+/**
+ * Checks if all quesitionnaire requirements have been fulfilled.
+ * @param {?goog.events.Event} e The submit/save trigger event.
+ * @return {boolean} Whether the questionnaire can be submitted/state.
+*/
+vsaq.Qpage.prototype.checkQuestionnaireRequirements = function(e) {
+  var required_fields_filled = this.handleRequiredItems();
+  if (e && !required_fields_filled)
+    e.preventDefault();
+  return required_fields_filled;
 };
 
 

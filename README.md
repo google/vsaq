@@ -45,6 +45,7 @@ These instructions have been tested with the following software:
 * ant — for building VSAQ dependencies
 * git
 * curl
+* maven
 * a web server (an optional Python development server is provided)
 * a browser with HTML5 support
 

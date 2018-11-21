@@ -119,6 +119,55 @@ function testUploadItemSetGetValue() {
 
 
 /**
+ * Tests whether UploadItems are rendered correctly with highlight.
+ */
+function testUploadItemRerender() {
+  upload.setValue('');
+  upload.render(true);
+  var el = upload.container;
+
+  assertEquals(String(goog.dom.TagName.DIV), el.tagName);
+  var desc = goog.dom.getFirstElementChild(el);
+  assertEquals(CAPTION, goog.dom.getTextContent(desc));
+  var fileTypeDesc = goog.dom.getNextElementSibling(desc);
+  assertEquals(String(goog.dom.TagName.DIV), fileTypeDesc.tagName);
+  var form = goog.dom.getNextElementSibling(fileTypeDesc);
+  assertEquals(upload.form_, form);
+  assertEquals('multipart/form-data', form.enctype);
+  var label = goog.dom.getFirstElementChild(form);
+  assertEquals('uploaditem_id-label', label.id);
+  assertEquals(upload.label_, label);
+  var input = goog.dom.getNextElementSibling(label);
+  assertEquals(String(goog.dom.TagName.INPUT), input.tagName);
+  assertEquals('uploaditem_id-file', input.id);
+  var dlLink = goog.dom.getNextElementSibling(input);
+  assertEquals(String(goog.dom.TagName.A), dlLink.tagName);
+  assertEquals('uploaditem_id-download', dlLink.id);
+  var delLink = goog.dom.getNextElementSibling(dlLink);
+  assertEquals(String(goog.dom.TagName.A), delLink.tagName);
+  assertEquals('uploaditem_id-delete', delLink.id);
+}
+
+
+/**
+ * Tests if upload items preserve value after re-render.
+ */
+function testUploadItemPreserveValue() {
+  upload.setValue(VALUE);
+  upload.render();
+
+  assertEquals(VALUE, upload.getValue());
+  assertEquals('filename', upload.filename_);
+  assertEquals('fileid', upload.fileId_);
+  assertEquals(false, goog.style.isElementShown(upload.fileInput_));
+  assertEquals('Uploaded file: filename',
+      goog.dom.getTextContent(upload.label_));
+  assertEquals(true, goog.style.isElementShown(upload.deleteLink_));
+  assertEquals(true, goog.style.isElementShown(upload.downloadLink_));
+}
+
+
+/**
  * Tests parsing of UploadItems.
  */
 function testUploadItemParse() {
@@ -132,12 +181,14 @@ function testUploadItemParse() {
   assertEquals(ID, upload.id);
   assertEquals(CAPTION, upload.text);
   assertEquals(0, testStack.length);
+  assertFalse(upload.required);
   assertTrue(upload.auth != 'readonly');
 
   testStack = [{
     'type': 'upload',
     'text': CAPTION,
     'id': ID,
+    'required': true,
     'auth': 'readonly'
   }];
   upload = vsaq.questionnaire.items.UploadItem.parse(testStack);
@@ -145,6 +196,7 @@ function testUploadItemParse() {
   assertEquals(ID, upload.id);
   assertEquals(CAPTION, upload.text);
   assertEquals(0, testStack.length);
+  assertTrue(upload.required);
   assertEquals('readonly', upload.auth);
 }
 

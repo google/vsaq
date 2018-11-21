@@ -82,7 +82,7 @@ vsaq.questionnaire.items.Item = function(id, conditions) {
 
   /**
    * A string containing the item type e.g. checkbox.
-   * @type {!string}
+   * @type {string}
    */
   this.type = '';
   var propertyInformation = {
@@ -212,8 +212,8 @@ vsaq.questionnaire.items.Item.prototype.addPropertyInformation = function(
 /**
  * Get information about an item property either by providing its template name
  * or its class name.
- * @param {!string} propertyName The name of the property within the template.
- * @param {!string=} opt_nameInClass The name of the property in the class.
+ * @param {string} propertyName The name of the property within the template.
+ * @param {string=} opt_nameInClass The name of the property in the class.
  * @return {Object} An object containing all property information.
  */
 vsaq.questionnaire.items.Item.prototype.getPropertyInformation = function(
@@ -577,6 +577,18 @@ vsaq.questionnaire.items.ValueItem.prototype.answerChanged = function() {
  */
 vsaq.questionnaire.items.ValueItem.prototype.isChecked = function(opt_value) {
   return false;
+};
+
+
+/**
+ * Return true if the item is marked required in template,
+ * meets all conditions (thus visible) and not yet answered, false otherwise.
+ * It can be useful to decide if a valid questionnaire is ready to submit.
+ * @return {boolean} Whether the item needs to be filled in order to
+ * submit the questionnaire.
+ */
+vsaq.questionnaire.items.ValueItem.prototype.isUnfilled = function() {
+  return this.isVisible() && this.required && !this.isAnswered();
 };
 
 

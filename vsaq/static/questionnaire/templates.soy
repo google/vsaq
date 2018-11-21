@@ -85,7 +85,7 @@
            {/for}
          </select>
     {else}
-      {($propertyInformation.value or 'none')}
+      {((isNonnull($propertyInformation.value) and strLen($propertyInformation.value) > 0) ? $propertyInformation.value : 'none')}
     {/if}
   </span>
 {/template}
@@ -195,7 +195,9 @@
 {template .yesno}
   <div class="vsaq-item vsaq-yesno-block" data-vsaq-container-for="{$id}">
     <div class="vsaq-question-title">
-      <span name="text" class="vsaq-label-text">{$captionHtml}</span>
+      <span name="text" id="{$id}-title" class="vsaq-label-text">
+        {$captionHtml}
+      </span>
     </div>
     <label>
       <input name="{$id}" id="{$id}/yes" type="radio" value="yes"
@@ -219,7 +221,8 @@
 {template .groupitem}
   <div id="{$id}" class="vsaq-item vsaq-group-item">
     <div class="vsaq-question-title">
-      <span name="text" class="vsaq-label-text">{$captionHtml}</span>
+      <span name="text" id="{$id}-title" class="vsaq-label-text">
+        {$captionHtml}</span>
     </div>
   </div>
 {/template}
@@ -287,7 +290,7 @@
 {template .bubble}
   <div class="vsaq-item vsaq-bubble-block" data-vsaq-container-for="{$id}">
     <div class="maia-notification{sp}
-      {if $isWarning}vsaq-bubble-{$severity or 'medium'}{/if}">
+      {if $isWarning}vsaq-bubble-{(isNonnull($severity) and strLen($severity) > 0) ? $severity : 'medium'}{/if}">
       <p><strong>
         {if $customTitle}
           <span name="customTitle" class="vsaq-label-text">{$customTitle}</span>
@@ -326,7 +329,7 @@
 {template .box}
   <div class="vsaq-item" data-vsaq-container-for="{$id}">
     <div class="vsaq-question-title">
-      <label name="text" class="vsaq-label-text" for="{$id}">
+      <label name="text" id="{$id}-title" class="vsaq-label-text" for="{$id}">
         {$captionHtml}
       </label>
     </div>
@@ -355,7 +358,7 @@
 {template .line}
   <div class="vsaq-item" data-vsaq-container-for="{$id}">
     <div class="vsaq-question-title">
-      <label name="text" class="vsaq-label-text" for="{$id}">
+      <label name="text" id="{$id}-title" class="vsaq-label-text" for="{$id}">
         {$captionHtml}
       </label>
     </div>
@@ -380,7 +383,7 @@
 {template .upload}
   <div class="vsaq-item" data-vsaq-container-for="{$id}">
     <div class="vsaq-question-title">
-      <label name="text" class="vsaq-label-text" for="{$id}-file">
+      <label name="text" id="{$id}-title" class="vsaq-label-text" for="{$id}-file">
         {$captionHtml}
       </label>
     </div>
@@ -418,7 +421,7 @@
       {/for}
       </ul>
     {else}
-      <p>Great news, you're all set. There is no todo.</p>
+      <p>Great news, you're all set. There are no todos at this time.</p>
     {/if}
   </fieldset>
 {/template}

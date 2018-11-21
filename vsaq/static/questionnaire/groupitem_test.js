@@ -22,6 +22,8 @@ goog.provide('vsaq.questionnaire.items.GroupItemTests');
 goog.setTestOnly('vsaq.questionnaire.items.GroupItemTests');
 
 goog.require('goog.array');
+goog.require('goog.dom');
+goog.require('goog.dom.classlist');
 goog.require('goog.testing.asserts');
 goog.require('goog.testing.jsunit');
 goog.require('vsaq.questionnaire.items.CheckItem');
@@ -117,6 +119,23 @@ function testGroupItem() {
 
 
 /**
+ * Tests whether all possible GroupItems are render correctly with highlight
+ */
+function testGroupItemRerender() {
+  var el = checkgroupItem.container;
+  var span = goog.dom.getFirstElementChild(goog.dom.getFirstElementChild(el));
+  assertTrue(
+      'Class not set', goog.dom.classlist.contains(span, 'vsaq-label-text'));
+
+  checkgroupItem.render(true);
+  el = checkgroupItem.container;
+  span = goog.dom.getFirstElementChild(goog.dom.getFirstElementChild(el));
+  assertTrue(
+      'Class not set', goog.dom.classlist.contains(span, 'vsaq-label-text'));
+}
+
+
+/**
  * Tests parsing of all possible GroupItems.
  */
 function testGroupItemParse() {
@@ -129,6 +148,7 @@ function testGroupItemParse() {
 
   testStack = [TEST_RADIOGROUP];
   radiogroupItem = vsaq.questionnaire.items.RadiogroupItem.parse(testStack);
+  assertFalse(radiogroupItem.required);
   assert(radiogroupItem instanceof vsaq.questionnaire.items.RadiogroupItem);
   for (var i = 0; i < radiogroupItem.containerItems.length; ++i)
     assertFalse('readonly' == radiogroupItem.containerItems[i].auth);
@@ -138,36 +158,34 @@ function testGroupItemParse() {
 
   // testing readonly functionality
   var TEST_CHECKGROUP2 = {
-    "type": "checkgroup",
-    "defaultChoice": true,
-    "text": "caption",
-    "choices": [
-      {"choice_id_1": "Text 1"},
-      {"choice_id_2": "Text 2"}
-    ],
-    "choicesConds": [],
-    "auth": "readonly"
+    'type': 'checkgroup',
+    'defaultChoice': true,
+    'text': 'caption',
+    'choices': [{'choice_id_1': 'Text 1'}, {'choice_id_2': 'Text 2'}],
+    'choicesConds': [],
+    'required': true,
+    'auth': 'readonly'
   };
 
   var TEST_RADIOGROUP2 = {
     'type': 'radiogroup',
     'text': 'caption',
     'defaultChoice': false,
-    'choices': [
-      {'choice_id_1': 'Text 1'},
-      {'choice_id_2': 'Text 2'}
-    ],
+    'choices': [{'choice_id_1': 'Text 1'}, {'choice_id_2': 'Text 2'}],
     'choicesConds': [],
+    'required': true,
     'auth': 'readonly'
   };
   testStack = [TEST_CHECKGROUP2];
   checkgroupItem = vsaq.questionnaire.items.CheckgroupItem.parse(testStack);
+  assertTrue(checkgroupItem.required);
   assert(checkgroupItem instanceof vsaq.questionnaire.items.CheckgroupItem);
   for (var i = 0; i < checkgroupItem.containerItems.length; ++i)
     assertEquals('readonly', checkgroupItem.containerItems[i].auth);
 
   testStack = [TEST_RADIOGROUP2];
   radiogroupItem = vsaq.questionnaire.items.RadiogroupItem.parse(testStack);
+  assertTrue(radiogroupItem.required);
   assert(radiogroupItem instanceof vsaq.questionnaire.items.RadiogroupItem);
   for (var i = 0; i < radiogroupItem.containerItems.length; ++i)
     assertEquals('readonly', radiogroupItem.containerItems[i].auth);

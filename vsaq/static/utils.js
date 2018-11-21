@@ -114,7 +114,8 @@ vsaq.utils.initProjectSelector = function() {
       var projectUrl = goog.dom.forms.getValue(e.target);
       if (projectUrl) {
         var currentSubPage = window.location.pathname.match('^/.*/');
-        document.location = currentSubPage + projectUrl;
+        var url = /** @type {string} */ (currentSubPage + projectUrl);
+        goog.dom.safe.setLocationHref(window.location, url);
       }
     });
   }

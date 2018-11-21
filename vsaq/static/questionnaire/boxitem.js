@@ -75,7 +75,8 @@ goog.inherits(vsaq.questionnaire.items.BoxItem,
 /**
  * Render the HTML for this item.
  */
-vsaq.questionnaire.items.BoxItem.prototype.render = function() {
+vsaq.questionnaire.items.BoxItem.prototype.render =
+  function() {
   var oldNode = this.container;
   this.container = goog.soy.renderAsElement(vsaq.questionnaire.templates.box, {
     id: this.id,
@@ -84,12 +85,15 @@ vsaq.questionnaire.items.BoxItem.prototype.render = function() {
     inputPattern: this.inputPattern,
     inputTitle: this.inputTitle,
     isRequired: Boolean(this.required),
-    maxlength: this.maxlength
+    maxlength: this.maxlength,
   });
   goog.dom.replaceNode(this.container, oldNode);
 
+  // Update the text area but preserve the old value
+  var oldValue = this.textArea_ ? this.getValue() : "";
   this.textArea_ = /** @type {!HTMLTextAreaElement} */
       (vsaq.questionnaire.utils.findById(this.container, this.id));
+  this.setInternalValue(oldValue || '');
   goog.events.listen(
       this.textArea_,
       [goog.events.EventType.KEYUP, goog.events.EventType.CHANGE],

@@ -19,9 +19,11 @@ goog.setTestOnly('vsaq.QuestionnaireTest');
 
 goog.require('goog.array');
 goog.require('goog.dom');
+goog.require('goog.dom.classlist');
 goog.require('goog.events');
 goog.require('goog.events.EventType');
 goog.require('goog.object');
+goog.require('goog.structs');
 goog.require('goog.testing.MockControl');
 goog.require('goog.testing.jsunit');
 goog.require('vsaq.Questionnaire');
@@ -38,6 +40,8 @@ goog.require('vsaq.questionnaire.items.TipItem');
 goog.require('vsaq.questionnaire.items.UploadItem');
 goog.require('vsaq.questionnaire.items.YesNoItem');
 goog.require('vsaq.questionnaire.items.factory');
+goog.require('vsaq.questionnaire.utils');
+
 
 
 var HTML_STRING = 'some_html<br>_string';
@@ -66,7 +70,8 @@ function setUp() {
   BOX = {
     id: 'box_id',
     type: 'box',
-    text: HTML_STRING
+    text: HTML_STRING,
+    required: true
   };
   CHECK = {
     id: 'check_id',
@@ -113,7 +118,8 @@ function setUp() {
     type: 'yesno',
     yes: HTML_STRING + 'yes_part',
     no: HTML_STRING + 'no_part',
-    text: HTML_STRING
+    text: HTML_STRING,
+    required: true
   };
 
   BLOCK1.items = [BOX, LINE, BLOCK2, YESNO, RADIO1, RADIO2, SPACER, CHECK];
@@ -526,5 +532,48 @@ function testAddNamespaceToIds() {
   q.addNamespaceToIds_([BLOCK2], 'test');
   assertEquals('test:tip_id', TIP['id']);
   assertEquals('test:whytip_id', WHYTIP['id']);
+}
+
+
+/**
+ * Test unfilled required items handling.
+ */
+function testGetUnfilledRequiredItems() {
+  var q = new vsaq.Questionnaire(root);
+  q.setTemplate(QUESTIONNAIRE);
+  // should be 4: box, radio, line, yesno
+  assertEquals(4, q.rootBlock_.getUnansweredCount());
+  q.setValues({'yesno_id': 'yes'});
+  assertEquals(3, q.rootBlock_.getUnansweredCount());
+  q.setValues({'yesno_id': 'yes', 'line_id': 'blah'});
+  var unfilled = q.getUnfilledRequiredItems();
+  assertEquals(unfilled.length, 1);
+  assertEquals(unfilled[0].id, 'box_id');
+  q.setValues({'yesno_id': 'no', 'box_id': 'box'});
+  unfilled = q.getUnfilledRequiredItems();
+  assertEquals(unfilled.length, 0);
+}
+
+
+/**
+ * Tests notification behavior for required items.
+ */
+function testChangeRequiredItemWarning() {
+  var q = new vsaq.Questionnaire(root);
+  q.setTemplate(QUESTIONNAIRE);
+
+  var unfilled = q.getUnfilledRequiredItems();
+  assertEquals(unfilled.length, 2);
+  // Add a warning to all required but unfilled items.
+  goog.structs.forEach(unfilled, function(item, id, items) {
+    q.changeRequiredItemWarning(item, true);
+    var labelElement = /** @type {!HTMLLabelElement} */ (
+        vsaq.questionnaire.utils.findById(item.container, item.id + '-title'));
+    assertTrue(goog.dom.classlist.contains(
+        labelElement, 'vsaq-unfilled-highlight'));
+    q.changeRequiredItemWarning(item, false);
+    assertFalse(goog.dom.classlist.contains(
+        labelElement, 'vsaq-unfilled-highlight'));
+  }, this);
 }
 

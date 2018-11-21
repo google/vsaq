@@ -212,6 +212,9 @@
   color: black;
   font-weight: initial;
 }
+.vsaq-unfilled-highlight {
+  color: red;
+}
 a.vsaq-block-link:visited,
 a.vsaq-block-link:hover,
 a.vsaq-block-link:active {

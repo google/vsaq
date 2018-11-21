@@ -40,35 +40,31 @@ goog.require('vsaq.questionnaire.utils');
  * @param {string} caption The caption to show next to the radio button.
  * @param {string} yes String shown as label for the first option.
  * @param {string} no String shown as label for the second option.
+ * @param {boolean=} opt_isRequired If true, the item value is required.
  * @param {string=} opt_auth If "readonly", this ValueItem cannot be modified.
  * @extends {vsaq.questionnaire.items.ValueItem}
  * @constructor
  */
-vsaq.questionnaire.items.YesNoItem = function(id, conditions, caption, yes,
-    no, opt_auth) {
-  goog.base(this, id, conditions, caption, undefined, undefined, undefined,
-            undefined, undefined, opt_auth);
+vsaq.questionnaire.items.YesNoItem = function(
+    id, conditions, caption, yes, no, opt_isRequired, opt_auth) {
+  goog.base(
+      this, id, conditions, caption, undefined, undefined, undefined,
+      opt_isRequired, undefined, opt_auth);
 
   /**
    * The text for the yes choice.
-   * @type {!string}
+   * @type {string}
    */
   this.yes = yes;
-  var propertyInformation = {
-    nameInClass: 'yes',
-    mandatory: true
-  };
+  var propertyInformation = {nameInClass: 'yes', mandatory: true};
   this.addPropertyInformation('yes', propertyInformation);
 
   /**
    * The text for the no choice.
-   * @type {!string}
+   * @type {string}
    */
   this.no = no;
-  propertyInformation = {
-    nameInClass: 'no',
-    mandatory: true
-  };
+  propertyInformation = {nameInClass: 'no', mandatory: true};
   this.addPropertyInformation('no', propertyInformation);
 
   /**
@@ -87,8 +83,8 @@ vsaq.questionnaire.items.YesNoItem = function(id, conditions, caption, yes,
 
   this.render();
 };
-goog.inherits(vsaq.questionnaire.items.YesNoItem,
-              vsaq.questionnaire.items.ValueItem);
+goog.inherits(
+    vsaq.questionnaire.items.YesNoItem, vsaq.questionnaire.items.ValueItem);
 
 
 /**
@@ -96,8 +92,8 @@ goog.inherits(vsaq.questionnaire.items.YesNoItem,
  */
 vsaq.questionnaire.items.YesNoItem.prototype.render = function() {
   var oldNode = this.container;
-  this.container = goog.soy.renderAsElement(vsaq.questionnaire.templates.yesno,
-      {
+  this.container =
+      goog.soy.renderAsElement(vsaq.questionnaire.templates.yesno, {
         id: this.id,
         captionHtml: soydata.VERY_UNSAFE.ordainSanitizedHtml(this.text),
         yesHtml: soydata.VERY_UNSAFE.ordainSanitizedHtml(this.yes),
@@ -105,14 +101,19 @@ vsaq.questionnaire.items.YesNoItem.prototype.render = function() {
       });
   goog.dom.replaceNode(this.container, oldNode);
 
+  // Update radio buttons but preserve old value
+  var oldValue = (this.yesRadio_ && this.noRadio_) ? this.getValue() : '';
   this.yesRadio_ = /** @type {!HTMLInputElement} */ (
       vsaq.questionnaire.utils.findById(this.container, this.id + '/yes'));
   this.noRadio_ = /** @type {!HTMLInputElement} */ (
       vsaq.questionnaire.utils.findById(this.container, this.id + '/no'));
-  goog.events.listen(this.yesRadio_, goog.events.EventType.CLICK,
-      this.answerChanged, true, this);
-  goog.events.listen(this.noRadio_, goog.events.EventType.CLICK,
-      this.answerChanged, true, this);
+  this.setInternalValue(oldValue || '');
+  goog.events.listen(
+      this.yesRadio_, goog.events.EventType.CLICK, this.answerChanged, true,
+      this);
+  goog.events.listen(
+      this.noRadio_, goog.events.EventType.CLICK, this.answerChanged, true,
+      this);
 };
 
 
@@ -152,8 +153,9 @@ vsaq.questionnaire.items.YesNoItem.parse = function(questionStack) {
   if (item.type != vsaq.questionnaire.items.YesNoItem.TYPE)
     throw new vsaq.questionnaire.items.ParseError('Wrong parser chosen.');
 
-  return new vsaq.questionnaire.items.YesNoItem(item.id, item.cond, item.text,
-                                                item.yes, item.no, item.auth);
+  return new vsaq.questionnaire.items.YesNoItem(
+      item.id, item.cond, item.text, item.yes, item.no, item.required,
+      item.auth);
 };
 
 
@@ -185,8 +187,8 @@ vsaq.questionnaire.items.YesNoItem.prototype.getValue = function() {
 
 
 /** @inheritDoc */
-vsaq.questionnaire.items.YesNoItem.prototype.setInternalValue =
-    function(value) {
+vsaq.questionnaire.items.YesNoItem.prototype.setInternalValue = function(
+    value) {
   if (value == vsaq.questionnaire.items.YesNoItem.YES_VALUE) {
     this.yesRadio_.checked = true;
     this.noRadio_.checked = false;
