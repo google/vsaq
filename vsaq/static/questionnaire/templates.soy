@@ -408,8 +408,7 @@
   <fieldset class="vsaq-item vsaq-block">
     <legend>Todo List</legend>
     {if length($todoListItems)}
-      <p>Based on your selections, we have compiled the following todo list
-      for you:</p>
+      <p>Based on your selections, we have compiled the following todo list for you:</p>
       <ul id='vsaq_todo_ul'>
       {for $todo in $todoListItems}
         <li><label><input type='checkbox' name='{$todo.key}'
@@ -417,11 +416,12 @@
                           {if $todoStatus[$todo.key] == 'checked'}checked {/if}
                           id='{$todo.key}'
                           value='checked'>
-          <span>{$todo.description}</span></label></li>
+          <span style="padding-left:1em">{$todo.description}</span></label></li>
       {/for}
       </ul>
     {else}
-      <p>Great news, you're all set. There are no todos at this time.</p>
+      <p>Great news, you're all set. There are no todos at this time.<br>
+        Please check the remediation portal once this questionnaire has been submitted.</p>
     {/if}
   </fieldset>
 {/template}

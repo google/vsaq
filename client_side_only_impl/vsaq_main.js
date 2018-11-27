@@ -259,13 +259,13 @@ vsaq.Qpage.prototype.handleRequiredItems = function() {
 
 /**
  * Checks if all quesitionnaire requirements have been fulfilled.
- * @param {?goog.events.Event} e The submit/save trigger event.
+ * @param {!goog.events.Event=} opt_event The optional submit/save trigger event.
  * @return {boolean} Whether the questionnaire can be submitted/state.
 */
-vsaq.Qpage.prototype.checkQuestionnaireRequirements = function(e) {
+vsaq.Qpage.prototype.checkQuestionnaireRequirements = function(opt_event) {
   var required_fields_filled = this.handleRequiredItems();
-  if (e && !required_fields_filled)
-    e.preventDefault();
+  if (opt_event && !required_fields_filled)
+    opt_event.preventDefault();
   return required_fields_filled;
 };
 
