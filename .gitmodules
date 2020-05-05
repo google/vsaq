@@ -10,3 +10,9 @@
 [submodule "third_party/js-dossier"]
 	path = third_party/js-dossier
 	url = https://github.com/jleyba/js-dossier
+[submodule "third_party/closure-templates"]
+	path = third_party/closure-templates
+	url = https://github.com/google/closure-templates
+[submodule "third_party/safe-html-types"]
+	path = third_party/safe-html-types
+	url = https://github.com/google/safe-html-types
